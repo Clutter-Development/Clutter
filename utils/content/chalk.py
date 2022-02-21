@@ -1,4 +1,3 @@
-import sys
 from typing import Union, Any, Callable
 
 
@@ -12,7 +11,7 @@ def _esc(*codes: Union[int, str]) -> str:
 
 def _make_color(start, end: str) -> Callable[[str], str]:
     def color_func(s: str) -> str:
-        return s if not sys.stdout.isatty() else start + _t(s) + end
+        return start + _t(s) + end
 
     return color_func
 
