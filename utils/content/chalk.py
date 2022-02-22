@@ -1,4 +1,4 @@
-from typing import Union, Any, Callable
+from typing import Any, Callable, Union
 
 
 def _t(b: Union[bytes, Any]) -> str:
@@ -6,7 +6,7 @@ def _t(b: Union[bytes, Any]) -> str:
 
 
 def _esc(*codes: Union[int, str]) -> str:
-    return _t('\x1b[{}m').format(_t(';').join(_t(str(c)) for c in codes))
+    return _t("\x1b[{}m").format(_t(";").join(_t(str(c)) for c in codes))
 
 
 def _make_color(start, end: str) -> Callable[[str], str]:

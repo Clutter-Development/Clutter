@@ -8,7 +8,6 @@ from config import defaults
 
 
 class Embed:
-
     def __init__(self, db) -> None:
         self.db = db
 
@@ -16,7 +15,8 @@ class Embed:
         return discord.Embed(
             title=f"{self.db.get(f'servers.{guild_id}.emojis.{asset_type}', defaults['emojis'][asset_type])} {title}",
             description=description,
-            color=self.db.get(f"servers.{guild_id}.colors.{asset_type}", defaults["colors"][asset_type]))
+            color=self.db.get(f"servers.{guild_id}.colors.{asset_type}", defaults["colors"][asset_type]),
+        )
 
     def success(self, guild_id: int, title: str, description: str = "") -> discord.Embed:
         return self._assemble_embed(asset_type="success", guild_id=guild_id, title=title, description=description)

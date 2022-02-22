@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from config import secrets
-from utils.init import chalk, get_all_py, get_prefix, fancy_desc, embed, get_txt
+from utils.init import chalk, embed, fancy_desc, get_all_py, get_prefix, get_txt
 
 bot = commands.Bot(command_prefix=get_prefix, intents=discord.Intents().default(), help_command=None)
 
@@ -22,7 +22,8 @@ start_log = f"{chalk.green(fancy_desc('Loaded', _modules_loaded[:-1]))}{chalk.re
 @bot.event
 async def on_ready():
     print(
-        f"{start_log}\n{fancy_desc('Logged in as', bot.user.name)}\n{fancy_desc('Pycord version', discord.__version__)}\nConnected to {len(bot.guilds)} servers")
+        f"{start_log}\n{fancy_desc('Logged in as', bot.user.name)}\n{fancy_desc('Pycord version', discord.__version__)}\nConnected to {len(bot.guilds)} servers"
+    )
 
 
 @bot.command(name="load")
@@ -36,8 +37,11 @@ async def _load(ctx, module: str):
     except KeyError:
         await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
     except Exception:
-        await ctx.reply(embed=embed.error(ctx.guild.id, f"Couldn't load **{module}**"),
-                        file=get_txt(traceback.format_exc(), "error"), mention_author=False)
+        await ctx.reply(
+            embed=embed.error(ctx.guild.id, f"Couldn't load **{module}**"),
+            file=get_txt(traceback.format_exc(), "error"),
+            mention_author=False,
+        )
     else:
         await ctx.reply(embed=embed.success(ctx.guild.id, f"Loaded **{module}**"), mention_author=False)
 
@@ -53,8 +57,11 @@ async def _reload(ctx, module: str):
     except KeyError:
         await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
     except Exception:
-        await ctx.reply(embed=embed.error(ctx.guild.id, f"Couldn't reload **{module}**"),
-                        file=get_txt(traceback.format_exc(), "error"), mention_author=False)
+        await ctx.reply(
+            embed=embed.error(ctx.guild.id, f"Couldn't reload **{module}**"),
+            file=get_txt(traceback.format_exc(), "error"),
+            mention_author=False,
+        )
     else:
         await ctx.reply(embed=embed.success(ctx.guild.id, f"Reloaded **{module}**"), mention_author=False)
 
@@ -70,8 +77,11 @@ async def _unload(ctx, module: str):
     except KeyError:
         await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
     except Exception:
-        await ctx.reply(embed=embed.error(ctx.guild.id, f"Couldn't unload **{module}**"),
-                        file=get_txt(traceback.format_exc(), "error"), mention_author=False)
+        await ctx.reply(
+            embed=embed.error(ctx.guild.id, f"Couldn't unload **{module}**"),
+            file=get_txt(traceback.format_exc(), "error"),
+            mention_author=False,
+        )
     else:
         await ctx.reply(embed=embed.success(ctx.guild.id, f"Unloaded **{module}**"), mention_author=False)
 

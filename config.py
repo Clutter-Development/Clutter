@@ -11,13 +11,8 @@ defaults = {  # im storing these locally because its faster
         "warning": "<:warning:889206830637666334>",
         "info": "<:info:889206906588106824>",
     },
-    "colors": {
-        "success": 0x34C789,
-        "error": 0xFF005C,
-        "warning": 0x006AFF,
-        "info": 0x656479
-    },
-    "prefix": ">"
+    "colors": {"success": 0x34C789, "error": 0xFF005C, "warning": 0x006AFF, "info": 0x656479},
+    "prefix": ">",
 }
 
 secrets = {
@@ -32,5 +27,5 @@ bot_info = {
     "invite": "",
     "owner_id": 512640455834337290,
     "bot_id": 884505093548949575,
-    "version": "0.2b"
+    "version": "0.2b",
 }
