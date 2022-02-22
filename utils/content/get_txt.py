@@ -7,7 +7,7 @@ import discord
 
 
 def get_txt(text: str, filename: str) -> discord.File:
-    fn = f"./temp/{''.join(random.choices(string.ascii_lowercase + string.digits, k=10))}.txt"
+    fn = f"./temp/{''.join(random.choices(string.ascii_lowercase, k=10))}.txt"
     with open(fn, mode="w") as file:
         file.write(text)
     with open(fn, mode="rb") as file:
