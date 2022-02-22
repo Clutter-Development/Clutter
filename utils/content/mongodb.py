@@ -32,8 +32,9 @@ class MongoManager:
         _cooldown: The cooldown time in seconds.
     """
 
-    def __init__(self, connect_url: str, cooldown: int) -> None:
+    def __init__(self, connect_url: str, database: str, *, cooldown: int) -> None:
         self._client = MongoClient(connect_url)
+        self._db = self._client[database]
         self._cache = {}
         self._cooldown = cooldown
 
@@ -81,9 +82,9 @@ class MongoManager:
     def _get_from_db(self, path: str) -> Any:
         """Fetches the variable from the database."""
         path = [_ for _ in path.split(".") if _ != ""]
-        while len(path) < 4:
+        while len(path) < 3:
             path.append("_")
-        collection = self._client[path.pop(0)][path.pop(0)]
+        collection = self._db[path.pop(0)]
         _id = path.pop(0)
         key = path.pop(0)
         result = collection.find_one({"_id": _id}, {"_id": 0, ".".join(key): 1})
@@ -105,9 +106,9 @@ class MongoManager:
         """Sets the variable in the database."""
         path_raw = copy.copy(path)
         path = [_ for _ in path.split(".") if _ != ""]
-        while len(path) < 4:
+        while len(path) < 3:
             path.append("_")
-        collection = self._client[path.pop(0)][path.pop(0)]
+        collection = self._db[path.pop(0)]
         _id = path.pop(0)
         if collection.find_one({"_id": _id}, {"_id": 1}) is None:
             collection.insert_one({"_id": _id, **self._assemble_dict(path, value)})
@@ -130,7 +131,7 @@ class MongoManager:
         """Removes the variable from the database."""
         path_raw = copy.copy(path)
         path = [_ for _ in path.split(".") if _ != ""]
-        collection = self._client[path.pop(0)][path.pop(0)]
+        collection = self._db[path.pop(0)]
         if not path:
             collection.drop()
             return

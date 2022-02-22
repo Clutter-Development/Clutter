@@ -5,10 +5,10 @@ class Checks:
     def __init__(self, db):
         self.db = db
 
-    def mod_only(self, **kwargs):
+    def mod_only(self):
         async def predicate(ctx):
-            return any(role.id in self.db.get(f"{ctx.guild.id}.moderators.roles") for role in
-                       ctx.author.roles) or ctx.author.id in self.db.get(f"{ctx.guild.id}.moderators.users")
+            return any(role.id in self.db.get(f"servers.{ctx.guild.id}.moderators.roles") for role in
+                       ctx.author.roles) or ctx.author.id in self.db.get(f"servers.{ctx.guild.id}.moderators.users")
 
         return commands.check(predicate)
 
