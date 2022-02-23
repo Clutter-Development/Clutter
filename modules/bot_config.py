@@ -14,14 +14,15 @@ class BotConfig(commands.Cog):
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
     @commands.has_permissions(administrator=True)
     async def config(self, ctx):
-        await ctx.reply(embed=embed.error(ctx.guild.id, "You need to specify a sub command", "`moderators`"),
-                        mention_author=False)
+        await ctx.reply(
+            embed=embed.error(ctx.guild.id, "You need to specify a sub command", "`moderators`"), mention_author=False
+        )
 
     @config.group(invoke_without_command=True, aliases=["moderator", "mod"])
     async def moderators(self, ctx):
         await ctx.reply(
             embed=embed.error(ctx.guild.id, "You need to specify a sub command", "`add` or `remove`"),
-            mention_author=False
+            mention_author=False,
         )
 
     @moderators.command(name="add")
