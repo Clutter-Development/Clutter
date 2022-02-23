@@ -73,9 +73,9 @@ class MongoManager:
         """Sets the last used time for the variable to now."""
         self._cache[path] = [self._cache[path][0], math.floor(time.time())]
 
-    async def _remove_after_cooldown(self, path: str) -> None:
+    def _remove_after_cooldown(self, path: str) -> None:
         """Removes the variable from the cache if it hasn't been used for the cooldown after the cooldown time has passed."""
-        await asyncio.sleep(self._cooldown + 0.1)
+        time.sleep(self._cooldown + 0.1)
         if self._get_last_used(path) > self._cooldown:
             self._cache.pop(path)
 
@@ -97,7 +97,7 @@ class MongoManager:
         if isinstance(path, str):
             for key in self._cache.keys():
                 if key.startswith(path):  # The reason for this is that im treating the path like a dictionary.
-                    self._cache[key] = [self._get_from_db(path), math.floor(time.time())]
+                    self._cache.pop(key)
             return
         for _ in path:
             self.refresh(_)
@@ -116,14 +116,40 @@ class MongoManager:
             collection.update_one({"_id": _id}, {"$set": {".".join(path): value}})
         self.refresh(path_raw)
 
+    def push(self, path: str, value: Any) -> None:
+        """Appends the variable to a list in the database."""
+        path_raw = copy.copy(path)
+        path = [_ for _ in path.split(".") if _ != ""]
+        while len(path) < 3:
+            path.append("_")
+        collection = self._db[path.pop(0)]
+        _id = path.pop(0)
+        if collection.find_one({"_id": _id}, {"_id": 1}) is None:
+            collection.insert_one({"_id": _id, **self._assemble_dict(path, [value])})
+        else:
+            collection.update_one({"_id": _id}, {"$push": {".".join(path): value}})
+        self.refresh(path_raw)
+
+    def pull(self, path: str, value: Any) -> None:
+        """Removes the variable from a list in the database."""
+        path_raw = copy.copy(path)
+        path = [_ for _ in path.split(".") if _ != ""]
+        while len(path) < 3:
+            path.append("_")
+        collection = self._db[path.pop(0)]
+        _id = path.pop(0)
+        if collection.find_one({"_id": _id}, {"_id": 1}) is not None:
+            collection.update_one({"_id": _id}, {"$pull": {".".join(path): value}})
+            self.refresh(path_raw)
+
     def get(self, path: str, default: Any = None) -> Any:
         """Returns the variable from the cache if it's not too old, otherwise fetches it from the database."""
         if path in self._cache.keys():
             self._use(path)
         else:
             self.refresh(path)
-        asyncio.create_task(self._remove_after_cooldown(path))
-        if self._cache[path][0] is None:
+        asyncio.get_event_loop().run_in_executor(None, self._remove_after_cooldown, path)
+        if self._cache.get(path, [None])[0] is None:
             return default
         return self._cache[path][0]
 

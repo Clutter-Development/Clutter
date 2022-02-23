@@ -1,43 +1,22 @@
-from discord.ext import commands
+from typing import Union
 
-from utils.init import embed
+import discord
+from discord.ext import commands
 
 
 class BotConfig(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.ALLOWED_KEYS = [
-            "prefix",
-            "emojis.success",
-            "emojis.error",
-            "emojis.warning",
-            "emojis.info",
-            "colors.success",
-            "colors.error",
-            "colors.warning",
-            "colors.info",
-            "moderators.roles",
-            "moderators.users",
-        ]
 
     @commands.group(invoke_without_command=True)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
-    @commands.has_permissions(manage_guild=True)
+    @commands.has_permissions(administrator=True)
     async def config(self, ctx):
         pass
 
     @commands.command()
-    async def set(self, ctx, key: str, value: str):
-        if key not in self.ALLOWED_KEYS:
-            return await ctx.reply(
-                embed=embed.error(
-                    ctx.guild.id,
-                    "Invalid key provided",
-                    f"To view the valid keys, execute `{self.bot.command_prefix}config valid_keys`",
-                ),
-                mention_author=False,
-            )
-        # TODO: make it work
+    async def moderators(self, ctx, operation_type: str, to_add: Union[discord.Member, discord.Role]):
+        pass
 
 
 def setup(bot):
