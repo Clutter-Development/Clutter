@@ -2,13 +2,10 @@ import sys
 import traceback
 
 import discord
-# from discord import Webhook
-# from discord.webhook.async_ import AsyncWebhookAdapter
-# import aiohttp
 from discord.ext import commands
 
-# from config import secrets
-from utils.init import chalk, embed  # , get_txt
+from config import secrets
+from utils.init import chalk, embed, get_txt
 
 
 class ErrorHandler(commands.Cog):
@@ -46,21 +43,16 @@ class ErrorHandler(commands.Cog):
             except (discord.Forbidden, discord.HTTPException):
                 pass
         else:
-            print(
-                chalk.red(
-                    f"\nIgnoring exception in command {ctx.command}:\n{''.join(traceback.format_exception(type(error), error, error.__traceback__))}"
-                ),
-                file=sys.stderr,
-            )
+            full_error = f"\nIgnoring exception in command {ctx.command}:\n{''.join(traceback.format_exception(type(error), error, error.__traceback__))}"
+            print(chalk.red(full_error), file=sys.stderr, )
             await ctx.reply(
                 embed=embed.error(
                     ctx.guild.id, "An unexpected error occured", "The bot developers have been notified to fix this bug"
                 ),
                 mention_author=False,
             )
-            # async with aiohttp.ClientSession() as session:
-            #    webhook = Webhook.from_url(secrets["error_webhook"], AsyncWebhookAdapter())
-            # TODO: Add error webhook, this doesnt work, pycord moment
+            webhook = discord.SyncWebhook.from_url(secrets["error_webhook"])
+            webhook.send(username=f"Error from '{ctx.guild.name}'", file=get_txt(full_error, "error"))
 
 
 def setup(bot):
