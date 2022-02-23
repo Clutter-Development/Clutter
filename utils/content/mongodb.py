@@ -31,6 +31,7 @@ class MongoManager:
         _cache: The cache dictionary.
         _cooldown: The cooldown time in seconds.
     """
+
     def __init__(self, connect_url: str, database: str, *, cooldown: int) -> None:
         self._client = MongoClient(connect_url)
         self._db = self._client[database]

@@ -38,14 +38,19 @@ class ErrorHandler(commands.Cog):
                 pass
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply(
-                embed=embed.error(ctx.guild.id, "Please fill all the required arguments",
-                                  f"Missing the argument `{error.param}`"), mention_author=False
+                embed=embed.error(
+                    ctx.guild.id, "Please fill all the required arguments", f"Missing the argument `{error.param}`"
+                ),
+                mention_author=False,
             )
         elif isinstance(error, (commands.CheckFailure, commands.CheckAnyFailure)):
             await ctx.reply(embed=embed.error(ctx.guild.id, "You cannot use this command"), mention_author=False)
         else:
             full_error = f"\nIgnoring exception in command {ctx.command}:\n{''.join(traceback.format_exception(type(error), error, error.__traceback__))}"
-            print(chalk.red(full_error), file=sys.stderr, )
+            print(
+                chalk.red(full_error),
+                file=sys.stderr,
+            )
             await ctx.reply(
                 embed=embed.error(
                     ctx.guild.id, "An unexpected error occured", "The bot developers have been notified to fix this bug"
@@ -53,8 +58,11 @@ class ErrorHandler(commands.Cog):
                 mention_author=False,
             )
             webhook = discord.SyncWebhook.from_url(secrets["error_webhook"])
-            webhook.send(f"@everyone Error from the server '{ctx.guild.name}'", username="Error Log",
-                         file=get_txt(full_error, "error"))
+            webhook.send(
+                f"@everyone Error from the server '{ctx.guild.name}'",
+                username="Error Log",
+                file=get_txt(full_error, "error"),
+            )
 
 
 def setup(bot):
