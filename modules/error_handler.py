@@ -2,7 +2,6 @@ import sys
 import traceback
 
 import discord
-
 # from discord import Webhook
 # from discord.webhook.async_ import AsyncWebhookAdapter
 # import aiohttp
