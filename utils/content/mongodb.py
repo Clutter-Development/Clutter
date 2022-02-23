@@ -65,6 +65,15 @@ class MongoManager:
                 return None
         return get_from.get(key, None)
 
+    def _parse_path(self, path: str) -> Any:
+        """Parses the path."""
+        path = [_ for _ in path.split(".") if _ != ""]
+        while len(path) < 3:
+            path.append("_")
+        collection = self._db[path.pop(0)]
+        _id = path.pop(0)
+        return path, collection, _id
+
     def _get_last_used(self, path: str) -> int:
         """Returns the time in seconds since the last used time of the variable."""
         return math.floor(time.time()) - self._cache[path][1] if path in self._cache.keys() else 0
@@ -81,11 +90,7 @@ class MongoManager:
 
     def _get_from_db(self, path: str) -> Any:
         """Fetches the variable from the database."""
-        path = [_ for _ in path.split(".") if _ != ""]
-        while len(path) < 3:
-            path.append("_")
-        collection = self._db[path.pop(0)]
-        _id = path.pop(0)
+        path, collection, _id = self._parse_path(path)
         key = path.pop(0)
         result = collection.find_one({"_id": _id}, {"_id": 0, ".".join(key): 1})
         if not result:
@@ -105,11 +110,7 @@ class MongoManager:
     def set(self, path: str, value: Any) -> None:
         """Sets the variable in the database."""
         path_raw = copy.copy(path)
-        path = [_ for _ in path.split(".") if _ != ""]
-        while len(path) < 3:
-            path.append("_")
-        collection = self._db[path.pop(0)]
-        _id = path.pop(0)
+        path, collection, _id = self._parse_path(path)
         if collection.find_one({"_id": _id}, {"_id": 1}) is None:
             collection.insert_one({"_id": _id, **self._assemble_dict(path, value)})
         else:
@@ -119,11 +120,7 @@ class MongoManager:
     def push(self, path: str, value: Any) -> None:
         """Appends the variable to a list in the database."""
         path_raw = copy.copy(path)
-        path = [_ for _ in path.split(".") if _ != ""]
-        while len(path) < 3:
-            path.append("_")
-        collection = self._db[path.pop(0)]
-        _id = path.pop(0)
+        path, collection, _id = self._parse_path(path)
         if collection.find_one({"_id": _id}, {"_id": 1}) is None:
             collection.insert_one({"_id": _id, **self._assemble_dict(path, [value])})
         else:
@@ -133,11 +130,7 @@ class MongoManager:
     def pull(self, path: str, value: Any) -> None:
         """Removes the variable from a list in the database."""
         path_raw = copy.copy(path)
-        path = [_ for _ in path.split(".") if _ != ""]
-        while len(path) < 3:
-            path.append("_")
-        collection = self._db[path.pop(0)]
-        _id = path.pop(0)
+        path, collection, _id = self._parse_path(path)
         if collection.find_one({"_id": _id}, {"_id": 1}) is not None:
             collection.update_one({"_id": _id}, {"$pull": {".".join(path): value}})
             self.refresh(path_raw)
