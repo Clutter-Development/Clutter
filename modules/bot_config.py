@@ -21,8 +21,8 @@ class BotConfig(commands.Cog):
         ]
 
     @commands.group(invoke_without_command=True)
-    @commands.has_permissions(manage_guild=True)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
+    @commands.has_permissions(manage_guild=True)
     async def config(self, ctx):
         pass
 

@@ -27,8 +27,8 @@ async def on_ready():
 
 
 @bot.command(name="load")
-@commands.is_owner()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
+@commands.is_owner()
 async def _load(ctx, module: str):
     await ctx.channel.trigger_typing()
     modules = get_all_py("./modules")
@@ -47,8 +47,8 @@ async def _load(ctx, module: str):
 
 
 @bot.command(name="reload")
-@commands.is_owner()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
+@commands.is_owner()
 async def _reload(ctx, module: str):
     await ctx.channel.trigger_typing()
     modules = get_all_py("./modules")
@@ -67,8 +67,8 @@ async def _reload(ctx, module: str):
 
 
 @bot.command(name="unload")
-@commands.is_owner()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
+@commands.is_owner()
 async def _unload(ctx, module: str):
     await ctx.channel.trigger_typing()
     modules = get_all_py("./modules")
