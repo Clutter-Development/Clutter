@@ -31,7 +31,6 @@ class MongoManager:
         _cache: The cache dictionary.
         _cooldown: The cooldown time in seconds.
     """
-
     def __init__(self, connect_url: str, database: str, *, cooldown: int) -> None:
         self._client = MongoClient(connect_url)
         self._db = self._client[database]
@@ -91,8 +90,7 @@ class MongoManager:
     def _get_from_db(self, path: str) -> Any:
         """Fetches the variable from the database."""
         path, collection, _id = self._parse_path(path)
-        key = path.pop(0)
-        result = collection.find_one({"_id": _id}, {"_id": 0, ".".join(key): 1})
+        result = collection.find_one({"_id": _id}, {"_id": 0, ".".join(path): 1})
         if not result:
             return None
         return self._find_in_dict(result, path)
@@ -100,7 +98,7 @@ class MongoManager:
     def refresh(self, path: Union[str, list]) -> None:
         """Refreshes the variable from the database."""
         if isinstance(path, str):
-            for key in self._cache.keys():
+            for key in copy.copy(self._cache).keys():
                 if key.startswith(path):  # The reason for this is that im treating the path like a dictionary.
                     self._cache.pop(key)
             return
@@ -140,7 +138,7 @@ class MongoManager:
         if path in self._cache.keys():
             self._use(path)
         else:
-            self.refresh(path)
+            self._cache[path] = [self._get_from_db(path), math.floor(time.time())]
         asyncio.get_event_loop().run_in_executor(None, self._remove_after_cooldown, path)
         if self._cache.get(path, [None])[0] is None:
             return default

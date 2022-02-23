@@ -30,7 +30,7 @@ class BotConfig(commands.Cog):
             db.push(f"servers.{ctx.guild.id}.moderators.roles", str(target.id))
             return await ctx.send(embed=embed.success(ctx.guild.id, f"**@{target.name}** is now a moderator role"),
                                   mention_author=False)
-        elif target.id in db.get(f"servers.{ctx.guild.id}.moderators.users", []):
+        if str(target.id) in db.get(f"servers.{ctx.guild.id}.moderators.users", []):
             return await ctx.send(embed=embed.error(ctx.guild.id, f"**{target}** is already a moderator"),
                                   mention_author=False)
         db.push(f"servers.{ctx.guild.id}.moderators.users", str(target.id))
@@ -39,14 +39,14 @@ class BotConfig(commands.Cog):
     @moderators.command(name="remove", alises=["rem"])
     async def _remove(self, ctx, target: Union[discord.Member, discord.Role]):
         if isinstance(target, discord.Role):
-            if target.id not in db.get(f"servers.{ctx.guild.id}.moderators.roles", []):
+            if str(target.id) not in db.get(f"servers.{ctx.guild.id}.moderators.roles", []):
                 return await ctx.send(
                     embed=embed.error(ctx.guild.id, f"**@{target.name}** is already not a moderator role"),
                     mention_author=False)
             db.pull(f"servers.{ctx.guild.id}.moderators.roles", str(target.id))
             return await ctx.send(embed=embed.success(ctx.guild.id, f"**@{target.name}** is now not a moderator role"),
                                   mention_author=False)
-        elif target.id not in db.get(f"servers.{ctx.guild.id}.moderators.users", []):
+        elif str(target.id) not in db.get(f"servers.{ctx.guild.id}.moderators.users", []):
             return await ctx.send(embed=embed.error(ctx.guild.id, f"**{target}** is already not a moderator"),
                                   mention_author=False)
         db.pull(f"servers.{ctx.guild.id}.moderators.users", str(target.id))

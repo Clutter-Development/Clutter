@@ -14,7 +14,6 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        print(error)
         if hasattr(ctx.command, "on_error"):
             return
         if cog := ctx.cog:
@@ -26,7 +25,6 @@ class ErrorHandler(commands.Cog):
             return
         elif isinstance(error, commands.BotMissingPermissions):
             missing = "\n".join([f"`{perm}`" for perm in error.missing_permissions])
-            print(missing)
             try:
                 await ctx.reply(
                     embed=embed.error(
