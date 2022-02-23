@@ -26,6 +26,7 @@ class BotConfig(commands.Cog):
         )
 
     @moderators.command(name="add")
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def _add(self, ctx, target: Union[discord.Member, discord.Role]):
         if isinstance(target, discord.Role):
             if str(target.id) in db.get(f"servers.{ctx.guild.id}.moderators.roles", []):
@@ -45,6 +46,7 @@ class BotConfig(commands.Cog):
         await ctx.reply(embed=embed.success(ctx.guild.id, f"**{target}** is now a moderator"), mention_author=False)
 
     @moderators.command(name="remove")
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def _remove(self, ctx, target: Union[discord.Member, discord.Role]):
         if isinstance(target, discord.Role):
             if str(target.id) not in db.get(f"servers.{ctx.guild.id}.moderators.roles", []):
