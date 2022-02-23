@@ -9,11 +9,11 @@ from utils.init import chalk, embed, fancy_desc, get_all_py, get_prefix, get_txt
 bot = commands.Bot(command_prefix=get_prefix, intents=discord.Intents().default(), help_command=None)
 
 _modules_loaded, _modules_failed = "", ""
-for fn, fp in get_all_py("./utils").items():
+for fn, fp in get_all_py("./modules").items():
     try:
         bot.load_extension(fp)
     except Exception:
-        _modules_failed += "\n" + fancy_desc(f"\nFailed to load {chalk.bold(fn)}", traceback.format_exc())
+        _modules_failed += "\n" + fancy_desc(f"\nFailed to load {chalk.bold(fn)}", traceback.format_exc()[:-1])
     else:
         _modules_loaded += f"{fn}\n"
 start_log = f"{chalk.green(fancy_desc('Loaded', _modules_loaded[:-1]))}{chalk.red(_modules_failed)}"
@@ -22,7 +22,7 @@ start_log = f"{chalk.green(fancy_desc('Loaded', _modules_loaded[:-1]))}{chalk.re
 @bot.event
 async def on_ready():
     print(
-        f"{start_log}\n{fancy_desc('Logged in as', bot.user.name)}\n{fancy_desc('Pycord version', discord.__version__)}\nConnected to {len(bot.guilds)} servers"
+        f"{start_log}\n\n{fancy_desc('Logged in as', bot.user.name)}\n\n{fancy_desc('Pycord version', discord.__version__)}\n\nConnected to {len(bot.guilds)} servers"
     )
 
 

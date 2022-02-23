@@ -14,6 +14,7 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        print(error)
         if hasattr(ctx.command, "on_error"):
             return
         if cog := ctx.cog:
@@ -23,14 +24,9 @@ class ErrorHandler(commands.Cog):
         error = getattr(error, "original", error)
         if isinstance(error, ignored):
             return
-        elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply(
-                embed=embed.error(ctx.guild.id, "Please fill all the required arguments"), mention_author=False
-            )
-        elif isinstance(error, (commands.CheckFailure, commands.CheckAnyFailure)):
-            await ctx.reply(embed=embed.error(ctx.guild.id, "You cannot use this command"), mention_author=False)
         elif isinstance(error, commands.BotMissingPermissions):
             missing = "\n".join([f"`{perm}`" for perm in error.missing_permissions])
+            print(missing)
             try:
                 await ctx.reply(
                     embed=embed.error(
@@ -42,6 +38,13 @@ class ErrorHandler(commands.Cog):
                 )
             except (discord.Forbidden, discord.HTTPException):
                 pass
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply(
+                embed=embed.error(ctx.guild.id, "Please fill all the required arguments",
+                                  f"Missing the argument `{error.param}`"), mention_author=False
+            )
+        elif isinstance(error, (commands.CheckFailure, commands.CheckAnyFailure)):
+            await ctx.reply(embed=embed.error(ctx.guild.id, "You cannot use this command"), mention_author=False)
         else:
             full_error = f"\nIgnoring exception in command {ctx.command}:\n{''.join(traceback.format_exception(type(error), error, error.__traceback__))}"
             print(chalk.red(full_error), file=sys.stderr, )
@@ -52,7 +55,8 @@ class ErrorHandler(commands.Cog):
                 mention_author=False,
             )
             webhook = discord.SyncWebhook.from_url(secrets["error_webhook"])
-            webhook.send(username=f"Error from '{ctx.guild.name}'", file=get_txt(full_error, "error"))
+            webhook.send(f"@everyone Error from the server '{ctx.guild.name}'", username="Error Log",
+                         file=get_txt(full_error, "error"))
 
 
 def setup(bot):
