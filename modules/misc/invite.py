@@ -16,7 +16,7 @@ class Invite(commands.Cog):
         await ctx.reply(
             embed=embed.info(
                 ctx.guild.id,
-                "Invite me",
+                "Invite Me",
                 f"[Bot invite]({bot_info['invite']})\n[Support server]({bot_info['discord']})",
             ),
             mention_author=False,

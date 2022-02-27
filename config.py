@@ -25,7 +25,5 @@ bot_info = {
     "github": "https://github.com/Clutter-Development/Clutter",
     "discord": "https://discord.gg/mVKkMZRPQE",
     "invite": "https://discord.com/api/oauth2/authorize?client_id=884505093548949575&permissions=8&scope=bot",
-    "owner_id": 512640455834337290,
-    "bot_id": 884505093548949575,
     "version": "0.2b",
 }
