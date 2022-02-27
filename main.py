@@ -27,12 +27,16 @@ async def on_ready():
     )
 
 
+@bot.before_invoke
+async def before_invoke(ctx):
+    await ctx.trigger_typing()
+
+
 @bot.command(name="load")
 @commands.guild_only()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _load(ctx, module: str):
-    await ctx.channel.trigger_typing()
     modules = get_all_py("./modules")
     try:
         bot.load_extension(modules[module])
@@ -53,7 +57,6 @@ async def _load(ctx, module: str):
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _reload(ctx, module: str):
-    await ctx.channel.trigger_typing()
     modules = get_all_py("./modules")
     try:
         bot.reload_extension(modules[module])
@@ -74,7 +77,6 @@ async def _reload(ctx, module: str):
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _unload(ctx, module: str):
-    await ctx.channel.trigger_typing()
     modules = get_all_py("./modules")
     try:
         bot.unload_extension(modules[module])

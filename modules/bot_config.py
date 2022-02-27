@@ -15,7 +15,6 @@ class BotConfig(commands.Cog):
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
     @commands.has_permissions(administrator=True)
     async def config(self, ctx):
-        await ctx.channel.trigger_typing()
         if ctx.invoked_subcommand is None:
             await ctx.reply(
                 embed=embed.error(ctx.guild.id, "You need to specify a sub command", "`moderators`"),
