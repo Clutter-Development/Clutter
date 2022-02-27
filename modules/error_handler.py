@@ -20,7 +20,7 @@ class ErrorHandler(commands.Cog):
         if cog := ctx.cog:
             if cog._get_overridden_method(cog.cog_command_error) is not None:
                 return
-        ignored = (commands.CommandNotFound, commands.DisabledCommand)
+        ignored = (commands.CommandNotFound, commands.DisabledCommand, commands.NoPrivateMessage)
         error = getattr(error, "original", error)
         if isinstance(error, ignored):
             return
