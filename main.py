@@ -9,6 +9,7 @@ from utils.init import chalk, embed, fancy_desc, get_all_py, get_prefix, get_txt
 bot = commands.Bot(command_prefix=get_prefix, intents=discord.Intents().default(), help_command=None)
 
 _modules_loaded, _modules_failed = "", ""
+bot.load_extension("jishaku")
 for fn, fp in get_all_py("./modules").items():
     try:
         bot.load_extension(fp)

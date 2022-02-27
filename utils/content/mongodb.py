@@ -41,6 +41,10 @@ class MongoManager:
                 return None
         return get_from.get(key, None)
 
+    @staticmethod
+    def _current_time() -> int:
+        return math.floor(time.time())
+
     def _parse_path(self, path: str) -> Any:
         """Parses the path."""
         path = [_ for _ in path.split(".") if _ != ""]
@@ -52,17 +56,18 @@ class MongoManager:
 
     def _get_last_used(self, path: str) -> int:
         """Returns the time in seconds since the last used time of the variable."""
-        return math.floor(time.time()) - self._cache[path][1] if path in self._cache.keys() else 0
+        return (self._current_time() - self._cache[path][1]) if path in self._cache.keys() else 0
 
     def _use(self, path: str) -> None:
         """Sets the last used time for the variable to now."""
-        self._cache[path] = [self._cache[path][0], math.floor(time.time())]
+        self._cache[path][1] = self._current_time()
 
-    def _remove_after_cooldown(self, path: str) -> None:
+    async def _remove_after_cooldown(self, path: str) -> None:
         """Removes the variable from the cache if it hasn't been used for the cooldown after the cooldown time has passed."""
-        time.sleep(self._cooldown + 0.1)
-        if self._get_last_used(path) > self._cooldown:
-            self._cache.pop(path)
+        await asyncio.sleep(self._cooldown + 1)
+        if self._get_last_used(path) >= self._cooldown:
+            # print(f"{path} hasn't been used for {self._get_last_used(path)} seconds, removing from cache.")
+            self._cache.pop(path, None)
 
     def _get_from_db(self, path: str) -> Any:
         """Fetches the variable from the database."""
@@ -113,10 +118,12 @@ class MongoManager:
     def get(self, path: str, default: Any = None) -> Any:
         """Returns the variable from the cache if it's not too old, otherwise fetches it from the database."""
         if path in self._cache.keys():
+            # print("Cache used: {}".format(path))
             self._use(path)
         else:
-            self._cache[path] = [self._get_from_db(path), math.floor(time.time())]
-        asyncio.get_event_loop().run_in_executor(None, self._remove_after_cooldown, path)
+            # print("DB used: {}".format(path))
+            self._cache[path] = [self._get_from_db(path), self._current_time()]
+        asyncio.create_task(self._remove_after_cooldown(path))
         if self._cache.get(path, [None])[0] is None:
             return default
         return self._cache[path][0]

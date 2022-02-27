@@ -10,7 +10,7 @@ from utils.content import (
     mongodb,
 )
 
-db = mongodb.MongoManager(secrets["mongo_url"], "Clutter", cooldown=1800)
+db = mongodb.MongoManager(secrets["mongo_url"], "Clutter", cooldown=4)
 
 # Requires a database
 checks = checks.Checks(db)  # To get the mod roles and user

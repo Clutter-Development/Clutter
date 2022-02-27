@@ -1,3 +1,4 @@
 py-cord==2.0.0b4
 pymongo==4.0.1
 python-dotenv==0.19.2
+jishaku==2.3.2
