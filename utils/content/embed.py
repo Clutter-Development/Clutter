@@ -1,7 +1,3 @@
-"""
-Why like this? Can't you make a callable generator?
-I tried, but it didn't work. It bugged hard. Python moment.
-"""
 import discord
 
 from config import defaults

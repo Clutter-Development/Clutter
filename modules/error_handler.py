@@ -1,3 +1,4 @@
+import math
 import sys
 import traceback
 
@@ -36,6 +37,10 @@ class ErrorHandler(commands.Cog):
                 )
             except (discord.Forbidden, discord.HTTPException):
                 pass
+        elif isinstance(error, commands.CommandOnCooldown):
+            usable_after = math.ceil(error.retry_after)
+            await ctx.reply(embed=embed.error(ctx.guild.id, "This command is on cooldown",
+                                              f"You can use this command again in {usable_after} second{'s' if usable_after != 1 else ''}"))
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply(
                 embed=embed.error(

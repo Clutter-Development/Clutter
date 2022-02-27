@@ -8,30 +8,6 @@ from pymongo import MongoClient
 
 
 class MongoManager:
-    """
-    Basic database manager.
-    Stores the requested data in the cache.
-    Discards if the data hasn't been used in the specified time.
-
-    Methods:
-        refresh(key: Union[str, list]): Refreshes the cache for the specified key(s).
-        get(key: str, default: Any): Returns the cached data for the specified key. If the key is not found, returns the default value.
-        set(key: str, value: Any): Sets the key value pair in the database.
-        rem(key: str): Removes the key value pair from the database.
-        ***
-        _assemble_dict(key: str, value: Any): Assembles a nested dictionary from the key and value.
-        _find_in_dict(get_from: dict, path: str): Finds the key value pair in the specified dictionary.
-        _get_last_used(key: str): Returns the last time the key value pair was used.
-        _use(key: str): Updates the last used time for the key value pair to now.
-        _remove_after_cooldown(key: str): Removes the key value pair from the cache if the last used time is older than the cooldown time.
-        _get_from_db(key: str): Returns the key value pair from the database.
-
-    Attributes:
-        _client: The MongoClient object.
-        _cache: The cache dictionary.
-        _cooldown: The cooldown time in seconds.
-    """
-
     def __init__(self, connect_url: str, database: str, *, cooldown: int) -> None:
         self._client = MongoClient(connect_url)
         self._db = self._client[database]
