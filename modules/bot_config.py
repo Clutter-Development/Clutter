@@ -19,7 +19,7 @@ class BotConfig(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.reply(
                 embed=embed.error(ctx.guild.id, "You need to specify a sub command", "`moderators`"),
-                mention_author=False  # will make the valid subcmd list automated later
+                mention_author=False,  # will make the valid subcmd list automated later
             )
 
     @config.group(invoke_without_command=True, aliases=["moderator", "mod"])
