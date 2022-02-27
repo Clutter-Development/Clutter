@@ -10,8 +10,8 @@ class Invite(commands.Cog):
 
     @commands.command(name="invite")
     @commands.guild_only()
-    @commands.cooldown(1, 2, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
+    @commands.cooldown(1, 2, commands.BucketType.user)
     async def _invite(self, ctx):
         await ctx.channel.trigger_typing()
         await ctx.reply(embed=embed.info(ctx.guild.id, "Invite me",
