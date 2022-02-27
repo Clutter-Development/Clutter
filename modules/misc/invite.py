@@ -14,8 +14,13 @@ class Invite(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def _invite(self, ctx):
         await ctx.channel.trigger_typing()
-        await ctx.reply(embed=embed.info(ctx.guild.id, "Invite me",
-                                         f"[Bot invite]({bot_info['invite']})\n[Support server]({bot_info['discord']})"))
+        await ctx.reply(
+            embed=embed.info(
+                ctx.guild.id,
+                "Invite me",
+                f"[Bot invite]({bot_info['invite']})\n[Support server]({bot_info['discord']})",
+            )
+        )
 
 
 def setup(bot):
