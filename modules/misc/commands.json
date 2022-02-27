@@ -1,0 +1,41 @@
+{
+  "Maintainer Commands": {
+    "reload": {
+      "brief": "Reloads a module",
+      "desc": "Reloads a module, if it fails while reloading, it will spit an error as a txt file",
+      "usage": "reload <module>"
+    },
+    "load": {
+      "brief": "Loads a module",
+      "desc": "Loads a module, if it fails while loading, it will spit an error as a txt file",
+      "usage": "unload <module>"
+    },
+    "unload": {
+      "brief": "Unloads a module",
+      "desc": "Unloads a module, if it fails whileun loading, it will spit an error as a txt file",
+      "usage": "unload <module>"
+    }
+  },
+  "Miscellaneous Commands": {
+    "help": {
+      "brief": "Sends help for a command",
+      "desc": "Sends dedicated help for a specific command, if no command is specified, it will send a list of all commands",
+      "usage": "help [command]"
+    },
+    "info": {
+      "brief": "Sends information about the bot",
+      "desc": "Sends information about the bot, this includes:\nTotal Guilds, Total Members, Bot Version, Python Version and Bot Uptime",
+      "usage": "info"
+    },
+    "invite": {
+      "brief": "Sends an invite link for the bot and the bot's support server",
+      "desc": "Sends an invite link for the bot and the bot's support server",
+      "usage": "invite"
+    },
+    "ping": {
+      "brief": "Sends the bots latency",
+      "desc": "Sends the bots latency, which is the latency between a HEARTBEAT and a HEARTBEAT_ACK in miliseconds",
+      "usage": "ping"
+    }
+  }
+}

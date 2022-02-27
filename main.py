@@ -39,9 +39,8 @@ async def before_invoke(ctx):
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _load(ctx, module: str):
-    modules = get_all_py("./modules")
     try:
-        bot.load_extension(modules[module])
+        bot.load_extension(get_all_py("./modules")[module])
     except KeyError:
         await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
     except Exception:
@@ -59,9 +58,8 @@ async def _load(ctx, module: str):
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _reload(ctx, module: str):
-    modules = get_all_py("./modules")
     try:
-        bot.reload_extension(modules[module])
+        bot.reload_extension(get_all_py("./modules")[module])
     except KeyError:
         await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
     except Exception:
@@ -79,9 +77,8 @@ async def _reload(ctx, module: str):
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _unload(ctx, module: str):
-    modules = get_all_py("./modules")
     try:
-        bot.unload_extension(modules[module])
+        bot.unload_extension(get_all_py("./modules")[module])
     except KeyError:
         await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
     except Exception:

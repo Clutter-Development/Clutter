@@ -27,7 +27,7 @@ class Info(commands.Cog):
         _embed.add_field(name="Total Members", value=f"```{len(self.bot.users)}```")
         _embed.add_field(name="Bot Version", value=f"```{bot_info['version']}```")
         _embed.add_field(name="Python Version", value=f"```v{platform.python_version()}```")
-        _embed.add_field(name="Uptime", value=f"```{datetime.timedelta(seconds=int(time.time() - start_time))}```")
+        _embed.add_field(name="Uptime", value=f"```{datetime.timedelta(seconds=round(time.time()) - start_time)}```")
 
         await ctx.reply(embed=_embed, mention_author=False)
 
