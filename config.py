@@ -12,7 +12,7 @@ defaults = {  # im storing these locally because its faster
         "info": "<:info:889206906588106824>",
     },
     "colors": {"success": 0x34C789, "error": 0xFF005C, "warning": 0x006AFF, "info": 0x656479},
-    "prefix": ">",
+    "prefix": [">"],
 }
 
 secrets = {
