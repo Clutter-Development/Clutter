@@ -22,7 +22,7 @@ start_log = f"{chalk.green(fancy_desc('Loaded', _modules_loaded[:-1]))}{chalk.re
 @bot.event
 async def on_ready():
     print(
-        f"{start_log}\n\n{fancy_desc('Logged in as', bot.user.name)}\n\n{fancy_desc('Pycord version', discord.__version__)}\n\nConnected to {len(bot.guilds)} servers"
+        f"{start_log}\n\n{fancy_desc('Logged in as', f'{bot.user.name}#{bot.user.discriminator}')}\n\n{fancy_desc('Pycord version', discord.__version__)}\n\nConnected to {len(bot.guilds)} servers"
     )
 
 
