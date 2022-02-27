@@ -27,6 +27,7 @@ async def on_ready():
 
 
 @bot.command(name="load")
+@commands.guild_only()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _load(ctx, module: str):
@@ -47,6 +48,7 @@ async def _load(ctx, module: str):
 
 
 @bot.command(name="reload")
+@commands.guild_only()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _reload(ctx, module: str):
@@ -67,6 +69,7 @@ async def _reload(ctx, module: str):
 
 
 @bot.command(name="unload")
+@commands.guild_only()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
 async def _unload(ctx, module: str):

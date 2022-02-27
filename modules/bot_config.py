@@ -10,13 +10,17 @@ class BotConfig(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.group(invoke_without_command=True)
+    @commands.group()
+    @commands.guild_only()
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
     @commands.has_permissions(administrator=True)
     async def config(self, ctx):
-        await ctx.reply(
-            embed=embed.error(ctx.guild.id, "You need to specify a sub command", "`moderators`"), mention_author=False
-        )
+        await ctx.channel.trigger_typing()
+        if ctx.invoked_subcommand is None:
+            await ctx.reply(
+                embed=embed.error(ctx.guild.id, "You need to specify a sub command", "`moderators`"),
+                mention_author=False  # will make the valid subcmd list automated later
+            )
 
     @config.group(invoke_without_command=True, aliases=["moderator", "mod"])
     async def moderators(self, ctx):

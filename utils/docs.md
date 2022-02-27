@@ -1,4 +1,5 @@
 # Docs
+
 (outdated, very)
 
 ## _class_ `MongoManager(connect_url: str, cooldown: int)`

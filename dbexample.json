@@ -1,17 +1,19 @@
 {
   "_id": "872630094837251645",
-  "prefix": "!",
-  "emojis": {
+  "-prefix": [
+    "!"
+  ],
+  "-emojis": {
     "success": "<:success:889206855321157683>",
     "error": "<:error:911240678342819870>",
     "warning": "<:warning:889206830637666334>",
     "info": "<:info:889206906588106824>"
   },
-  "colors": {
-    "success": "0x34C789",
-    "error": "0xFF005C",
-    "warning": "0x006AFF",
-    "info": "0x656479"
+  "-colors": {
+    "success": 3458953,
+    "error": 16711772,
+    "warning": 27391,
+    "info": 6644857
   },
   "moderators": {
     "roles": [
@@ -24,5 +26,5 @@
       "872630094837251645"
     ]
   },
-  "will be extended": true
+  "? info": "a - at the start of the key means it hasnt been implemented yet, a ? means its just info and not in the actual database"
 }

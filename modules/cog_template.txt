@@ -1,0 +1,13 @@
+import discord
+from discord.ext import commands
+
+
+class Cog!Template(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    # code here
+
+
+def setup(bot):
+    bot.add_cog(Cog!Template(bot))
