@@ -12,8 +12,9 @@ class Ping(commands.Cog):
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def _ping(self, ctx):
-        await ctx.reply(embed=embed.info(ctx.guild.id, f"Pong! `{round(self.bot.latency * 1000)}ms`"),
-                        mention_author=False)
+        await ctx.reply(
+            embed=embed.info(ctx.guild.id, f"Pong! `{round(self.bot.latency * 1000)}ms`"), mention_author=False
+        )
 
 
 def setup(bot):

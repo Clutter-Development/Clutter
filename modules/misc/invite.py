@@ -18,9 +18,9 @@ class Invite(commands.Cog):
                 ctx.guild.id,
                 "Invite me",
                 f"[Bot invite]({bot_info['invite']})\n[Support server]({bot_info['discord']})",
-            )
-            ,
-            mention_author=False)
+            ),
+            mention_author=False,
+        )
 
 
 def setup(bot):
