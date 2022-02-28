@@ -3,7 +3,6 @@ from typing import Optional
 
 
 class Parameter:
-
     def __init__(self, raw: dict):
         self.name = raw["name"]
         self.description = raw["description"]
@@ -12,7 +11,6 @@ class Parameter:
 
 
 class Command:
-
     def __init__(self, raw: dict):
         self.name = raw["name"]
         self.category = raw["category"]
@@ -29,7 +27,6 @@ class Command:
 
 
 class CommandsList:
-
     def __init__(self, raw: list):
         self.raw = raw
 
