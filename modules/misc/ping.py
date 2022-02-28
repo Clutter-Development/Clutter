@@ -7,7 +7,7 @@ class Ping(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @commands.command(name="ping")
+    @commands.command(name="ping", aliases=["latency"])
     @commands.guild_only()
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
     @commands.cooldown(1, 2, commands.BucketType.user)

@@ -1,0 +1,117 @@
+[
+  {
+    "name": "load",
+    "category": "Maintainer Commands",
+    "brief": "Loads a module",
+    "description": "Loads a module, if it fails while loading, it will spit an error as a txt file",
+    "needs_perms": [
+      "owner"
+    ],
+    "aliases": [
+      "l"
+    ],
+    "parameters": [
+      {
+        "name": "module",
+        "description": "The module to load",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "reload",
+    "category": "Maintainer Commands",
+    "brief": "Reoads a module",
+    "description": "Reoads a module, if it fails while reloading, it will spit an error as a txt file",
+    "needs_perms": [
+      "owner"
+    ],
+    "aliases": [
+      "rl"
+    ],
+    "parameters": [
+      {
+        "name": "module",
+        "description": "The module to reload",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "unload",
+    "category": "Maintainer Commands",
+    "brief": "Unloads a module",
+    "description": "Unloads a module, if it fails while loading, it will spit an error as a txt file",
+    "needs_perms": [
+      "owner"
+    ],
+    "aliases": [
+      "ul"
+    ],
+    "parameters": [
+      {
+        "name": "module",
+        "description": "The module to unload",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "help",
+    "category": "Miscellaneous Commands",
+    "brief": "Sends help for a command",
+    "description": "Sends dedicated help for a specific command, if no command is specified, it will send a list of all commands",
+    "needs_perms": [],
+    "aliases": [
+      "imlost",
+      "commands"
+    ],
+    "parameters": [
+      {
+        "name": "command",
+        "type": "string",
+        "description": "The command to get help for",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "info",
+    "category": "Miscellaneous Commands",
+    "brief": "Sends information about the bot",
+    "description": "Sends information about the bot, this includes:\nTotal Guilds, Total Members, Bot Version, Python Version and Bot Uptime",
+    "needs_perms": [],
+    "aliases": [
+      "botinfo",
+      "about",
+      "stats",
+      "uptime"
+    ],
+    "parameters": []
+  },
+  {
+    "name": "invite",
+    "category": "Miscellaneous Commands",
+    "brief": "Sends an invite link for the bot and the bot's support server",
+    "description": "Sends an invite link for the bot and the bot's support server",
+    "needs_perms": [],
+    "aliases": [
+      "support"
+    ],
+    "parameters": []
+  },
+  {
+    "name": "ping",
+    "category": "Miscellaneous Commands",
+    "brief": "Sends the bots latency",
+    "description": "Sends the bots latency, which is the latency between a HEARTBEAT and a HEARTBEAT_ACK in miliseconds",
+    "needs_perms": [],
+    "aliases": [
+      "latency"
+    ],
+    "parameters": []
+  }
+]

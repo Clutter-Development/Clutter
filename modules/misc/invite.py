@@ -8,7 +8,7 @@ class Invite(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="invite")
+    @commands.command(name="invite", aliases=["support"])
     @commands.guild_only()
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
     @commands.cooldown(1, 2, commands.BucketType.user)

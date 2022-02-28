@@ -34,7 +34,7 @@ async def before_invoke(ctx):
     await ctx.trigger_typing()
 
 
-@bot.command(name="load")
+@bot.command(name="load", aliases=["l"])
 @commands.guild_only()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
@@ -53,7 +53,7 @@ async def _load(ctx, module: str):
         await ctx.reply(embed=embed.success(ctx.guild.id, f"Loaded **{module}**"), mention_author=False)
 
 
-@bot.command(name="reload")
+@bot.command(name="reload", aliases=["rl"])
 @commands.guild_only()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()
@@ -72,7 +72,7 @@ async def _reload(ctx, module: str):
         await ctx.reply(embed=embed.success(ctx.guild.id, f"Reloaded **{module}**"), mention_author=False)
 
 
-@bot.command(name="unload")
+@bot.command(name="unload", aliases=["ul"])
 @commands.guild_only()
 @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, attach_files=True)
 @commands.is_owner()

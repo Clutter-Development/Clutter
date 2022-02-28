@@ -1,3 +1,5 @@
+import json
+
 from config import secrets
 from utils.content import (
     chalk,
@@ -8,6 +10,7 @@ from utils.content import (
     get_prefix,
     get_txt,
     mongodb,
+    cmd
 )
 
 db = mongodb.MongoManager(secrets["mongo_url"], "Clutter", cooldown=4)
@@ -22,3 +25,5 @@ get_all_py = get_all_py.get_all_py
 fancy_desc = fancy_desc.fancy_desc
 chalk = chalk.Chalk
 get_txt = get_txt.get_txt
+with open("./utils/content/cmd.json", mode="r") as f:
+    cmd = cmd.CommandsList(json.load(f))

@@ -17,7 +17,7 @@ class Info(commands.Cog):
         global start_time
         start_time = round(time.time())
 
-    @commands.command(name="info")
+    @commands.command(name="info", aliases=["botinfo", "about", "stats", "uptime"])
     @commands.guild_only()
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
     @commands.cooldown(1, 2, commands.BucketType.user)
