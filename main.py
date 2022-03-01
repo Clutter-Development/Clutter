@@ -8,6 +8,7 @@ from utils.init import chalk, embed, fancy_desc, get_all_py, get_prefix, get_txt
 
 intents = discord.Intents.default()
 intents.members = True
+# intents.message_content = True  On api v10
 bot = commands.Bot(command_prefix=get_prefix, intents=intents, help_command=None)
 
 _modules_loaded, _modules_failed = "", ""
