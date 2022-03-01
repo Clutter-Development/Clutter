@@ -43,15 +43,17 @@ async def _load(ctx, module: str):
     try:
         bot.load_extension(get_all_py("./modules")[module])
     except KeyError:
-        await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
+        await ctx.reply(embed=embed.error(ctx.guild.id, f"'{module}' is not a valid module"), mention_author=False)
+    except discord.ExtensionAlreadyLoaded:
+        await ctx.reply(embed=embed.error(ctx.guild.id, f"'{module}' is already loaded"), mention_author=False)
     except Exception:
         await ctx.reply(
-            embed=embed.error(ctx.guild.id, f"Couldn't load **{module}**"),
+            embed=embed.error(ctx.guild.id, f"Couldn't load '{module}'"),
             file=get_txt(traceback.format_exc(), "error"),
             mention_author=False,
         )
     else:
-        await ctx.reply(embed=embed.success(ctx.guild.id, f"Loaded **{module}**"), mention_author=False)
+        await ctx.reply(embed=embed.success(ctx.guild.id, f"Loaded '{module}'"), mention_author=False)
 
 
 @bot.command(name="reload", aliases=["rl"])
@@ -62,15 +64,17 @@ async def _reload(ctx, module: str):
     try:
         bot.reload_extension(get_all_py("./modules")[module])
     except KeyError:
-        await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
+        await ctx.reply(embed=embed.error(ctx.guild.id, f"'{module}' is not a valid module"), mention_author=False)
+    except discord.ExtensionNotLoaded:
+        await ctx.invoke(bot.get_command("load"), module)
     except Exception:
         await ctx.reply(
-            embed=embed.error(ctx.guild.id, f"Couldn't reload **{module}**"),
+            embed=embed.error(ctx.guild.id, f"Couldn't reload '{module}'"),
             file=get_txt(traceback.format_exc(), "error"),
             mention_author=False,
         )
     else:
-        await ctx.reply(embed=embed.success(ctx.guild.id, f"Reloaded **{module}**"), mention_author=False)
+        await ctx.reply(embed=embed.success(ctx.guild.id, f"Reloaded '{module}'"), mention_author=False)
 
 
 @bot.command(name="unload", aliases=["ul"])
@@ -81,15 +85,17 @@ async def _unload(ctx, module: str):
     try:
         bot.unload_extension(get_all_py("./modules")[module])
     except KeyError:
-        await ctx.reply(embed=embed.error(ctx.guild.id, f"**{module}** is not a valid module"), mention_author=False)
+        await ctx.reply(embed=embed.error(ctx.guild.id, f"'{module}' is not a valid module"), mention_author=False)
+    except discord.ExtensionNotLoaded:
+        await ctx.reply(embed=embed.error(ctx.guild.id, f"'{module}' is already unloaded"), mention_author=False)
     except Exception:
         await ctx.reply(
-            embed=embed.error(ctx.guild.id, f"Couldn't unload **{module}**"),
+            embed=embed.error(ctx.guild.id, f"Couldn't unload '{module}'"),
             file=get_txt(traceback.format_exc(), "error"),
             mention_author=False,
         )
     else:
-        await ctx.reply(embed=embed.success(ctx.guild.id, f"Unloaded **{module}**"), mention_author=False)
+        await ctx.reply(embed=embed.success(ctx.guild.id, f"Unloaded '{module}'"), mention_author=False)
 
 
 bot.run(secrets["token"])
