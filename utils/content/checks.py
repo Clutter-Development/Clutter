@@ -14,4 +14,4 @@ class Checks:
         return commands.check(predicate)
 
     # maybe add a check for bot maintainers?
-    # will add if i need it later on
+    # will add if I need it later on
