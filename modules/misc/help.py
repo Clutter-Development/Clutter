@@ -22,8 +22,9 @@ class Help(commands.Cog):
             if aliases := command.aliases:
                 _embed.add_field(name="Aliases", value=", ".join([f"`{alias}`" for alias in aliases]), inline=False)
             if needs_perms := command.needs_perms:
-                _embed.add_field(name="Needs Permissions", value=", ".join([f"`{perm}`" for perm in needs_perms]),
-                                 inline=False)
+                _embed.add_field(
+                    name="Needs Permissions", value=", ".join([f"`{perm}`" for perm in needs_perms]), inline=False
+                )
             _embed.add_field(name="Category", value=f"`{command.category}`", inline=False)
             if parameters := command.parameters:
                 _embed.add_field(
@@ -34,7 +35,8 @@ class Help(commands.Cog):
                             for param in parameters
                         ]
                     ),
-                    inline=False)
+                    inline=False,
+                )
         else:
             _embed = embed.info(
                 ctx.guild.id, "Help", f"Use `{prefix}help <command>` to get help for a specific command"
