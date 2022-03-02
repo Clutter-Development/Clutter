@@ -15,7 +15,7 @@ class Info(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.boot_time = self.start_time - time.time()
+        self.boot_time = time.time() - self.start_time
         self.start_time = time.time()
 
     @commands.command(name="info", aliases=["botinfo", "about", "stats", "uptime"])
