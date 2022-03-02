@@ -97,13 +97,14 @@ class MongoManager:
             collection.update_one({"_id": _id}, {"$set": {".".join(path): value}})
         self.refresh(path_raw)
 
-    def push(self, path: str, value: Any) -> None:
+    def push(self, path: str, value: Any, *,
+             multiple=True) -> None:  # if multiple is false, it will push if the value is not in the list (NOT TESTED YET)
         """Appends the variable to a list in the database."""
         path_raw = copy.copy(path)
         path, collection, _id = self._parse_path(path)
-        if collection.find_one({"_id": _id}, {"_id": 1}) is None:
+        if doc := collection.find_one({"_id": _id}) is None:
             collection.insert_one({"_id": _id, **self._assemble_dict(path, [value])})
-        else:
+        elif multiple or not multiple and value not in self._find_in_dict(doc, path):
             collection.update_one({"_id": _id}, {"$push": {".".join(path): value}})
         self.refresh(path_raw)
 
