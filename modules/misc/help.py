@@ -18,12 +18,13 @@ class Help(commands.Cog):
         prefix = db.get(f"servers.{ctx.guild.id}.prefix", defaults["prefix"])[0]
         if command := cmd.get_command(command):
             _embed = embed.info(ctx.guild.id, f"Showing help for '{command.name}'", command.description)
-            _embed.add_field(name="Usage", value=f"`{prefix}{command.usage}`")
+            _embed.add_field(name="Usage", value=f"`{prefix}{command.usage}`", inline=False)
             if aliases := command.aliases:
-                _embed.add_field(name="Aliases", value=", ".join([f"`{alias}`" for alias in aliases]))
+                _embed.add_field(name="Aliases", value=", ".join([f"`{alias}`" for alias in aliases]), inline=False)
             if needs_perms := command.needs_perms:
-                _embed.add_field(name="Needs Permissions", value=", ".join([f"`{perm}`" for perm in needs_perms]))
-            _embed.add_field(name="Category", value=f"`{command.category}`")
+                _embed.add_field(name="Needs Permissions", value=", ".join([f"`{perm}`" for perm in needs_perms]),
+                                 inline=False)
+            _embed.add_field(name="Category", value=f"`{command.category}`", inline=False)
             if parameters := command.parameters:
                 _embed.add_field(
                     name="Parameters",
@@ -33,7 +34,7 @@ class Help(commands.Cog):
                             for param in parameters
                         ]
                     ),
-                )
+                    inline=False)
         else:
             _embed = embed.info(
                 ctx.guild.id, "Help", f"Use `{prefix}help <command>` to get help for a specific command"
@@ -43,7 +44,7 @@ class Help(commands.Cog):
                 for cmd_ in cmds:
                     res[category].append(f"`{cmd_.name}` - {cmd_.brief}")
             for category, description in res.items():
-                _embed.add_field(name=category, value="\n".join(description))
+                _embed.add_field(name=category, value="\n".join(description), inline=False)
         await ctx.reply(embed=_embed, mention_author=False)
 
 
