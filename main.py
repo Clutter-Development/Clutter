@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from config import secrets
-from utils.init import chalk, embed, fancy_desc, get_all_py, get_prefix, get_txt
+from utils.init import chalk, embed, listify, get_all_py, get_prefix, mktxt
 
 intents = discord.Intents.default()
 intents.members = True
@@ -17,16 +17,16 @@ for fn, fp in get_all_py("./modules").items():
     try:
         bot.load_extension(fp)
     except Exception:
-        _modules_failed += "\n" + fancy_desc(f"\nFailed to load {chalk.bold(fn)}", traceback.format_exc()[:-1])
+        _modules_failed += "\n" + listify(f"\nFailed to load {chalk.bold(fn)}", traceback.format_exc()[:-1])
     else:
         _modules_loaded += f"{fn}\n"
-start_log = f"{chalk.green(fancy_desc('Loaded', _modules_loaded[:-1]))}{chalk.red(_modules_failed)}"
+start_log = f"{chalk.green(listify('Loaded', _modules_loaded[:-1]))}{chalk.red(_modules_failed)}"
 
 
 @bot.event
 async def on_ready():
     print(
-        f"{start_log}\n\n{fancy_desc('Logged in as', f'{bot.user.name}#{bot.user.discriminator}')}\n\n{fancy_desc('Pycord version', discord.__version__)}\n\nConnected to {len(bot.guilds)} servers"
+        f"{start_log}\n\n{listify('Logged in as', f'{bot.user.name}#{bot.user.discriminator}')}\n\n{listify('Pycord version', discord.__version__)}\n\nConnected to {len(bot.guilds)} servers"
     )
 
 
@@ -49,7 +49,7 @@ async def _load(ctx, module: str):
     except Exception:
         await ctx.reply(
             embed=embed.error(ctx.guild.id, f"Couldn't load '{module}'"),
-            file=get_txt(traceback.format_exc(), "error"),
+            file=mktxt(traceback.format_exc(), "error"),
             mention_author=False,
         )
     else:
@@ -70,7 +70,7 @@ async def _reload(ctx, module: str):
     except Exception:
         await ctx.reply(
             embed=embed.error(ctx.guild.id, f"Couldn't reload '{module}'"),
-            file=get_txt(traceback.format_exc(), "error"),
+            file=mktxt(traceback.format_exc(), "error"),
             mention_author=False,
         )
     else:
@@ -91,7 +91,7 @@ async def _unload(ctx, module: str):
     except Exception:
         await ctx.reply(
             embed=embed.error(ctx.guild.id, f"Couldn't unload '{module}'"),
-            file=get_txt(traceback.format_exc(), "error"),
+            file=mktxt(traceback.format_exc(), "error"),
             mention_author=False,
         )
     else:

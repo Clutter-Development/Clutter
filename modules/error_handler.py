@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 from config import secrets
-from utils.init import chalk, embed, get_txt
+from utils.init import chalk, embed, mktxt
 
 
 class ErrorHandler(commands.Cog):
@@ -73,7 +73,7 @@ class ErrorHandler(commands.Cog):
             webhook.send(
                 f"@everyone Error from the server '{ctx.guild.name}'",
                 username="Error Log",
-                file=get_txt(full_error, "error"),
+                file=mktxt(full_error, "error"),
             )
 
 
