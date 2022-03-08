@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from config import secrets
-from utils.init import chalk, embed, listify, get_all_py, get_prefix, mktxt
+from utils.init import chalk, embed, get_all_py, get_prefix, listify, mktxt
 
 intents = discord.Intents.default()
 intents.members = True

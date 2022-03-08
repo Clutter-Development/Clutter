@@ -1,21 +1,10 @@
 import json
 
 from config import secrets
-from utils.content import (
-    cmd,
-    mongodb,
-)
-from utils.content.disutils import (
-    checks,
-    get_prefix,
-    mktxt,
-    embed
-)
+from utils.content import cmd, mongodb
+from utils.content.disutils import checks, embed, get_prefix, mktxt
 from utils.content.pathutils import get_all_py
-from utils.content.strutils import (
-    chalk,
-    listify
-)
+from utils.content.strutils import chalk, listify
 
 db = mongodb.MongoManager(secrets["mongo_url"], "Clutter", cooldown=300)
 
