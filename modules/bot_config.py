@@ -1,10 +1,9 @@
 # from typing import Union
 
-#import discord
+# import discord
 from discord.ext import commands
 
-
-#from utils.init import db, embed
+# from utils.init import db, embed
 
 
 class BotConfig(commands.Cog):
