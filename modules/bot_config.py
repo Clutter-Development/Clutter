@@ -1,16 +1,17 @@
-from typing import Union
+# from typing import Union
 
-import discord
+#import discord
 from discord.ext import commands
 
-from utils.init import db, embed
+
+#from utils.init import db, embed
 
 
 class BotConfig(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.group(invoke_without_command=True)
+    """@commands.group(invoke_without_command=True)
     @commands.guild_only()
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True)
     @commands.has_permissions(administrator=True)
@@ -67,7 +68,7 @@ class BotConfig(commands.Cog):
                 embed=embed.error(ctx.guild.id, f"**{target}** is already not a moderator"), mention_author=False
             )
         db.pull(f"servers.{ctx.guild.id}.moderators.users", str(target.id))
-        await ctx.reply(embed=embed.success(ctx.guild.id, f"**{target}** is now not a moderator"), mention_author=False)
+        await ctx.reply(embed=embed.success(ctx.guild.id, f"**{target}** is now not a moderator"), mention_author=False)"""
 
 
 def setup(bot):
