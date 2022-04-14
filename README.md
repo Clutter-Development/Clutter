@@ -17,7 +17,7 @@ This application was designed to work on Linux and has been tested in the follow
 
 The preffered method for running this bot is Docker.
 
-Before running, don't forget to modify the `config.json` file in the `./bot` directory (see header below).
+Before running, don't forget to modify the `config.json5` file in the `./bot` directory (see header below).
 
 Installation commands:
 
@@ -29,11 +29,11 @@ cd Clutter # Go to the Clutter directory
 
 # Configuration
 
-The bot configuration can be found in the `config.json` file in the `./bot` directory.
+The bot configuration can be found in the `config.json5` file in the `./bot` directory.
 
 There is already an example configuration in the file, so this chapter will not be very long.
 
-If you want to use an .env file to store critical info (mongodb URI, bot token, error webhook), you can set the `use_env_for_critical` key to `true` in the `config.json` file. This will make it so you need to put the critical info in the env and not in the json file.
+If you want to use an .env file to store critical info (mongodb URI, bot token, error webhook), you can set the `use_env_for_critical` key to `true` in the `config.json5` file. This will make it so you need to put the critical info in the env and not in the json file.
 
 Example env file:
 
