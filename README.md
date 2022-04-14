@@ -1,0 +1,44 @@
+# Clutter
+
+[![CodeFactor](https://www.codefactor.io/repository/github/clutter-development/clutter/badge)](https://www.codefactor.io/repository/github/clutter-development/clutter)
+![Total Lines](https://img.shields.io/tokei/lines/github/Clutter-Development/Clutter)
+[![License](https://img.shields.io/badge/license-ccc0-success)](LICENSE)
+[![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
+
+Clutter is a multipurpose, compact, extremely configurable Discord bot.
+
+This application was designed to work on Linux and has been tested in the following distros:
+
+* Manjaro (Tested on 21.2.5)
+
+<!-- More Soon -->
+
+# Installation
+
+The preffered method for running this bot is Docker.
+
+Before running, don't forget to modify the `config.json` file in the `./bot` directory (see header below).
+
+Installation commands:
+
+```bash
+git clone https://github.com/Clutter-Development/Clutter # Clone the repo
+cd Clutter # Go to the Clutter directory
+./deploy.sh # Run the deploy script
+```
+
+# Configuration
+
+The bot configuration can be found in the `config.json` file in the `./bot` directory.
+
+There is already an example configuration in the file, so this chapter will not be very long.
+
+If you want to use an .env file to store critical info (mongodb URI, bot token, error webhook), you can set the `use_env_for_critical` key to `true` in the `config.json` file. This will make it so you need to put the critical info in the env and not in the json file.
+
+Example env file:
+
+```
+MONGO_URI=
+BOT_TOKEN=
+ERROR_WEBHOOK_URL=
+```
