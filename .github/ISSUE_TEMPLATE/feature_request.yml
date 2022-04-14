@@ -1,0 +1,15 @@
+name: Feature Request
+description: Suggest a feature for this library
+labels: feature request
+body:
+  - type: input
+    attributes:
+      label: Summary
+      description: >
+        A short summary of what your feature request is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: If there is anything else to say, please do so here.
