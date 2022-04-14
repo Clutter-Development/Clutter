@@ -64,7 +64,7 @@ class MongoManager:
             value (Any): The value to set the key to.
         """
         path, collection, _id = self._parse_path(path)
-        if not (path and isinstance(value, dict)):
+        if not path and not isinstance(value, dict):
             raise ValueError("Value must be a dictionary if whole document is wanted to be updated.")
         if await collection.find_one({"_id": _id}, {"_id": 1}):
             val = {"$set": {".".join(path): value}} if path else value
