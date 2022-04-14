@@ -7,6 +7,8 @@ from discord import Embed
 if TYPE_CHECKING:
     from .database.cacher import CachedMongoManager
 
+__all__ = ("EmbedBuilder",)
+
 
 class EmbedBuilder:
     def __init__(self, db: CachedMongoManager, /) -> None:
