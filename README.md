@@ -17,7 +17,7 @@ This application was designed to work on Linux and has been tested in the follow
 
 The preffered method for running this bot is Docker.
 
-Before running, don't forget to modify the `config.json5` file in the `./bot` directory (see header below).
+Before running, don't forget to modify the `config.json5` file in the `./bot` directory [(see below)](#configuration).
 
 Installation commands:
 
