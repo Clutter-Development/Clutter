@@ -119,14 +119,11 @@ class MongoManager:
             return True
         return False
 
-    async def rem(self, path: str, /) -> bool:  # FIXME TODO: shit code
+    async def rem(self, path: str, /) -> None:  # FIXME TODO: shit code
         """Removes the col/doc/var from the database.
 
         Args:
             path (str): The path to the col/doc/var. Must be at least 1 element long.
-
-        Returns:
-            bool: If the variable was removed.
 
         Raises:
             ValueError: If the path is too short.
@@ -134,19 +131,12 @@ class MongoManager:
         path = [_ for _ in path.split(".") if _ != ""]
         if not path:
             raise ValueError("Path not given. Cannot delete entire database.")
-        col = copy.copy(path[0])
         collection = self._db[path.pop(0)]
         if not path:
-            if col in await self._db.list_collection_names():
-                await collection.drop()
-                return True
-            return False
-        _id = path.pop(0)
-        res = await collection.find_one({"_id": _id}, {".".join(path): 1})
-        if res is not None and not path:
+            await collection.drop()
+            return
+        _id = maybe_int(path.pop(0))
+        if not path:
             await collection.delete_one({"_id": _id})
-            return True
-        elif res:
+        else:
             await collection.update_one({"_id": _id}, {"$unset": {".".join(path): ""}})
-            return True
-        return False
