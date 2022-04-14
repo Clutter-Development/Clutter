@@ -20,15 +20,15 @@ class CachedMongoManager:
         """Returns the current time in seconds."""
         return floor(time()) - self._start_time
 
-    def _get_last_used(self, path: str) -> int:
+    def _get_last_used(self, path: str, /) -> int:
         """Returns the time in seconds since the last used time of the variable."""
         return (self._current_time() - self._cache[path][1]) if path in self._cache.keys() else 0
 
-    def _use(self, path: str) -> None:
+    def _use(self, path: str, /) -> None:
         """Sets the last used time for the variable to now."""
         self._cache[path][1] = self._current_time()
 
-    async def _remove_after_cooldown(self, path: str) -> None:
+    async def _remove_after_cooldown(self, path: str, /) -> None:
         """Removes the variable from the cache if it hasn't been used for the cooldown after the cooldown time has passed."""
         await asyncio.sleep(self.cooldown)
         if self._get_last_used(path) >= self.cooldown:

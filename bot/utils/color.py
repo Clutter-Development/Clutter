@@ -33,7 +33,7 @@ __all__ = (
 )
 
 
-def t(b: Union[bytes, Any]) -> str:
+def t(b: Union[bytes, Any], /) -> str:
     return b.decode() if isinstance(b, bytes) else b
 
 
@@ -41,8 +41,8 @@ def esc(*codes: Union[int, str]) -> str:
     return t("\x1b[{}m").format(t(";").join(t(str(c)) for c in codes))
 
 
-def make_color(start, end: str) -> Callable[[str], str]:
-    def color_func(s: str) -> str:
+def make_color(start, end: str, /) -> Callable[[str], str]:
+    def color_func(s: str, /) -> str:
         return start + t(s) + end
 
     return color_func

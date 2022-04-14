@@ -3,7 +3,7 @@ import re
 __all__ = ("listify",)
 
 
-def listify(title: str, description: str) -> str:
+def listify(title: str, description: str, /) -> str:
     """Makes a list? out of a title and description.
 
     Args:
