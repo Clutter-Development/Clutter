@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
 from discord import Embed
 
 if TYPE_CHECKING:
@@ -8,7 +9,6 @@ if TYPE_CHECKING:
 
 
 class EmbedBuilder:
-
     def __init__(self, db: CachedMongoManager, /) -> None:
         self._db = db
         self.success = self._assemble_embed("success")
@@ -23,4 +23,5 @@ class EmbedBuilder:
             emoji = doc["emojis"][asset_type]
             color = doc["colors"][asset_type]
             return Embed(title=f"{emoji} {title}", description=description, color=color)
+
         return create_embed
