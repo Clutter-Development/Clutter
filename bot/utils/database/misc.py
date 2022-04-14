@@ -1,9 +1,9 @@
-from typing import Any, List, TypeVar, Union
+from typing import Any, List, TypeVar, Union, Dict
 
 __all__ = ("assemble_dict", "find_in_dict", "maybe_int")
 
 
-def assemble_dict(path: List[str], value: Any, /) -> dict:
+def assemble_dict(path: List[str], value: Any, /) -> Dict[str, Any]:
     """Assembles a nested dictionary from the path and value."""
     to_asm, i = {}, 0
     ref = to_asm
@@ -36,6 +36,6 @@ T = TypeVar("T")
 def maybe_int(value: T, /) -> Union[int, T]:
     """Converts the value to an int if possible."""
     try:
-        return int(value)
+        return int(value)  # type: ignore
     except (ValueError, TypeError):
         return value
