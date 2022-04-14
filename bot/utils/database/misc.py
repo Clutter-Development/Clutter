@@ -1,6 +1,6 @@
 from typing import Any, List, TypeVar, Union
 
-__all__ = ["assemble_dict", "find_in_dict", "maybe_int"]
+__all__ = ("assemble_dict", "find_in_dict", "maybe_int")
 
 
 def assemble_dict(path: List[str], value: Any, /) -> dict:

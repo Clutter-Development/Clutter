@@ -9,7 +9,7 @@ from .misc import assemble_dict, find_in_dict, maybe_int
 if TYPE_CHECKING:
     from pymongo.collection import Collection
 
-__all__ = ["MongoManager"]
+__all__ = ("MongoManager",)
 
 
 class MongoManager:

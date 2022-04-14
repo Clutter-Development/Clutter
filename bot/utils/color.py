@@ -1,6 +1,6 @@
 from typing import Any, Callable, Union
 
-__all__ = [
+__all__ = (
     "black",
     "red",
     "green",
@@ -30,7 +30,7 @@ __all__ = [
     "underline",
     "strike",
     "blink",
-]
+)
 
 
 def t(b: Union[bytes, Any]) -> str:

@@ -6,7 +6,7 @@ from typing import Any, List, Union
 
 from .manager import MongoManager
 
-__all__ = ["CachedMongoManager"]
+__all__ = ("CachedMongoManager",)
 
 
 class CachedMongoManager:
