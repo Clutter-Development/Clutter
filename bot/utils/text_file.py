@@ -12,7 +12,7 @@ def text_file(text: str, file_name: str, /, *, spoiler: bool = False) -> discord
         text (str): The text to be converted to a discord.File object.
         file_name (str): The name of the file.
         spoiler (bool, optional): Whether or not the file is a spoiler. Defaults to False.
-    
+
     Returns:
         discord.File: The discord.File object.
     """
