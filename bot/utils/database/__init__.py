@@ -1,3 +1,3 @@
-from .manager import *
 from .cacher import *
+from .manager import *
 from .misc import *

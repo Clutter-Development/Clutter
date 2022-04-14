@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import copy
-from typing import Any, Union, Tuple, Optional, TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
 
 from motor import motor_asyncio
 
@@ -14,7 +13,6 @@ __all__ = ["MongoManager"]
 
 
 class MongoManager:
-
     def __init__(self, connect_url: str, port: int = None, /, *, database: str) -> None:
         self._client = motor_asyncio.AsyncIOMotorClient(connect_url, port)
         self._db = self._client[database]
@@ -52,8 +50,9 @@ class MongoManager:
         """
         path, collection, _id = self._parse_path(path)
         if path:
-            return find_in_dict(await collection.find_one({"_id": _id}, {"_id": 0, ".".join(path): 1}), path,
-                                default=default)
+            return find_in_dict(
+                await collection.find_one({"_id": _id}, {"_id": 0, ".".join(path): 1}), path, default=default
+            )
         return collection.find_one({"_id": _id}) or default
 
     async def set(self, path: str, value: Any, /) -> None:

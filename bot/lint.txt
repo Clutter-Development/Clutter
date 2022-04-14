@@ -1,0 +1,1 @@
+isort . --profile black && black ./ --line-length=120 && flynt ./ -tc

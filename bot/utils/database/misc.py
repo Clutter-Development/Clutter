@@ -1,4 +1,4 @@
-from typing import Any, Union, TypeVar, List
+from typing import Any, List, TypeVar, Union
 
 __all__ = ["assemble_dict", "find_in_dict", "maybe_int"]
 
@@ -30,7 +30,7 @@ def find_in_dict(get_from: dict, path: List[str], /, *, default: Any = None) -> 
     return get_from.get(key, default)
 
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def maybe_int(value: T, /) -> Union[int, T]:

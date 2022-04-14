@@ -2,7 +2,7 @@ import asyncio
 import copy
 from math import floor
 from time import time
-from typing import List, Union, Any
+from typing import Any, List, Union
 
 from .manager import MongoManager
 
@@ -10,7 +10,6 @@ __all__ = ["CachedMongoManager"]
 
 
 class CachedMongoManager:
-
     def __init__(self, connect_url: str, /, *, database: str, cooldown: int) -> None:
         self._manager = MongoManager(connect_url, database=database)
         self._cache = {}
@@ -80,7 +79,7 @@ class CachedMongoManager:
         self.refresh(path, match=True)
         return val
 
-    async def rem(self, path: str, /) -> bool:
+    async def rem(self, path: str, /) -> None:
         val = await self._manager.rem(path)
         self.refresh(path, match=True)
         return val
