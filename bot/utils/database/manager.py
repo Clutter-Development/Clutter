@@ -51,7 +51,9 @@ class MongoManager:
         path, collection, _id = self._parse_path(path)  # type: ignore
         if path:
             return find_in_dict(
-                await collection.find_one({"_id": _id}, {"_id": 0, ".".join(path): 1}), path, default=default
+                await collection.find_one({"_id": _id}, {"_id": 0, ".".join(path): 1}),
+                path,
+                default=default
                 # type: ignore
             )
         return collection.find_one({"_id": _id}) or default
@@ -114,8 +116,9 @@ class MongoManager:
         path, collection, _id = self._parse_path(path)  # type: ignore
         if not path:
             raise ValueError("Path must be at least 3 elements long: Collection, _id and key for the pull operation.")
-        if value in find_in_dict(await collection.find_one({"_id": _id}, {".".join(path): 1}), path,
-                                 default=[]):  # type: ignore
+        if value in find_in_dict(
+            await collection.find_one({"_id": _id}, {".".join(path): 1}), path, default=[]
+        ):  # type: ignore
             await collection.update_one({"_id": _id}, {"$pull": {".".join(path): value}})
             return True
         return False

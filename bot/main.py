@@ -5,7 +5,6 @@ import discord
 import json5
 from discord.ext import commands
 from dotenv import load_dotenv
-
 from utils import CachedMongoManager, ConfigError
 
 
@@ -23,12 +22,13 @@ class Clutter(commands.AutoShardedBot):
                 self.db = CachedMongoManager(
                     os.getenv("MONGO_URI"),
                     database=config["database"]["database_name"],
-                    cooldown=config["database"]["cache_cooldown"]
+                    cooldown=config["database"]["cache_cooldown"],
                 )
             else:
                 self.token = config["bot"]["token"]
-                self.error_webhook = discord.Webhook.from_url(config["links"]["error_webhook_url"],
-                                                              session=self.session)
+                self.error_webhook = discord.Webhook.from_url(
+                    config["links"]["error_webhook_url"], session=self.session
+                )
 
             self.invite_url = config["bot"]["invite_url"]
             self.version = config["bot"]["version"]
