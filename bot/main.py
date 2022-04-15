@@ -9,19 +9,13 @@ from typing import List
 
 import discord
 from aiohttp import ClientSession
-from discord import (
-    Intents,
-    AllowedMentions,
-    MemberCacheFlags,
-    Message
-)
+from discord import AllowedMentions, Intents, MemberCacheFlags, Message
 from discord.ext import commands
 from discord.ext.commands import AutoShardedBot
 from dotenv import load_dotenv
 from json5 import load as load_json5
 from rich.console import Console
 from rich.logging import RichHandler
-
 from utils import CachedMongoManager, ConfigError, EmbedBuilder
 
 os.system("cls" if sys.platform == "win32" else "clear")
@@ -48,7 +42,7 @@ class Clutter(AutoShardedBot):
             self.db = CachedMongoManager(
                 db_uri,  # type: ignore
                 database=config["DATABASE"]["NAME"],
-                cooldown=config["DATABASE"]["CACHE_COOLDOWN"]
+                cooldown=config["DATABASE"]["CACHE_COOLDOWN"],
             )
             self.embed = EmbedBuilder(config["DEFAULTS"]["RESPONSES"], self.db)
 
@@ -83,7 +77,7 @@ class Clutter(AutoShardedBot):
                     show_time=False,
                     markup=True,
                 )
-            ]
+            ],
         )
         self.log = logging.getLogger("rich")
         self.console = Console(color_system="windows", force_terminal=True)
@@ -122,8 +116,8 @@ class Clutter(AutoShardedBot):
         loaded = []
         failed = []
         for fn in map(
-                lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
-                glob(f"modules/**/*.py", recursive=True),
+            lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
+            glob(f"modules/**/*.py", recursive=True),
         ):
             try:
                 self.load_extension(fn)
@@ -150,7 +144,8 @@ Signed into Discord as [bold]{self.user}[/bold] [italic]({self.user.id})[/italic
 Discord.py version: [bold]{discord.__version__}[/bold]
 Default prefix: [bold]{self.default_prefix}[/bold]
 Development Mode: [bold]{"On" if self.development_mode else "Off"}[/bold]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
+        )
 
 
 if __name__ == "__main__":
