@@ -53,7 +53,7 @@ class MongoManager:
             return find_in_dict(
                 await collection.find_one({"_id": _id}, {"_id": 0, ".".join(path): 1}),
                 path,  # type: ignore
-                default=default
+                default=default,
             )
         return collection.find_one({"_id": _id}) or default
 
