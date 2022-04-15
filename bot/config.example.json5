@@ -1,40 +1,40 @@
 // WARNING: Do not forget to rename this file to config.json5, otherwise the bot will not work!
 {
-  use_env_for_critical: false, // Make this `true` to store sensitive data in the .env file (or enviroment variables, both work).
-  bot: {
-    token: '', // Bot token, not needed if use_env_for_critical is true.
-    invite_url: '', // Invite URL for the bot
-    version: '0.0.1' // Bot version
+  USE_ENV: false, // Make this `true` to store sensitive data in the .env file (or enviroment variables, both work).
+  BOT: {
+    TOKEN: '', // Bot token, not needed if use_env_for_critical is true.
+    INVITE_URL: '', // Invite URL for the bot
+    VERSION: '0.0.1' // Bot version
   },
-  database: {
-    mongo_uri: '', // MongoDB URI, not needed if use_env_for_critical is true.
-    database_name: 'ClutterDB', // Database name.
-    cache_cooldown: 1200 // Cache cooldown in seconds.
+  DATABASE: {
+    URI: '', // MongoDB URI, not needed if use_env_for_critical is true.
+    NAME: 'ClutterDB', // Database name.
+    CACHE_COOLDOWN: 1200 // Cache cooldown in seconds.
   },
-  links: {
-    error_webhook_url: '', // Webhook URL for error reporting, not needed if use_env_for_critical is true.
-    github_repo_url: 'https://github.com/Clutter-Development/Clutter', // GitHub link
-    discord_invite_url: 'https://discord.gg/mVKkMZRPQE', // Bot support server invite link
-    documentation_url: '' // Documentation link
+  LINKS: {
+    ERROR_WEBHOOK: '', // Webhook URL for error reporting, not needed if use_env_for_critical is true.
+    GITHUB: 'https://github.com/Clutter-Development/Clutter', // GitHub link
+    DISCORD_INVITE: 'https://discord.gg/mVKkMZRPQE', // Bot support server invite link
+    DOCUMENTATION: '' // Documentation link
   },
   development: {
     server_id: 944535258722861106, // Server ID for the development server, dev slash commands will be synced here
     development_mode: false // Set this to `true` to enable the development mode (development mode makes it so commands can only be used by bot admins).
   },
-  defaults: {
-    prefix: ">", // Default prefix for message content commands (not slash!)
-    responses: {
-      emojis: {
-        error: '',
-        success: '',
-        warning: '',
-        info: ''
+  DEFAULTS: {
+    PREFIX: ">", // Default prefix for message content commands (not slash!)
+    RESPONSES: {
+      EMOJIS: {
+        ERROR: '',
+        SUCCESS: '',
+        WARNING: '',
+        INFO: ''
       },
-      colors: {
-        error: 0xFFFFFF,
-        success: 0xFFFFFF,
-        warning: 0xFFFFFF,
-        info: 0xFFFFFF
+      COLORS: {
+        ERROR: 0xFFFFFF,
+        SUCCESS: 0xFFFFFF,
+        WARNING: 0xFFFFFF,
+        INFO: 0xFFFFFF
       }
     }
   }
