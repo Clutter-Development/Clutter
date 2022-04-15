@@ -13,7 +13,24 @@
     documentation: '' // Documentation link
   },
   development: {
-    server_id: 944535258722861106, // Server ID for the development server
+    server_id: 944535258722861106, // Server ID for the development server, dev slash commands will be synced here
     development_mode: false // Set this to `true` to enable the development mode (development mode makes it so commands can only be used by bot admins).
+  },
+  defaults: {
+    prefix: ">", // Default prefix for message content commands (not slash!)
+    responses: {
+      emojis: {
+        error: '',
+        success: '',
+        warning: '',
+        info: ''
+      },
+      colors: {
+        error: 0xFFFFFF,
+        success: 0xFFFFFF,
+        warning: 0xFFFFFF,
+        info: 0xFFFFFF
+      }
+    }
   }
 }
