@@ -17,9 +17,9 @@
     DISCORD_INVITE: 'https://discord.gg/mVKkMZRPQE', // Bot support server invite link
     DOCUMENTATION: '' // Documentation link
   },
-  development: {
-    server_id: 944535258722861106, // Server ID for the development server, dev slash commands will be synced here
-    development_mode: false // Set this to `true` to enable the development mode (development mode makes it so commands can only be used by bot admins).
+  DEVELOPMENT: {
+    SERVER_ID: 944535258722861106, // Server ID for the development server, dev slash commands will be synced here
+    DEVELOPMENT_MODE: false // Set this to `true` to enable the development mode (development mode makes it so commands can only be used by bot admins).
   },
   DEFAULTS: {
     PREFIX: ">", // Default prefix for message content commands (not slash!)

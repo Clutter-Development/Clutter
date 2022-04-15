@@ -1,25 +1,26 @@
+import logging
 import os
 import sys
-
-import logging
-from rich.logging import RichHandler
-from traceback import print_exception
+from glob import glob
 from math import floor
 from time import time
+from traceback import print_exception
 from typing import List
+
 import discord
-from glob import glob
+from aiohttp import ClientSession
 from discord import (
     Intents,
     AllowedMentions,
     MemberCacheFlags,
     Message
 )
-from aiohttp import ClientSession
 from discord.ext import commands
 from discord.ext.commands import AutoShardedBot
 from dotenv import load_dotenv
 from json5 import load as load_json5
+from rich.console import Console
+from rich.logging import RichHandler
 
 from utils import CachedMongoManager, ConfigError, EmbedBuilder
 
@@ -41,7 +42,7 @@ class Clutter(AutoShardedBot):
             else:
                 self.token = config["BOT"]["TOKEN"]
                 webhook_url = config["LINKS"]["ERROR_WEBHOOK"]
-                db_uri = config["MONGO"]["URI"]
+                db_uri = config["DATABASE"]["URI"]
 
             self.webhook = discord.Webhook.from_url(webhook_url, session=self.session)  # type: ignore
             self.db = CachedMongoManager(
@@ -49,13 +50,13 @@ class Clutter(AutoShardedBot):
                 database=config["DATABASE"]["NAME"],
                 cooldown=config["DATABASE"]["CACHE_COOLDOWN"]
             )
-            self.embed = EmbedBuilder(config["RESPONSES"], self.db)
+            self.embed = EmbedBuilder(config["DEFAULTS"]["RESPONSES"], self.db)
 
             self.invite_url = config["BOT"]["INVITE_URL"]
             self.version = config["BOT"]["VERSION"]
             self.github = config["LINKS"]["GITHUB"]
             self.discord_invite = config["LINKS"]["DISCORD_INVITE"]
-            self.documentation_url = config["LINKS"]["DOCUMENTATION_URL"]
+            self.documentation_url = config["LINKS"]["DOCUMENTATION"]
 
             self.development_server = discord.Object(id=config["DEVELOPMENT"]["SERVER_ID"])
             self.development_mode = discord.Object(id=config["DEVELOPMENT"]["DEVELOPMENT_MODE"])
@@ -73,7 +74,7 @@ class Clutter(AutoShardedBot):
 
         logging.basicConfig(
             level=logging.INFO,
-            format="%(levelname)s => [CLUTTER LOG] %(message)s",
+            format="[CLUTTER LOG] %(message)s",
             handlers=[
                 RichHandler(
                     rich_tracebacks=True,
@@ -85,6 +86,7 @@ class Clutter(AutoShardedBot):
             ]
         )
         self.log = logging.getLogger("rich")
+        self.console = Console(color_system="windows", force_terminal=True)
 
         intents = Intents(
             guilds=True,
@@ -94,7 +96,7 @@ class Clutter(AutoShardedBot):
             messages=True,
             reactions=True,
             message_content=True,
-            )
+        )
 
         stuff_to_cache = MemberCacheFlags.from_intents(intents)
         allowed_mentions = AllowedMentions.none()
@@ -134,9 +136,23 @@ class Clutter(AutoShardedBot):
         return loaded, failed
 
     def run_bot(self):
-        self.run(self.token, reconnect=True)
+        try:
+            self.run(self.token, reconnect=True)
+        except KeyboardInterrupt:
+            self.session.close()
+            sys.exit()
 
     async def on_ready(self):
         self.uptime = floor(time())  # type: ignore  # noqa
-        
-                
+        self.console.print(
+            f"""[blue3]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Signed into Discord as [bold]{self.user}[/bold] [italic]({self.user.id})[/italic]
+Discord.py version: [bold]{discord.__version__}[/bold]
+Default prefix: [bold]{self.default_prefix}[/bold]
+Development Mode: [bold]{"On" if self.development_mode else "Off"}[/bold]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
+
+
+if __name__ == "__main__":
+    bot = Clutter()
+    bot.run_bot()
