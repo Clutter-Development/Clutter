@@ -9,13 +9,18 @@ from typing import List
 
 import discord
 from aiohttp import ClientSession
-from discord import AllowedMentions, Intents, MemberCacheFlags, Message
-from discord.ext import commands
-from discord.ext.commands import AutoShardedBot
+from discord import (
+    Intents,
+    AllowedMentions,
+    MemberCacheFlags,
+    Message
+)
+from discord.ext.commands import AutoShardedBot, when_mentioned_or
 from dotenv import load_dotenv
 from json5 import load as load_json5
 from rich.console import Console
 from rich.logging import RichHandler
+
 from utils import CachedMongoManager, ConfigError, EmbedBuilder
 
 os.system("cls" if sys.platform == "win32" else "clear")
@@ -42,7 +47,7 @@ class Clutter(AutoShardedBot):
             self.db = CachedMongoManager(
                 db_uri,  # type: ignore
                 database=config["DATABASE"]["NAME"],
-                cooldown=config["DATABASE"]["CACHE_COOLDOWN"],
+                cooldown=config["DATABASE"]["CACHE_COOLDOWN"]
             )
             self.embed = EmbedBuilder(config["DEFAULTS"]["RESPONSES"], self.db)
 
@@ -77,7 +82,7 @@ class Clutter(AutoShardedBot):
                     show_time=False,
                     markup=True,
                 )
-            ],
+            ]
         )
         self.log = logging.getLogger("rich")
         self.console = Console(color_system="windows", force_terminal=True)
@@ -103,21 +108,22 @@ class Clutter(AutoShardedBot):
             member_cache_flags=stuff_to_cache,
             chunk_guilds_at_startup=False,
             max_messages=1000,
+            strip_after_prefix=True,
         )
         self.load_extensions()
 
-    async def determine_prefix(self, bot: AutoShardedBot, message: Message) -> List[str]:
+    async def determine_prefix(self, bot: AutoShardedBot, message: Message, /) -> List[str]:
         if guild := message.guild:
             prefix = await self.db.get(f"guilds{guild.id}.prefix", default=self.default_prefix)
-            return commands.when_mentioned_or(prefix)(bot, message)
-        return commands.when_mentioned_or(self.default_prefix)(bot, message)
+            return when_mentioned_or(prefix)(bot, message)
+        return when_mentioned_or(self.default_prefix)(bot, message)
 
     def load_extensions(self):
         loaded = []
         failed = []
         for fn in map(
-            lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
-            glob(f"modules/**/*.py", recursive=True),
+                lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
+                glob(f"modules/**/*.py", recursive=True),
         ):
             try:
                 self.load_extension(fn)
@@ -144,8 +150,7 @@ Signed into Discord as [bold]{self.user}[/bold] [italic]({self.user.id})[/italic
 Discord.py version: [bold]{discord.__version__}[/bold]
 Default prefix: [bold]{self.default_prefix}[/bold]
 Development Mode: [bold]{"On" if self.development_mode else "Off"}[/bold]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
-        )
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""")
 
 
 if __name__ == "__main__":

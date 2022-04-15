@@ -67,19 +67,19 @@ class CachedMongoManager:
 
     async def set(self, path: str, value: Any, /) -> None:
         await self._manager.set(path, value)
-        self.refresh(path, match=True)
+        self.refresh(path)
 
     async def push(self, path: str, value: Any, /, *, allow_dupes: bool = True) -> bool:
         val = await self._manager.push(path, value, allow_dupes=allow_dupes)
-        self.refresh(path, match=True)
+        self.refresh(path)
         return val
 
     async def pull(self, path: str, value: Any, /) -> bool:
         val = await self._manager.pull(path, value)
-        self.refresh(path, match=True)
+        self.refresh(path)
         return val
 
     async def rem(self, path: str, /) -> None:
         val = await self._manager.rem(path)
-        self.refresh(path, match=True)
+        self.refresh(path)
         return val
