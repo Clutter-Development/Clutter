@@ -31,3 +31,6 @@ class EmbedBuilder:
             return Embed(title=f"{emoji} {title}", description=description, color=color)
 
         return create_embed
+
+    async def create_embed(self, asset_type: str, guild_id: int, title: str, description: str, /) -> Embed:
+        return await self._assemble_embed(asset_type)(guild_id, title, description)
