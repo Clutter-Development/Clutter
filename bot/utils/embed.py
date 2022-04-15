@@ -22,8 +22,12 @@ class EmbedBuilder:
     def _assemble_embed(self, asset_type: str, /):  # FIXME TODO: type this
         async def create_embed(guild_id: int, title: str, description: str, /) -> Embed:
             nonlocal asset_type
-            emoji = await self._db.get(f"guilds.{guild_id}.emojis.{asset_type}", default=self._config["emojis"][asset_type])
-            color = await self._db.get(f"guilds.{guild_id}.colors.{asset_type}", default=self._config["colors"][asset_type])
+            emoji = await self._db.get(
+                f"guilds.{guild_id}.emojis.{asset_type}", default=self._config["emojis"][asset_type]
+            )
+            color = await self._db.get(
+                f"guilds.{guild_id}.colors.{asset_type}", default=self._config["colors"][asset_type]
+            )
             return Embed(title=f"{emoji} {title}", description=description, color=color)
 
         return create_embed
