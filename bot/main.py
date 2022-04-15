@@ -17,10 +17,10 @@ class Clutter(commands.AutoShardedBot):
 
             if config.get("use_env_for_critical", False):
                 load_dotenv()
-                self.token = os.getenv("BOT_TOKEN")
-                self.error_webhook = discord.Webhook.from_url(os.getenv("ERROR_WEBHOOK"), session=self.session)
+                self.token = os.getenv("BOT_TOKEN")  # type: ignore
+                self.error_webhook = discord.Webhook.from_url(os.getenv("ERROR_WEBHOOK"), session=self.session)  # type: ignore
                 self.db = CachedMongoManager(
-                    os.getenv("MONGO_URI"),
+                    os.getenv("MONGO_URI"),  # type: ignore
                     database=config["database"]["database_name"],
                     cooldown=config["database"]["cache_cooldown"],
                 )

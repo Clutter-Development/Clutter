@@ -52,9 +52,8 @@ class MongoManager:
         if path:
             return find_in_dict(
                 await collection.find_one({"_id": _id}, {"_id": 0, ".".join(path): 1}),
-                path,
+                path,  # type: ignore
                 default=default
-                # type: ignore
             )
         return collection.find_one({"_id": _id}) or default
 
@@ -117,8 +116,8 @@ class MongoManager:
         if not path:
             raise ValueError("Path must be at least 3 elements long: Collection, _id and key for the pull operation.")
         if value in find_in_dict(
-            await collection.find_one({"_id": _id}, {".".join(path): 1}), path, default=[]
-        ):  # type: ignore
+            await collection.find_one({"_id": _id}, {".".join(path): 1}), path, default=[]  # type: ignore
+        ):
             await collection.update_one({"_id": _id}, {"$pull": {".".join(path): value}})
             return True
         return False
