@@ -136,3 +136,4 @@ dmypy.json
 
 # Testing
 test.py
+config.json5
