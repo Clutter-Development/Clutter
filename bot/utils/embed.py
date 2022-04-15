@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Union
 
 from discord import Embed
 
@@ -11,7 +11,8 @@ __all__ = ("EmbedBuilder",)
 
 
 class EmbedBuilder:
-    def __init__(self, db: CachedMongoManager, /) -> None:
+    def __init__(self, config: Dict[str, Union[int, Dict[str, Union[str, int]]]], db: CachedMongoManager, /) -> None:
+        self._config = config
         self._db = db
         self.success = self._assemble_embed("success")
         self.error = self._assemble_embed("error")
@@ -21,9 +22,8 @@ class EmbedBuilder:
     def _assemble_embed(self, asset_type: str, /):  # FIXME TODO: type this
         async def create_embed(guild_id: int, title: str, description: str, /) -> Embed:
             nonlocal asset_type
-            doc = await self._db.get(f"guilds.{guild_id}.responses")
-            emoji = doc["emojis"][asset_type]
-            color = doc["colors"][asset_type]
+            emoji = await self._db.get(f"guilds.{guild_id}.emojis.{asset_type}", default=self._config["emojis"][asset_type])
+            color = await self._db.get(f"guilds.{guild_id}.colors.{asset_type}", default=self._config["colors"][asset_type])
             return Embed(title=f"{emoji} {title}", description=description, color=color)
 
         return create_embed
