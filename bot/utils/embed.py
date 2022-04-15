@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, Union
+from typing import TYPE_CHECKING
 
 from discord import Embed
 
@@ -11,7 +11,7 @@ __all__ = ("EmbedBuilder",)
 
 
 class EmbedBuilder:
-    def __init__(self, config: Dict[str, Union[int, Dict[str, Union[str, int]]]], db: CachedMongoManager, /) -> None:
+    def __init__(self, config: dict, db: CachedMongoManager, /) -> None:
         self._config = config
         self._db = db
         self.success = self._assemble_embed("success")
