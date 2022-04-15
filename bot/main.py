@@ -1,7 +1,7 @@
 import os
 
-import discord
 import aiohttp
+import discord
 import json5
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -27,7 +27,8 @@ class Clutter(commands.AutoShardedBot):
                 )
             else:
                 self.token = config["bot"]["token"]
-                self.error_webhook = discord.Webhook.from_url(config["links"]["error_webhook_url"], session=self.session)
+                self.error_webhook = discord.Webhook.from_url(config["links"]["error_webhook_url"],
+                                                              session=self.session)
 
             self.invite_url = config["bot"]["invite_url"]
             self.version = config["bot"]["version"]
