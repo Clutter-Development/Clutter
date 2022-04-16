@@ -4,7 +4,15 @@ __all__ = ("assemble_dict", "find_in_dict", "maybe_int")
 
 
 def assemble_dict(path: List[str], value: Any, /) -> Dict[str, Any]:
-    """Assembles a nested dictionary from the path and value."""
+    """Assembles a nested dictionary from the path and value.
+
+    Args:
+        path (List[str]): The path to the value.
+        value (Any): The value to set.
+
+    Returns:
+        Dict[str, Any]: The assembled dictionary.
+    """
     to_asm, i = {}, 0
     ref = to_asm
     if not path:
@@ -20,7 +28,16 @@ def assemble_dict(path: List[str], value: Any, /) -> Dict[str, Any]:
 
 
 def find_in_dict(get_from: dict, path: List[str], /, *, default: Any = None) -> Any:
-    """Finds the key value pair in the specified dictionary."""
+    """Finds the key value pair in the specified dictionary.
+
+    Args:
+        get_from (dict): The dictionary to get the value from.
+        path (List[str]): The path to the value.
+        default (Any): The default value to return if the key is not found.
+
+    Returns:
+        Any: The value. Returns the default value if the key is not found.
+    """
     key = path.pop(-1)
     for _ in path:
         try:
@@ -34,7 +51,14 @@ T = TypeVar("T")
 
 
 def maybe_int(value: T, /) -> Union[int, T]:
-    """Converts the value to an int if possible."""
+    """Converts the value to an int if possible.
+
+    Args:
+        value (T): The value to convert.
+
+    Returns:
+        Union[int, T]: The converted? value.
+    """
     try:
         return int(value)  # type: ignore
     except (ValueError, TypeError):

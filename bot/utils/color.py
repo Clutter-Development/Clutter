@@ -34,14 +34,39 @@ __all__ = (
 
 
 def t(b: Union[bytes, Any], /) -> str:
+    """Ensures that the given bytes are decoded as a string.
+
+    Args:
+        b (Union[bytes, Any]): The bytes to decode.
+
+    Returns:
+        str: The encoded string.
+    """
     return b.decode() if isinstance(b, bytes) else b
 
 
 def esc(*codes: Union[int, str]) -> str:
+    """Returns the ANSI escape sequence for the given codes.
+
+    Args:
+        codes (Union[int, str]): The codes to use.
+
+    Returns:
+        str: The ANSI escape sequence.
+    """
     return t("\x1b[{}m").format(t(";").join(t(str(c)) for c in codes))
 
 
-def make_color(start, end: str, /) -> Callable[[str], str]:
+def make_color(start: str, end: str, /) -> Callable[[str], str]:
+    """Returns a function that returns the given color.
+
+    Args:
+        start (str): The start code.
+        end (str): The end code.
+
+    Returns:
+        Callable[[str], str]: The color function.
+    """
     def color_func(s: str, /) -> str:
         return start + t(s) + end
 
