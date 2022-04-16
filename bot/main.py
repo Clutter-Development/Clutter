@@ -10,11 +10,12 @@ from typing import List
 
 import discord
 from aiohttp import ClientSession
-from discord import AllowedMentions, Intents, MemberCacheFlags, Message
-from discord.ext.commands import AutoShardedBot, when_mentioned_or
+from discord import AllowedMentions, Intents, MemberCacheFlags, Message, Interaction
+from discord.ext.commands import AutoShardedBot, when_mentioned_or, Context
 from dotenv import load_dotenv
 from json5 import load as load_json5
 from rich.console import Console
+from typing import Union
 from rich.logging import RichHandler
 from utils import CachedMongoManager, ConfigError, EmbedBuilder
 
@@ -58,6 +59,7 @@ class Clutter(AutoShardedBot):
             self.development_mode = discord.Object(id=config["DEVELOPMENT"]["DEVELOPMENT_MODE"])
 
             self.default_prefix = config["DEFAULTS"]["PREFIX"]
+            self.default_language = config["DEFAULTS"]["LANGUAGE"]
 
         except FileNotFoundError:
             raise ConfigError("config.json5 does not exist!")
@@ -141,6 +143,28 @@ class Clutter(AutoShardedBot):
                 await self.session.close()
 
             run(stop())
+
+    async def i18n(self, ctx: Union[Context, Message, Interaction], text: Union[List[str], str], /, *, guild_wide: bool = False) -> str:  # FIXME TODO: idk if discord.Message is needed
+        if isinstance(ctx, Interaction):
+            lang = await self.db.get(f"guilds{ctx.guild.id}.language", default=self.default_language) if guild_wide else await self.determine_language(ctx)
+        else:
+            lang = await self.db.get(
+                f"users.{ctx.author.id}.language",
+                default=await self.db.get(
+                    f"guilds.{ctx.guild.id}.language",
+                    default="en-US"
+                )
+                if ctx.guild else "en-US"
+            )
+            if isinstance(text, str):
+                text = [text]
+            return "TODO"  # TODO!!!
+
+    async def determine_language(self, inter: Interaction, /) -> str:
+        if locale := str(inter.locale) == "en-US":
+            return await self.db.get(f"users.{inter.user.id}.language", default="en-US")
+        return locale
+        
 
     async def on_ready(self):
         self.uptime = floor(time())  # noqa

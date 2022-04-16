@@ -23,6 +23,7 @@
   },
   DEFAULTS: {
     PREFIX: ">", // Default prefix for message content commands (not slash!)
+    LANGUAGE: 'en-US', // Default language for the bot
     RESPONSES: {
       EMOJIS: {
         ERROR: '',
