@@ -31,12 +31,12 @@ class MongoManager:
         Raises:
             ValueError: If the path is too short
         """
-        path = [_ for _ in path.split(".") if _ != ""]  # type: ignore
+        path: List[str] = [_ for _ in path.split(".") if _ != ""]
         if len(path) < 2:
             raise ValueError("Path must be at least 2 elements long: Collection and _id")
-        collection = self._db[path.pop(0)]  # type: ignore
-        _id = maybe_int(path.pop(0))  # type: ignore
-        return path, collection, _id  # type: ignore
+        collection = self._db[path.pop(0)]
+        _id = maybe_int(path.pop(0))
+        return path, collection, _id
 
     async def get(self, path: str, /, *, default: Any = None) -> Any:
         """Fetches the variable from the database.

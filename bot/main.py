@@ -6,6 +6,7 @@ from math import floor
 from time import time
 from traceback import print_exception
 from typing import List
+from asyncio import run
 
 import discord
 from aiohttp import ClientSession
@@ -29,7 +30,7 @@ class Clutter(AutoShardedBot):
 
             if config.get("USE_ENV", False):
                 load_dotenv()
-                self.token = os.getenv("BOT_TOKEN")  # type: ignore
+                self.token = os.getenv("BOT_TOKEN")  
                 webhook_url = os.getenv("ERROR_WEBHOOK")
                 db_uri = os.getenv("MONGO_URI")
                 if not all([self.token, webhook_url, db_uri]):
@@ -39,9 +40,9 @@ class Clutter(AutoShardedBot):
                 webhook_url = config["LINKS"]["ERROR_WEBHOOK"]
                 db_uri = config["DATABASE"]["URI"]
 
-            self.webhook = discord.Webhook.from_url(webhook_url, session=self.session)  # type: ignore
+            self.webhook = discord.Webhook.from_url(webhook_url, session=self.session)  
             self.db = CachedMongoManager(
-                db_uri,  # type: ignore
+                db_uri,  
                 database=config["DATABASE"]["NAME"],
                 cooldown=config["DATABASE"]["CACHE_COOLDOWN"],
             )
@@ -65,7 +66,7 @@ class Clutter(AutoShardedBot):
         except KeyError as e:
             raise ConfigError(f"Missing required key and value pairs in config.json5: {e}")
 
-        self.uptime: int  # type: ignore
+        self.uptime: int  
 
         logging.basicConfig(
             level=logging.INFO,
@@ -134,12 +135,13 @@ class Clutter(AutoShardedBot):
     def run_bot(self):
         try:
             self.run(self.token, reconnect=True)
-        except KeyboardInterrupt:
-            self.session.close()
-            sys.exit()
+        finally:
+            async def stop():
+                await self.session.close()
+            run(stop())
 
     async def on_ready(self):
-        self.uptime = floor(time())  # type: ignore  # noqa
+        self.uptime = floor(time())  # noqa
         self.console.print(
             f"""[blue3]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Signed into Discord as [bold]{self.user}[/bold] [italic]({self.user.id})[/italic]
