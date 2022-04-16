@@ -27,6 +27,7 @@ class EmbedBuilder:
         Args:
             asset_type (str): The asset type to use.
         """
+
         async def create_embed(guild_id: int, title: str, description: str, /) -> Embed:
             """Creates an embed with the colors and emojis from the server configuration.
 

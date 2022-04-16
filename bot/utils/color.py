@@ -67,6 +67,7 @@ def make_color(start: str, end: str, /) -> Callable[[str], str]:
     Returns:
         Callable[[str], str]: The color function.
     """
+
     def color_func(s: str, /) -> str:
         return start + t(s) + end
 
