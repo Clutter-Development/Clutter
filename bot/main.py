@@ -6,16 +6,15 @@ from glob import glob
 from math import floor
 from time import time
 from traceback import print_exception
-from typing import List
+from typing import List, Union
 
 import discord
 from aiohttp import ClientSession
-from discord import AllowedMentions, Intents, MemberCacheFlags, Message, Interaction
-from discord.ext.commands import AutoShardedBot, when_mentioned_or, Context
+from discord import AllowedMentions, Intents, Interaction, MemberCacheFlags, Message
+from discord.ext.commands import AutoShardedBot, Context, when_mentioned_or
 from dotenv import load_dotenv
 from json5 import load as load_json5
 from rich.console import Console
-from typing import Union
 from rich.logging import RichHandler
 from utils import CachedMongoManager, ConfigError, EmbedBuilder
 
@@ -144,17 +143,19 @@ class Clutter(AutoShardedBot):
 
             run(stop())
 
-    async def i18n(self, ctx: Union[Context, Message, Interaction], text: Union[List[str], str], /, *, guild_wide: bool = False) -> str:  # FIXME TODO: idk if discord.Message is needed
+    async def i18n(
+        self, ctx: Union[Context, Message, Interaction], text: Union[List[str], str], /, *, guild_wide: bool = False
+    ) -> str:  # FIXME TODO: idk if discord.Message is needed
         if isinstance(ctx, Interaction):
-            lang = await self.db.get(f"guilds{ctx.guild.id}.language", default=self.default_language) if guild_wide else await self.determine_language(ctx)
+            lang = (
+                await self.db.get(f"guilds{ctx.guild.id}.language", default=self.default_language)
+                if guild_wide
+                else await self.determine_language(ctx)
+            )
         else:
             lang = await self.db.get(
                 f"users.{ctx.author.id}.language",
-                default=await self.db.get(
-                    f"guilds.{ctx.guild.id}.language",
-                    default="en-US"
-                )
-                if ctx.guild else "en-US"
+                default=await self.db.get(f"guilds.{ctx.guild.id}.language", default="en-US") if ctx.guild else "en-US",
             )
             if isinstance(text, str):
                 text = [text]
@@ -164,7 +165,6 @@ class Clutter(AutoShardedBot):
         if str(inter.locale) == "en-US":
             return await self.db.get(f"users.{inter.user.id}.language", default="en-US")
         return str(inter.locale)
-        
 
     async def on_ready(self):
         self.uptime = floor(time())  # noqa
