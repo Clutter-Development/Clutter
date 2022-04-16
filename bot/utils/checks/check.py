@@ -17,6 +17,7 @@ class CommandChecks:
 
     @staticmethod
     def bot_admin_only() -> Callable:
+        """Checks if the use is a bot admin."""
         async def predicate(inter: Interaction, /) -> bool:
             return inter.user.id in inter.client.admin_ids  # type: ignore
 
@@ -24,6 +25,7 @@ class CommandChecks:
 
     @staticmethod
     def cooldown(rate: float, per: float, /) -> Callable:
+        """Adds a cooldown to a command. Bypasses the cooldown if the user is a bot admin."""
         async def predicate(inter: Interaction, /) -> Optional[app.Cooldown]:
             if inter.user.id in inter.client.admin_ids:  # type: ignore
                 return None
