@@ -72,14 +72,14 @@ class CachedMongoManager:
             self.refresh(_)
 
     async def get(self, path: str, /, *, default: Any = None) -> Any:
-        """Gets the value of the varaible.
+        """Fetches the variable from the database.
 
         Args:
-            path (str): The variable to get the value of.
-            default (Any): The default value to return if the variable doesn't exist.
+            path (str): The path to the variable. Must be at least 2 elements long: Collection and _id.
+            default (Any): The default value to return if the variable is not found.
 
         Returns:
-            Any: The value of the variable. If the variable doesn't exist, the default value is returned.
+            Any: The value of the variable.
         """
         if path in self._cache:
             # print("Cache used: {}".format(path))
@@ -93,49 +93,58 @@ class CachedMongoManager:
         return self._cache[path][0]
 
     async def set(self, path: str, value: Any, /) -> None:
-        """Sets the value of the variable.
+        """Sets the variable in the database.
 
         Args:
-            path (str): The variable to set the value of.
-            value (Any): The value to set the variable to.
+            path (str): The path to the variable. Must be at least 2 elements long: Collection and _id.
+            value (Any): The value to set the key to.
         """
         await self._manager.set(path, value)
         self.refresh(path)
 
     async def push(self, path: str, value: Any, /, *, allow_dupes: bool = True) -> bool:
-        """Pushes the value to the end of the array in the path
+        """Appends the variable to a list in the database.
 
         Args:
-            path (str): The variable to push the value to.
-            value (Any): The value to push to the array.
-            allow_dupes (bool): Whether to allow duplicate values in the array.
+            path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
+            value (Any): The value to append to the list.
+            allow_dupes (bool): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
 
         Returns:
-            bool: Whether the value was pushed to the array.
+            bool: If the value was pushed.
+
+        Raises:
+            ValueError: If the path is too short.
         """
         val = await self._manager.push(path, value, allow_dupes=allow_dupes)
         self.refresh(path)
         return val
 
     async def pull(self, path: str, value: Any, /) -> bool:
-        """Pulls the value from the array in the path.
+        """Removes the variable from a list in the database.
 
         Args:
-            path (str): The variable to pull the value from.
-            value (Any): The value to pull from the array.
+            path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
+            value (Any): The value to remove from the list.
 
         Returns:
-            bool: Whether the value was pulled from the array.
+            bool: If the value was removed.
+
+        Raises:
+            ValueError: If the path is too short.
         """
         val = await self._manager.pull(path, value)
         self.refresh(path)
         return val
 
     async def rem(self, path: str, /) -> None:
-        """Remove the variable from the database.
+        """Removes the col/doc/var from the database.
 
         Args:
-            path (str): The variable to remove.
+            path (str): The path to the col/doc/var. Must be at least 1 element long.
+
+        Raises:
+            ValueError: If the path is too short.
         """
         await self._manager.rem(path)
         self.refresh(path)
