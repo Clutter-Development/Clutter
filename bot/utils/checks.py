@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from discord import Interaction
     from discord import app_commands as app
 
-    from ..database import CachedMongoManager
+    from .database import CachedMongoManager
 
 __all__ = ("CommandChecks",)
 
