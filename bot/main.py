@@ -32,6 +32,8 @@ class Clutter(AutoShardedBot):
                 self.token = os.getenv("BOT_TOKEN")  # type: ignore
                 webhook_url = os.getenv("ERROR_WEBHOOK")
                 db_uri = os.getenv("MONGO_URI")
+                if not all([self.token, webhook_url, db_uri]):
+                    raise ConfigError("Missing required config variables in the .env file.")
             else:
                 self.token = config["BOT"]["TOKEN"]
                 webhook_url = config["LINKS"]["ERROR_WEBHOOK"]
