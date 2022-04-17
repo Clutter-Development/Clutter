@@ -8,12 +8,12 @@ from .manager import MongoManager
 __all__ = ("CachedMongoManager",)
 
 
-class CachedMongoManager:
+class CachedMongoManager(MongoManager):
     def __init__(self, connect_url: str, /, *, database: str, cooldown: int) -> None:
-        self._manager = MongoManager(connect_url, database=database)
         self._cache = {}
         self._start_time = floor(time())
         self.cooldown = cooldown
+        super().__init__(connect_url, database=database)
 
     def _current_time(self) -> int:
         """Returns the current time in seconds.
@@ -86,7 +86,7 @@ class CachedMongoManager:
             self._use(path)
         else:
             # print("DB used: {}".format(path))
-            self._cache[path] = [await self._manager.get(path), self._current_time()]
+            self._cache[path] = [await super().get(path), self._current_time()]
         asyncio.create_task(self._remove_after_cooldown(path))
         if self._cache.get(path, [None])[0] is None:
             return default
@@ -99,7 +99,7 @@ class CachedMongoManager:
             path (str): The path to the variable. Must be at least 2 elements long: Collection and _id.
             value (Any): The value to set the key to.
         """
-        await self._manager.set(path, value)
+        await super().set(path, value)
         self.refresh(path)
 
     async def push(self, path: str, value: Any, /, *, allow_dupes: bool = True) -> bool:
@@ -116,7 +116,7 @@ class CachedMongoManager:
         Raises:
             ValueError: If the path is too short.
         """
-        val = await self._manager.push(path, value, allow_dupes=allow_dupes)
+        val = await super().push(path, value, allow_dupes=allow_dupes)
         self.refresh(path)
         return val
 
@@ -133,7 +133,7 @@ class CachedMongoManager:
         Raises:
             ValueError: If the path is too short.
         """
-        val = await self._manager.pull(path, value)
+        val = await super().pull(path, value)
         self.refresh(path)
         return val
 
@@ -146,5 +146,5 @@ class CachedMongoManager:
         Raises:
             ValueError: If the path is too short.
         """
-        await self._manager.rem(path)
+        await super().rem(path)
         self.refresh(path)

@@ -6,13 +6,13 @@ if TYPE_CHECKING:
     from discord import Interaction
     from discord import app_commands as app
 
-    from .database import CachedMongoManager
+    from .database import MongoManager
 
 __all__ = ("CommandChecks",)
 
 
 class CommandChecks:
-    def __init__(self, db: CachedMongoManager, /):
+    def __init__(self, db: MongoManager, /):
         self._db = db
 
     @staticmethod

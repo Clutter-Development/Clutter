@@ -5,13 +5,13 @@ from typing import TYPE_CHECKING, Callable
 from discord import Embed
 
 if TYPE_CHECKING:
-    from .database.cacher import CachedMongoManager
+    from .database import MongoManager
 
 __all__ = ("EmbedBuilder",)
 
 
 class EmbedBuilder:
-    def __init__(self, config: dict, db: CachedMongoManager, /) -> None:
+    def __init__(self, config: dict, db: MongoManager, /) -> None:
         self._config = config
         self._db = db
         self._embeds = []
