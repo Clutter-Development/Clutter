@@ -1,95 +1,78 @@
-import logging
 import os
 import sys
-from asyncio import run
+import asyncio
 from glob import glob
-from math import floor
-from time import time
-from traceback import print_exception
-from typing import List, Union
+import math
+import time
+import traceback
+from typing import List
 
+import aiohttp
 import discord
-from aiohttp import ClientSession
-from discord import AllowedMentions, Intents, Interaction, MemberCacheFlags, Message
-from discord.ext.commands import AutoShardedBot, Context, when_mentioned_or
+from discord.ext import commands
 from dotenv import load_dotenv
-from json5 import load as load_json5
-from rich.console import Console
-from rich.logging import RichHandler
-from utils import CachedMongoManager, CommandChecks, ConfigError, EmbedBuilder
+import json5
+from utils import CachedMongoManager, EmbedBuilder, CommandChecks, listify, color
 
 os.system("cls" if sys.platform == "win32" else "clear")
 
 
-class Clutter(AutoShardedBot):
+class Clutter(commands.AutoShardedBot):
     def __init__(self):
-        self.session = ClientSession()
-        try:
-            with open("config.json5") as f:
-                config = load_json5(f)
+        self.session = aiohttp.ClientSession()
 
-            if config.get("USE_ENV", False):
-                load_dotenv()
-                self.token = os.getenv("BOT_TOKEN")
-                webhook_url = os.getenv("ERROR_WEBHOOK")
-                db_uri = os.getenv("MONGO_URI")
-                if not all([self.token, webhook_url, db_uri]):
-                    raise ConfigError("Missing required config variables in the .env file.")
-            else:
-                self.token = config["BOT"]["TOKEN"]
-                webhook_url = config["LINKS"]["ERROR_WEBHOOK"]
-                db_uri = config["DATABASE"]["URI"]
+        # load config
+        with open("./config.json5") as f:
+            self.config = json5.load(f)
 
-            self.webhook = discord.Webhook.from_url(webhook_url, session=self.session)
-            self.db = CachedMongoManager(
-                db_uri,
-                database=config["DATABASE"]["NAME"],
-                cooldown=config["DATABASE"]["CACHE_COOLDOWN"],
-            )
-            self.embed = EmbedBuilder(self, self.db)
-            self.checks = CommandChecks(self, self.db)
+        # get critical info
+        if self.config.get("USE_ENV", False):
+            load_dotenv()
+            self.token = os.getenv("BOT_TOKEN")
+            webhook_url = os.getenv("ERROR_WEBHOOK_URL")
+            db_uri = os.getenv("DATABASE_URI")
+        else:
+            self.token = self.config["BOT"]["TOKEN"]
+            webhook_url = self.config["BOT"]["ERROR_WEBHOOK_URL"]
+            db_uri = self.config["DATABASE"]["URI"]
 
-            self.invite_url = config["BOT"]["INVITE_URL"]
-            self.version = config["BOT"]["VERSION"]
-            self.admin_ids = config["BOT"]["ADMINS"]
-            self.github = config["LINKS"]["GITHUB"]
-            self.discord_invite = config["LINKS"]["DISCORD_INVITE"]
-            self.documentation_url = config["LINKS"]["DOCUMENTATION"]
-
-            self.development_server = discord.Object(id=config["DEVELOPMENT"]["SERVER_ID"])
-            self.development_mode = discord.Object(id=config["DEVELOPMENT"]["DEVELOPMENT_MODE"])
-
-            self.default_prefix = config["DEFAULTS"]["PREFIX"]
-            self.default_language = config["DEFAULTS"]["LANGUAGE"]
-
-            self.config = config
-
-        except FileNotFoundError:
-            raise ConfigError("config.json5 does not exist!")
-        except ValueError:
-            raise ConfigError("Invalid config.json5 file.")
-        except KeyError as e:
-            raise ConfigError(f"Missing required key and value pairs in config.json5: {e}")
-
-        self.uptime: int
-
-        logging.basicConfig(
-            level=logging.INFO,
-            format="[CLUTTER LOG] %(message)s",
-            handlers=[
-                RichHandler(
-                    rich_tracebacks=True,
-                    omit_repeated_times=False,
-                    show_path=False,
-                    show_time=False,
-                    markup=True,
-                )
-            ],
+        # initialize webhook and database
+        self.webhook = discord.Webhook.from_url(webhook_url, session=self.session)
+        self.db = CachedMongoManager(
+            db_uri,
+            database=self.config["DATABASE"]["NAME"],
+            cooldown=self.config["DATABASE"]["CACHE_COOLDOWN"],
         )
-        self.log = logging.getLogger("rich")
-        self.console = Console(color_system="windows", force_terminal=True)
 
-        intents = Intents(
+        # initialize EmbedBuilder
+        with open("./assets/colors.json5") as f:
+            colors = json5.load(f)
+        with open("./assets/emojis.json5") as f:
+            emojis = json5.load(f)
+        self.embed = EmbedBuilder(colors, emojis)
+
+        # initialize CommandChecks
+        self.checks = CommandChecks(self)
+
+        # get miscellaneous info
+        self.admin_ids = self.config["BOT"]["ADMIN_IDS"]
+        self.invite_url = self.config["BOT"]["INVITE_URL"]
+        self.default_prefix = self.config["BOT"]["DEFAULT_PREFIX"]
+        self.default_language = self.config["BOT"]["DEFAULT_LANGUAGE"]
+        self.development_server = discord.Object(id=self.config["BOT"]["DEVELOPMENT_SERVER_ID"])
+        self.development_mode = discord.Object(id=self.config["BOT"]["DEVELOPMENT_MODE"])
+
+        with open("./misc.json5") as f:
+            misc = json5.load(f)
+        self.version = misc["BOT_VERSION"]
+        self.github = misc["GITHUB_REPO_URL"]
+        self.discord_invite = misc["DISCORD_INVITE_URL"]
+        self.documentation_url = misc["DOCUMENTATION_URL"]
+
+        self.uptime = 0
+        self.startup_log = ""
+
+        intents = discord.Intents(
             guilds=True,
             members=True,
             bans=True,
@@ -99,8 +82,8 @@ class Clutter(AutoShardedBot):
             message_content=True,
         )
 
-        stuff_to_cache = MemberCacheFlags.from_intents(intents)
-        allowed_mentions = AllowedMentions.none()
+        stuff_to_cache = discord.MemberCacheFlags.from_intents(intents)
+        allowed_mentions = discord.AllowedMentions.none()
         super().__init__(
             intents=intents,
             command_prefix=self.determine_prefix,
@@ -114,15 +97,15 @@ class Clutter(AutoShardedBot):
         )
         self.load_extensions()
 
-    async def determine_prefix(self, bot: AutoShardedBot, message: Message, /) -> List[str]:
+    async def determine_prefix(self, bot: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
         if guild := message.guild:
             prefix = await self.db.get(f"guilds{guild.id}.prefix", default=self.default_prefix)
-            return when_mentioned_or(prefix)(bot, message)
-        return when_mentioned_or(self.default_prefix)(bot, message)
+            return commands.when_mentioned_or(prefix)(bot, message)
+        return commands.when_mentioned_or(self.default_prefix)(bot, message)
 
     def load_extensions(self):
         loaded = []
-        failed = []
+        failed = {}
         for fn in map(
             lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
             glob(f"modules/**/*.py", recursive=True),
@@ -130,58 +113,43 @@ class Clutter(AutoShardedBot):
             try:
                 self.load_extension(fn)
                 loaded.append(fn)
-                self.log.info(f"[bright_green][MODULE][/] Successfully loaded [bold]{fn}[/].")
-            except Exception as e:
-                failed.append(fn)
-                self.log.error(f"[bright_red][MODULE][/] Failed to load [bold]{fn}[/]:")
-                print_exception(type(e), e, e.__traceback__)
-        return loaded, failed
+            except:
+                failed[fn] = traceback.format_exc()
+        log = []
+        if loaded:
+            log.append(color.green(listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))))
+        for name, error in failed.items():
+            log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
+        self.startup_log = "\n".join(log)
 
-    def run_bot(self):
+    def run(self):
         try:
-            self.run(self.token, reconnect=True)
+            super().run(self.token, reconnect=True)
         finally:
 
             async def stop():
                 await self.session.close()
 
-            run(stop())
-
-    async def i18n(
-        self, ctx: Union[Context, Message, Interaction], text: Union[List[str], str], /, *, guild_wide: bool = False
-    ) -> str:  # FIXME TODO: idk if discord.Message is needed
-        if isinstance(ctx, Interaction):
-            lang = (
-                await self.db.get(f"guilds{ctx.guild.id}.language", default=self.default_language)
-                if guild_wide
-                else await self.determine_language(ctx)
-            )
-        else:
-            lang = await self.db.get(
-                f"users.{ctx.author.id}.language",
-                default=await self.db.get(f"guilds.{ctx.guild.id}.language", default="en-US") if ctx.guild else "en-US",
-            )
-            if isinstance(text, str):
-                text = [text]
-            return "TODO"  # TODO!!!
-
-    async def determine_language(self, inter: Interaction, /) -> str:
-        if str(inter.locale) == "en-US":
-            return await self.db.get(f"users.{inter.user.id}.language", default="en-US")
-        return str(inter.locale)
+            asyncio.run(stop())
 
     async def on_ready(self):
-        self.uptime = floor(time())  # noqa
-        self.console.print(
-            f"""[blue3]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Signed into Discord as [bold]{self.user}[/bold] [italic]({self.user.id})[/italic]
-Discord.py version: [bold]{discord.__version__}[/bold]
-Default prefix: [bold]{self.default_prefix}[/bold]
-Development Mode: [bold]{"On" if self.development_mode else "Off"}[/bold]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
+        self.uptime = math.floor(time.time())
+        print(self.startup_log)
+        discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
+        bot_info = listify("Bot Info", f"{color.bold('User:')} {self.user}"
+                                       f"\n{color.bold('ID:')} {self.user.id}"
+                                       f"\n{color.bold('Total Guilds:')} {len(self.guilds)}"
+                                       f"\n{color.bold('Total Users:')} {len(self.users)}"
+                                       f"\n{color.bold('Total Shards: ')} {self.shard_count}"
+                           )
+        print("\n\n".join([
+            color.cyan(discord_info),
+            color.magenta(bot_info),
+            color.yellow(f"Running on Clutter v{self.version}")]
+                         )
         )
 
 
 if __name__ == "__main__":
     bot = Clutter()
-    bot.run_bot()
+    bot.run()

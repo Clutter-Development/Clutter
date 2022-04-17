@@ -13,15 +13,14 @@ __all__ = ("CommandChecks",)
 
 
 class CommandChecks:
-    def __init__(self, bot: Clutter, db: MongoManager, /):
-        self.bot = bot
-        self._db = db
+    def __init__(self, bot: Clutter, /):
+        self._bot = bot
 
     def bot_admin_only(self) -> Callable:
         """Checks if the use is a bot admin."""
 
         async def predicate(inter: Interaction, /) -> bool:
-            return inter.user.id in self.bot.admin_ids
+            return inter.user.id in self._bot.admin_ids
 
         return app.check(predicate)
 
@@ -29,7 +28,7 @@ class CommandChecks:
         """Adds a cooldown to a command. Bypasses the cooldown if the user is a bot admin."""
 
         async def predicate(inter: Interaction, /) -> Optional[app.Cooldown]:
-            if inter.user.id in self.bot.admin_ids:
+            if inter.user.id in self._bot.admin_ids:
                 return None
             return app.Cooldown(rate, per)
 

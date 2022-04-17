@@ -1,4 +1,4 @@
-__all__ = ("ClutterError", "ConfigError")
+__all__ = ("ClutterError",)
 
 
 class ClutterError(Exception):
@@ -6,8 +6,3 @@ class ClutterError(Exception):
 
     pass
 
-
-class ConfigError(ClutterError):
-    """Raised when a configuration file is invalid/not found."""
-
-    pass

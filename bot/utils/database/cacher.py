@@ -9,11 +9,11 @@ __all__ = ("CachedMongoManager",)
 
 
 class CachedMongoManager(MongoManager):
-    def __init__(self, connect_url: str, /, *, database: str, cooldown: int) -> None:
+    def __init__(self, connect_url: str, port: int = None, /, *, database: str, cooldown: int) -> None:
         self._cache = {}
         self._start_time = floor(time())
         self.cooldown = cooldown
-        super().__init__(connect_url, database=database)
+        super().__init__(connect_url, port, database=database)
 
     def _current_time(self) -> int:
         """Returns the current time in seconds.

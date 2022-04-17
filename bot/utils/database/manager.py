@@ -122,7 +122,7 @@ class MongoManager:
             return True
         return False
 
-    async def rem(self, path: str, /) -> None:  # FIXME TODO: shit code
+    async def rem(self, path: str, /) -> None:
         """Removes the col/doc/var from the database.
 
         Args:
