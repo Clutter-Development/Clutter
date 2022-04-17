@@ -9,7 +9,7 @@ __all__ = ("CachedMongoManager",)
 
 
 class CachedMongoManager(MongoManager):
-    def __init__(self, connect_url: str, port: int = None, /, *, database: str, cooldown: int) -> None:
+    def __init__(self, connect_url: str, port: int = None, /, *, database: str, cooldown: int) -> None:  # type: ignore
         self._cache = {}
         self._start_time = floor(time())
         self.cooldown = cooldown

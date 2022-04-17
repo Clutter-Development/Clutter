@@ -95,32 +95,35 @@ class Clutter(commands.AutoShardedBot):
             max_messages=1000,
             strip_after_prefix=True,
         )
+
         self.load_extensions()
 
-    async def determine_prefix(self, bot: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
+    async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
         if guild := message.guild:
             prefix = await self.db.get(f"guilds{guild.id}.prefix", default=self.default_prefix)
-            return commands.when_mentioned_or(prefix)(bot, message)
-        return commands.when_mentioned_or(self.default_prefix)(bot, message)
+            return commands.when_mentioned_or(prefix)(bot_, message)
+        return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
     def load_extensions(self):
-        loaded = []
-        failed = {}
-        for fn in map(
-            lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
-            glob(f"modules/**/*.py", recursive=True),
-        ):
-            try:
-                self.load_extension(fn)
-                loaded.append(fn)
-            except:
-                failed[fn] = traceback.format_exc()
-        log = []
-        if loaded:
-            log.append(color.green(listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))))
-        for name, error in failed.items():
-            log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
-        self.startup_log = "\n".join(log)
+        async def wrap():
+            loaded = []
+            failed = {}
+            for fn in map(
+                lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
+                glob(f"modules/**/*.py", recursive=True),
+            ):
+                try:
+                    await self.load_extension(fn)
+                    loaded.append(fn)
+                except:  # noqa
+                    failed[fn] = traceback.format_exc()
+            log = []
+            if loaded:
+                log.append(color.green(listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))))
+            for name, error in failed.items():
+                log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
+            self.startup_log = "\n".join(log)
+        asyncio.run(wrap())
 
     def run(self):
         try:
@@ -137,7 +140,7 @@ class Clutter(commands.AutoShardedBot):
         print(self.startup_log)
         discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
         bot_info = listify("Bot Info", f"{color.bold('User:')} {self.user}"
-                                       f"\n{color.bold('ID:')} {self.user.id}"
+                                       f"\n{color.bold('ID:')} {self.user.id}"  # type: ignore
                                        f"\n{color.bold('Total Guilds:')} {len(self.guilds)}"
                                        f"\n{color.bold('Total Users:')} {len(self.users)}"
                                        f"\n{color.bold('Total Shards: ')} {self.shard_count}"
