@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from json5 import load as load_json5
 from rich.console import Console
 from rich.logging import RichHandler
-from utils import CachedMongoManager, ConfigError, EmbedBuilder, CommandChecks
+from utils import CachedMongoManager, CommandChecks, ConfigError, EmbedBuilder
 
 os.system("cls" if sys.platform == "win32" else "clear")
 

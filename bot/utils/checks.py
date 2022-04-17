@@ -6,8 +6,8 @@ if TYPE_CHECKING:
     from discord import Interaction
     from discord import app_commands as app
 
-    from .database import MongoManager
     from ..main import Clutter
+    from .database import MongoManager
 
 __all__ = ("CommandChecks",)
 

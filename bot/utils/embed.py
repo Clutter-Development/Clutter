@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Callable
 from discord import Embed
 
 if TYPE_CHECKING:
-    from .database import MongoManager
     from ..main import Clutter
+    from .database import MongoManager
 
 __all__ = ("EmbedBuilder",)
 
