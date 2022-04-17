@@ -1,18 +1,18 @@
+import asyncio
+import math
 import os
 import sys
-import asyncio
-from glob import glob
-import math
 import time
 import traceback
+from glob import glob
 from typing import List
 
 import aiohttp
 import discord
+import json5
 from discord.ext import commands
 from dotenv import load_dotenv
-import json5
-from utils import CachedMongoManager, EmbedBuilder, CommandChecks, listify, color
+from utils import CachedMongoManager, CommandChecks, EmbedBuilder, color, listify
 
 os.system("cls" if sys.platform == "win32" else "clear")
 
@@ -123,6 +123,7 @@ class Clutter(commands.AutoShardedBot):
             for name, error in failed.items():
                 log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
             self.startup_log = "\n".join(log)
+
         asyncio.run(wrap())
 
     def run(self):
@@ -139,17 +140,18 @@ class Clutter(commands.AutoShardedBot):
         self.uptime = math.floor(time.time())
         print(self.startup_log)
         discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
-        bot_info = listify("Bot Info", f"{color.bold('User:')} {self.user}"
-                                       f"\n{color.bold('ID:')} {self.user.id}"  # type: ignore
-                                       f"\n{color.bold('Total Guilds:')} {len(self.guilds)}"
-                                       f"\n{color.bold('Total Users:')} {len(self.users)}"
-                                       f"\n{color.bold('Total Shards: ')} {self.shard_count}"
-                           )
-        print("\n\n".join([
-            color.cyan(discord_info),
-            color.magenta(bot_info),
-            color.yellow(f"Running on Clutter v{self.version}")]
-                         )
+        bot_info = listify(
+            "Bot Info",
+            f"{color.bold('User:')} {self.user}"
+            f"\n{color.bold('ID:')} {self.user.id}"  # type: ignore
+            f"\n{color.bold('Total Guilds:')} {len(self.guilds)}"
+            f"\n{color.bold('Total Users:')} {len(self.users)}"
+            f"\n{color.bold('Total Shards: ')} {self.shard_count}",
+        )
+        print(
+            "\n\n".join(
+                [color.cyan(discord_info), color.magenta(bot_info), color.yellow(f"Running on Clutter v{self.version}")]
+            )
         )
 
 

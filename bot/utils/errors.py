@@ -5,4 +5,3 @@ class ClutterError(Exception):
     """Base class for all Clutter errors."""
 
     pass
-

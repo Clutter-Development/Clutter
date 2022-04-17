@@ -8,7 +8,7 @@ __all__ = ("EmbedBuilder",)
 
 
 class EmbedBuilder:
-    def __init__(self, colors: Dict[str, int], emojis: Dict[str, str],  /) -> None:
+    def __init__(self, colors: Dict[str, int], emojis: Dict[str, str], /) -> None:
         self._color = colors
         self._emojis = emojis
 
