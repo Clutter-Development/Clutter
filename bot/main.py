@@ -60,7 +60,7 @@ class Clutter(commands.AutoShardedBot):
         self.default_prefix = self.config["BOT"]["DEFAULT_PREFIX"]
         self.default_language = self.config["BOT"]["DEFAULT_LANGUAGE"]
         self.development_server = discord.Object(id=self.config["BOT"]["DEVELOPMENT_SERVER_ID"])
-        self.development_mode = discord.Object(id=self.config["BOT"]["DEVELOPMENT_MODE"])
+        self.in_development = self.config["BOT"]["DEVELOPMENT_MODE"]
 
         with open("./misc.json5") as f:
             misc = json5.load(f)

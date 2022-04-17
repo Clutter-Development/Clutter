@@ -12,6 +12,12 @@ class EmbedBuilder:
         self._color = colors
         self._emojis = emojis
 
+        # Predefined embeds
+        self.success = self._assemble_embed("success")
+        self.error = self._assemble_embed("error")
+        self.warning = self._assemble_embed("warning")
+        self.info = self._assemble_embed("info")
+
     def _assemble_embed(self, asset_type: str, /) -> Callable:
         """Makes a function that returns an embed with the given asset type.
 

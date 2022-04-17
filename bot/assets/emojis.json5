@@ -1,6 +1,6 @@
 {
-  ERROR: '',
   SUCCESS: '',
+  ERROR: '',
   WARNING: '',
   INFO: ''
 }
