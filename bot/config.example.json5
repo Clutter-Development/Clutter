@@ -1,18 +1,32 @@
 {
+  // Set this to true if you want to store critical info in a .env file (or enviroment variables).
   USE_ENV: false,
+  // Basic bot config.
   BOT: {
+    // The bot's token, optional if USE_ENV is true.
     TOKEN: '',
+    // The webhook where erros will be sent, optional if USE_ENV is true.
     ERROR_WEBHOOK_URL: '',
+    // Bot admin ids.
     ADMIN_IDS: [512640455834337290],
+    // The bot's invite link.
     INVITE_URL: 'https://discord.com/oauth2/authorize?client_id=902405088138653726&permissions=8&scope=bot',
+    // The bot's default prefix (for traditional commands).
     DEFAULT_PREFIX: '>',
+    // The bot's default language.
     DEFAULT_LANGUAGE: 'en-US',
+    // The bot development server ID.
     DEVELOPMENT_SERVER_ID: 944535258722861106,
+    // Development mode, if true the bot will not accept and commands unless the user is a bot admin.
     DEVELOPMENT_MODE: false,
   },
+  // Basic database config.
   DATABASE: {
+    // The MongoDB connect URI.
     URI: '',
+    // The MongoDB database name.
     NAME: 'Clutter',
+    // The cooldown for database caching.
     CACHE_COOLDOWN: 1200,
   }
 }
