@@ -6,13 +6,14 @@ from discord import Embed
 
 if TYPE_CHECKING:
     from .database import MongoManager
+    from ..main import Clutter
 
 __all__ = ("EmbedBuilder",)
 
 
 class EmbedBuilder:
-    def __init__(self, config: dict, db: MongoManager, /) -> None:
-        self._config = config
+    def __init__(self, bot: Clutter, db: MongoManager, /) -> None:
+        self._config = bot.config["RESPONSES"]
         self._db = db
         self._embeds = []
         self.success = self._assemble_embed("SUCCESS")

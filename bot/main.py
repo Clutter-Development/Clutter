@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from json5 import load as load_json5
 from rich.console import Console
 from rich.logging import RichHandler
-from utils import CachedMongoManager, ConfigError, EmbedBuilder
+from utils import CachedMongoManager, ConfigError, EmbedBuilder, CommandChecks
 
 os.system("cls" if sys.platform == "win32" else "clear")
 
@@ -46,10 +46,12 @@ class Clutter(AutoShardedBot):
                 database=config["DATABASE"]["NAME"],
                 cooldown=config["DATABASE"]["CACHE_COOLDOWN"],
             )
-            self.embed = EmbedBuilder(config["DEFAULTS"]["RESPONSES"], self.db)
+            self.embed = EmbedBuilder(self, self.db)
+            self.checks = CommandChecks(self, self.db)
 
             self.invite_url = config["BOT"]["INVITE_URL"]
             self.version = config["BOT"]["VERSION"]
+            self.admin_ids = config["BOT"]["ADMINS"]
             self.github = config["LINKS"]["GITHUB"]
             self.discord_invite = config["LINKS"]["DISCORD_INVITE"]
             self.documentation_url = config["LINKS"]["DOCUMENTATION"]
@@ -59,6 +61,8 @@ class Clutter(AutoShardedBot):
 
             self.default_prefix = config["DEFAULTS"]["PREFIX"]
             self.default_language = config["DEFAULTS"]["LANGUAGE"]
+
+            self.config = config
 
         except FileNotFoundError:
             raise ConfigError("config.json5 does not exist!")

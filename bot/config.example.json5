@@ -5,6 +5,7 @@
     TOKEN: '', // Bot token, not needed if use_env_for_critical is true.
     INVITE_URL: '', // Invite URL for the bot
     VERSION: '0.0.1' // Bot version
+    ADMINS: [], // Bot admin IDs
   },
   DATABASE: {
     URI: '', // MongoDB URI, not needed if use_env_for_critical is true.
