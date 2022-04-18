@@ -1,10 +1,10 @@
 import asyncio
 import math
 import os
+import pathlib
 import sys
 import time
 import traceback
-import pathlib
 from typing import List, Union
 
 import aiohttp
