@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands as app
-from utils import NotAnAdmin, Blacklisted
+from utils import Blacklisted, NotAnAdmin
 
 
 class ClutterCommandTree(app.CommandTree):
