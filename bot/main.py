@@ -5,7 +5,7 @@ import sys
 import time
 import traceback
 from glob import glob
-from typing import List
+from typing import List, Union
 
 import aiohttp
 import discord
@@ -13,6 +13,7 @@ import json5
 from discord.ext import commands
 from dotenv import load_dotenv
 from utils import CachedMongoManager, CommandChecks, EmbedBuilder, color, listify
+from core.slash_tree import ClutterCommandTree
 
 os.system("cls" if sys.platform == "win32" else "clear")
 
@@ -94,9 +95,11 @@ class Clutter(commands.AutoShardedBot):
             chunk_guilds_at_startup=False,
             max_messages=1000,
             strip_after_prefix=True,
+            tree_cls=ClutterCommandTree,
         )
 
-        self.load_extensions()
+    async def startup_hook(self):
+        await self.load_extensions()
 
     async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
         if guild := message.guild:
@@ -104,27 +107,24 @@ class Clutter(commands.AutoShardedBot):
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
-    def load_extensions(self):
-        async def wrap():
-            loaded = []
-            failed = {}
-            for fn in map(
-                lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
-                glob(f"modules/**/*.py", recursive=True),
-            ):
-                try:
-                    await self.load_extension(fn)
-                    loaded.append(fn)
-                except:  # noqa
-                    failed[fn] = traceback.format_exc()
-            log = []
-            if loaded:
-                log.append(color.green(listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))))
-            for name, error in failed.items():
-                log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
-            self.startup_log = "\n".join(log)
-
-        asyncio.run(wrap())
+    async def load_extensions(self):
+        loaded = []
+        failed = {}
+        for fn in map(
+            lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
+            glob(f"modules/**/*.py", recursive=True),
+        ):
+            try:
+                await self.load_extension(fn)
+                loaded.append(fn)
+            except:  # noqa: 118
+                failed[fn] = traceback.format_exc()
+        log = []
+        if loaded:
+            log.append(color.green(listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))))
+        for name, error in failed.items():
+            log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
+        self.startup_log = "\n".join(log)
 
     def run(self):
         try:
@@ -153,6 +153,35 @@ class Clutter(commands.AutoShardedBot):
                 [color.cyan(discord_info), color.magenta(bot_info), color.yellow(f"Running on Clutter v{self.version}")]
             )
         )
+
+    async def blacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
+        user_id = user if isinstance(user, int) else user.id
+        if await self.db.get(f"users.{user_id}.blacklisted", default=False):
+            return False
+        await self.db.set(f"users.{user_id}.blacklisted", True)
+        return True
+
+    async def unblacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
+        user_id = user if isinstance(user, int) else user.id
+        if not await self.db.get(f"users.{user_id}.blacklisted", default=False):
+            return False
+        await self.db.set(f"users.{user_id}.blacklisted", False)
+        return True
+
+    def add_command(self, command: commands.Command, /) -> None:
+        super().add_command(command)
+        command.cooldown_after_parsing = True
+        if not getattr(command._buckets, "_cooldown", None):  # noqa: 170
+            command._buckets = commands.CooldownMapping.from_cooldown(1, 3, commands.BucketType.user)  # default cooldown is 1 per 3s
+
+    async def process_commands(self, message: discord.Message, /) -> None:
+        if message.author.bot:
+            return
+
+        ctx = await self.get_context(message)
+        if ctx.valid and getattr(ctx.cog, "qualified_name", None) != "Jishaku":
+            await ctx.trigger_typing()
+        await self.invoke(ctx)
 
 
 if __name__ == "__main__":
