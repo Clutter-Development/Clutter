@@ -8,7 +8,17 @@
     // The webhook where erros will be sent, optional if USE_ENV is true.
     ERROR_WEBHOOK_URL: '',
     // Bot admin ids.
-    ADMIN_IDS: [512640455834337290],
+    ADMIN_IDS: [
+      512640455834337290
+    ],
+    // The bot's version.
+    VERSION: '0.0.1',
+    // The bot's GitHub repo's url.
+    GITHUB_REPO_URL: '',
+    // The bot's support server invite url.
+    DISCORD_INVITE_URL: '',
+    // The bot's documentation url.
+    DOCUMENTATION_URL: '',
     // The bot's invite link.
     INVITE_URL: 'https://discord.com/oauth2/authorize?client_id=902405088138653726&permissions=8&scope=bot',
     // The bot's default prefix (for traditional commands).
@@ -28,5 +38,20 @@
     NAME: 'Clutter',
     // The cooldown for database caching.
     CACHE_COOLDOWN: 1200,
+  },
+  // Basic style config.
+  STYLE: {
+    COLORS: {
+      SUCCESS: 0xFFFFFF,
+      ERROR: 0xFFFFFF,
+      WARNING: 0xFFFFFF,
+      INFO: 0xFFFFFF
+    },
+    EMOJIS: {
+      SUCCESS: '',
+      ERROR: '',
+      WARNING: '️',
+      INFO: 'ℹ'
+    },
   }
 }

@@ -4,7 +4,7 @@ import os
 import sys
 import time
 import traceback
-from glob import glob
+import pathlib
 from typing import List, Union
 
 import aiohttp
@@ -45,30 +45,23 @@ class Clutter(commands.AutoShardedBot):
             cooldown=self.config["DATABASE"]["CACHE_COOLDOWN"],
         )
 
-        # initialize EmbedBuilder
-        with open("./assets/colors.json5") as f:
-            colors = json5.load(f)
-        with open("./assets/emojis.json5") as f:
-            emojis = json5.load(f)
-        self.embed = EmbedBuilder(colors, emojis)
+        # initialize EmbedBuilder)
+        self.embed = EmbedBuilder(self.config["STYLE"])
 
         # initialize CommandChecks
         self.checks = CommandChecks(self)
 
         # get miscellaneous info
         self.admin_ids = self.config["BOT"]["ADMIN_IDS"]
+        self.version = self.config["BOT"]["VERSION"]
+        self.github = self.config["BOT"]["GITHUB_REPO_URL"]
+        self.discord_invite = self.config["BOT"]["DISCORD_INVITE_URL"]
+        self.documentation_url = self.config["BOT"]["DOCUMENTATION_URL"]
         self.invite_url = self.config["BOT"]["INVITE_URL"]
         self.default_prefix = self.config["BOT"]["DEFAULT_PREFIX"]
         self.default_language = self.config["BOT"]["DEFAULT_LANGUAGE"]
         self.development_server = discord.Object(id=self.config["BOT"]["DEVELOPMENT_SERVER_ID"])
         self.in_development = self.config["BOT"]["DEVELOPMENT_MODE"]
-
-        with open("./misc.json5") as f:
-            misc = json5.load(f)
-        self.version = misc["BOT_VERSION"]
-        self.github = misc["GITHUB_REPO_URL"]
-        self.discord_invite = misc["DISCORD_INVITE_URL"]
-        self.documentation_url = misc["DOCUMENTATION_URL"]
 
         self.uptime = 0
         self.startup_log = ""
@@ -92,7 +85,7 @@ class Clutter(commands.AutoShardedBot):
             help_command=None,
             allowed_mentions=allowed_mentions,
             member_cache_flags=stuff_to_cache,
-            chunk_guilds_at_startup=False,
+            chunk_guilds_at_startup=True,  # TODO: remove this
             max_messages=1000,
             strip_after_prefix=True,
             tree_cls=ClutterCommandTree,
@@ -111,8 +104,8 @@ class Clutter(commands.AutoShardedBot):
         loaded = []
         failed = {}
         for fn in map(
-            lambda file_path: file_path.replace(os.path.sep, ".")[:-3],
-            glob(f"modules/**/*.py", recursive=True),
+            lambda file_path: ".".join(file_path.paths)[:-3],
+            pathlib.Path("./modules").glob(f"**/*.py"),
         ):
             try:
                 await self.load_extension(fn)

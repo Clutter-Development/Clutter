@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Dict
+from typing import Callable, Dict, Union
 
 from discord import Embed
 
@@ -8,9 +8,8 @@ __all__ = ("EmbedBuilder",)
 
 
 class EmbedBuilder:
-    def __init__(self, colors: Dict[str, int], emojis: Dict[str, str], /) -> None:
-        self._color = colors
-        self._emojis = emojis
+    def __init__(self, style: Dict[str, Dict[str, Union[str, int]]], /) -> None:
+        self._style = style
 
         # Predefined embeds
         self.success = self._assemble_embed("success")
@@ -32,8 +31,8 @@ class EmbedBuilder:
                 title (str): The title of the embed.
                 description (str): The description of the embed.
             """
-            color = self._color[asset_type.upper()]
-            emoji = self._emojis[asset_type.upper()]
+            color = self._style["COLORS"][asset_type.upper()]
+            emoji = self._style["EMOJIS"][asset_type.upper()]
             return Embed(title=f"{emoji} {title}", description=description, color=color)
 
         return create_embed
