@@ -10,10 +10,10 @@ from typing import List, Union
 import aiohttp
 import discord
 import json5
+from core.slash_tree import ClutterCommandTree
 from discord.ext import commands
 from dotenv import load_dotenv
 from utils import CachedMongoManager, CommandChecks, EmbedBuilder, color, listify
-from core.slash_tree import ClutterCommandTree
 
 os.system("cls" if sys.platform == "win32" else "clear")
 
@@ -172,7 +172,9 @@ class Clutter(commands.AutoShardedBot):
         super().add_command(command)
         command.cooldown_after_parsing = True
         if not getattr(command._buckets, "_cooldown", None):  # noqa: 170
-            command._buckets = commands.CooldownMapping.from_cooldown(1, 3, commands.BucketType.user)  # default cooldown is 1 per 3s
+            command._buckets = commands.CooldownMapping.from_cooldown(
+                1, 3, commands.BucketType.user
+            )  # default cooldown is 1 per 3s
 
     async def process_commands(self, message: discord.Message, /) -> None:
         if message.author.bot:
