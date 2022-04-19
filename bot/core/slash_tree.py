@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands as app
-from utils import UserBlacklisted, GuildBlacklisted, InDevelopmentMode
+from utils import GuildBlacklisted, InDevelopmentMode, UserBlacklisted
 
 
 class ClutterCommandTree(app.CommandTree):

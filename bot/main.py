@@ -1,4 +1,5 @@
 import asyncio
+import collections
 import math
 import os
 import pathlib
@@ -6,7 +7,6 @@ import sys
 import time
 import traceback
 from typing import List, Optional, Type, Union
-import collections
 
 import aiohttp
 import discord
@@ -189,7 +189,7 @@ class Clutter(commands.AutoShardedBot):
         if guild := ctx.guild:
             if self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
                 return
-            
+
         if ctx.valid and getattr(ctx.cog, "qualified_name", None) != "Jishaku":
             await ctx.trigger_typing()
         await self.invoke(ctx)
