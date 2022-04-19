@@ -19,16 +19,6 @@ class CommandChecks:
     def __init__(self, bot: Clutter, /):
         self._bot = bot
 
-    def bot_admin_only(self) -> Callable[[discord.Interaction], bool]:
-        """Checks if the use is a bot admin."""
-
-        async def predicate(inter: Interaction, /) -> bool:
-            if inter.user.id in self._bot.admin_ids:
-                return True
-            raise NotAnAdmin("User is not a bot admin.")
-
-        return app.check(predicate)
-
     def cooldown(self, rate: float, per: float, /) -> Callable[[discord.Interaction], Optional[app.Cooldown]]:
         """Adds a cooldown to a command. Bypasses the cooldown if the user is a bot admin."""
 

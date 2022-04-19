@@ -89,6 +89,7 @@ class Clutter(commands.AutoShardedBot):
             max_messages=1000,
             strip_after_prefix=True,
             tree_cls=ClutterCommandTree,
+            owner_ids=self.admin_ids,
         )
 
     async def startup_hook(self):
