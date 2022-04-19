@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING, Callable, Optional
 
 import discord
 
-from .errors import NotAnAdmin
-
 if TYPE_CHECKING:
     from discord import Interaction
     from discord import app_commands as app
