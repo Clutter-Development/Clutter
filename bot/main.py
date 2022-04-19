@@ -94,6 +94,7 @@ class Clutter(commands.AutoShardedBot):
 
     async def startup_hook(self):
         await self.load_extensions()
+        print(self.startup_log)
 
     async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
         if guild := message.guild:
@@ -132,7 +133,6 @@ class Clutter(commands.AutoShardedBot):
 
     async def on_ready(self):
         self.uptime = math.floor(time.time())
-        print(self.startup_log)
         discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
         bot_info = listify(
             "Bot Info",
