@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands as app
 
-__all__ = ("ClutterError", "InDevelopmentMode", "UserBlacklisted", "GuildBlacklisted")
+__all__ = ("ClutterError", "InDevelopmentMode", "UserIsBlacklisted", "GuildIsBlacklisted", "UserHasBeenBlacklisted", "GlobalCooldownReached")
 
 
 class ClutterError(discord.DiscordException):
@@ -16,13 +16,26 @@ class InDevelopmentMode(ClutterError, app.AppCommandError):
     pass
 
 
-class UserBlacklisted(ClutterError, app.AppCommandError):
+class UserIsBlacklisted(ClutterError, app.AppCommandError):
     """Raised when a user is blacklisted when using an app command."""
 
     pass
 
 
-class GuildBlacklisted(ClutterError, app.AppCommandError):
+class GuildIsBlacklisted(ClutterError, app.AppCommandError):
     """Raised when a guild is blacklisted when using an app command."""
 
     pass
+
+
+class UserHasBeenBlacklisted(ClutterError, app.AppCommandError):
+    """Raised when a user is blacklisted when using an app command."""
+
+    pass
+
+
+class GlobalCooldownReached(ClutterError, app.AppCommandError):
+    """Raised when a user is blacklisted when using an app command."""
+
+    def __init__(self, retry_after: float, message: str, /):
+        self.retry_after = retry_after

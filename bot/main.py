@@ -1,5 +1,4 @@
 import asyncio
-import collections
 import math
 import os
 import pathlib
@@ -7,6 +6,7 @@ import sys
 import time
 import traceback
 from typing import List, Optional, Type, Union
+import collections
 
 import aiohttp
 import discord
@@ -16,7 +16,7 @@ from core.slash_tree import ClutterCommandTree
 from discord.ext import commands
 from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
-from utils import CachedMongoManager, CommandChecks, EmbedBuilder, color, listify
+from utils import CachedMongoManager, CommandChecks, EmbedBuilder, color, listify, UserHasBeenBlacklisted, GlobalCooldownReached
 
 os.system("cls" if sys.platform == "win32" else "clear")
 
@@ -33,15 +33,18 @@ class Clutter(commands.AutoShardedBot):
         if self.config.get("USE_ENV", False):
             load_dotenv()
             self.token = os.getenv("BOT_TOKEN")
-            webhook_url = os.getenv("ERROR_WEBHOOK_URL")
+            error_webhook_url = os.getenv("ERROR_WEBHOOK_URL")
+            log_webhook_url = os.getenv("LOG_WEBHOOK_URL")
             db_uri = os.getenv("DATABASE_URI")
         else:
             self.token = self.config["BOT"]["TOKEN"]
-            webhook_url = self.config["BOT"]["ERROR_WEBHOOK_URL"]
+            error_webhook_url = self.config["BOT"]["ERROR_WEBHOOK_URL"]
+            log_webhook_url = self.config["BOT"]["LOG_WEBHOOK_URL"]
             db_uri = self.config["DATABASE"]["URI"]
 
         # initialize webhook and database
-        self.webhook = discord.Webhook.from_url(webhook_url, session=self.session)
+        self.error_webhook = discord.Webhook.from_url(error_webhook_url, session=self.session)
+        self.log_webhook = discord.Webhook.from_url(log_webhook_url, session=self.session)
         self.db = CachedMongoManager(
             db_uri,
             database=self.config["DATABASE"]["NAME"],
@@ -63,7 +66,7 @@ class Clutter(commands.AutoShardedBot):
         self.invite_url = self.config["BOT"]["INVITE_URL"]
         self.default_prefix = self.config["BOT"]["DEFAULT_PREFIX"]
         self.default_language = self.config["BOT"]["DEFAULT_LANGUAGE"]
-        self.development_server = discord.Object(id=self.config["BOT"]["DEVELOPMENT_SERVER_ID"])
+        self.development_servers = [discord.Object(id=guild_id) for guild_id in self.config["BOT"]["DEVELOPMENT_SERVER_IDS"]]
         self.in_development = self.config["BOT"]["DEVELOPMENT_MODE"]
 
         # Auto spam control for commands
@@ -100,7 +103,7 @@ class Clutter(commands.AutoShardedBot):
             owner_ids=self.admin_ids,
         )
 
-    async def startup_hook(self):
+    async def startup_hook(self) -> None:
         await self.load_extensions()
         print(self.startup_log)
 
@@ -110,12 +113,12 @@ class Clutter(commands.AutoShardedBot):
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
-    async def load_extensions(self):
+    async def load_extensions(self) -> None:
         loaded = []
         failed = {}
         for fn in map(
             lambda file_path: ".".join(file_path.paths)[:-3],
-            pathlib.Path("./modules").glob(f"**/*.py"),
+            pathlib.Path("./modules").rglob(f"*.py"),
         ):
             try:
                 await self.load_extension(fn)
@@ -129,7 +132,7 @@ class Clutter(commands.AutoShardedBot):
             log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
         self.startup_log = "\n".join(log)
 
-    def run(self):
+    def run(self) -> None:
         try:
             super().run(self.token, reconnect=True)
         finally:
@@ -139,7 +142,7 @@ class Clutter(commands.AutoShardedBot):
 
             asyncio.run(stop())
 
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         self.uptime = math.floor(time.time())
         discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
         bot_info = listify(
@@ -174,7 +177,15 @@ class Clutter(commands.AutoShardedBot):
         command.cooldown_after_parsing = True
         super().add_command(command)
 
-    async def process_commands(self, message: discord.Message, /) -> None:
+    async def log_spammer(self, ctx: commands.Context, /) -> None:
+        embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")
+        embed.add_field(name="User Info", value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}")
+        if guild := ctx.guild:
+            embed.add_field(name="Guild Info", value=f"**Name:** {guild.name}\n**ID:** {guild.id}")
+            embed.add_field(name="Channel Info", value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})")
+        await self.log_webhook.send(embed=embed)
+
+    async def process_commands(self, message: discord.Message, /) -> None:  # idk why im doing this here instead of a global check
         if message.author.bot:
             return
 
@@ -190,8 +201,21 @@ class Clutter(commands.AutoShardedBot):
             if self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
                 return
 
-        if ctx.valid and getattr(ctx.cog, "qualified_name", None) != "Jishaku":
-            await ctx.trigger_typing()
+        bucket = self.spam_control.get_bucket(message)
+        ts = message.created_at.timestamp()
+        retry_after = bucket.update_rate_limit(ts)
+        author_id = message.author.id
+        if retry_after and not self.is_owner(ctx.author):
+            self.spam_counter[author_id] += 1
+            if self.spam_counter[author_id] >= 3:
+                await self.blacklist_user(author_id)
+                del self.spam_counter[author_id]
+                await self.log_spammer(ctx)
+                return self.dispatch("command_error", ctx, UserHasBeenBlacklisted("You have been blacklisted for frequently spamming commands."))
+            return self.dispatch("command_error", ctx, GlobalCooldownReached(retry_after, f"You have been ratelimited for spamming commands. Retry in {retry_after} seconds."))
+        else:
+            self.spam_counter.pop(author_id, None)
+
         await self.invoke(ctx)
 
     async def get_context(
