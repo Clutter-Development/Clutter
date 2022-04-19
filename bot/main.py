@@ -201,9 +201,6 @@ class Clutter(commands.AutoShardedBot):
         return members[0]
 
 
-    
-
-
 if __name__ == "__main__":
     bot = Clutter()
     bot.run()
