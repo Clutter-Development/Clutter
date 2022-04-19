@@ -1,5 +1,6 @@
 from io import StringIO
 from typing import Optional
+
 import discord
 
 __all__ = ("text_file",)

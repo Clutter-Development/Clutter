@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Optional
 
-from .errors import NotAnAdmin
 import discord
+
+from .errors import NotAnAdmin
 
 if TYPE_CHECKING:
     from discord import Interaction

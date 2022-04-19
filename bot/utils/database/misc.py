@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, TypeVar, Union, Optional
+from typing import Any, Dict, List, Optional, TypeVar, Union
 
 __all__ = ("assemble_dict", "find_in_dict", "maybe_int")
 

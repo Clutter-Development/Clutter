@@ -1,7 +1,7 @@
 import asyncio
 import math
 import time
-from typing import Any, List, Union, Optional, Dict, Any
+from typing import Any, Dict, List, Optional, Union
 
 from .manager import MongoManager
 

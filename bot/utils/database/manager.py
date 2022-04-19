@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, Tuple, Union, Optional
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
 
 from motor import motor_asyncio
 
@@ -115,9 +115,7 @@ class MongoManager:
         ppath, collection, _id = self._parse_path(path)
         if not ppath:
             raise ValueError("Path must be at least 3 elements long: Collection, _id and key for the pull operation.")
-        if value in find_in_dict(
-            await collection.find_one({"_id": _id}, {".".join(ppath): 1}), ppath, default=[]
-        ):
+        if value in find_in_dict(await collection.find_one({"_id": _id}, {".".join(ppath): 1}), ppath, default=[]):
             await collection.update_one({"_id": _id}, {"$pull": {".".join(ppath): value}})
             return True
         return False
