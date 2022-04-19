@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, Tuple, Union
+from typing import TYPE_CHECKING, Any, List, Tuple, Union, Optional
 
 from motor import motor_asyncio
 
@@ -13,11 +13,11 @@ __all__ = ("MongoManager",)
 
 
 class MongoManager:
-    def __init__(self, connect_url: str, port: int = None, /, *, database: str) -> None:  # type: ignore
+    def __init__(self, connect_url: str, port: Optional[int] = None, /, *, database: str) -> None:
         self._client = motor_asyncio.AsyncIOMotorClient(connect_url, port)
         self._db = self._client[database]
 
-    def _parse_path(self, path: str, /) -> Tuple[List[str], Collection, Union[str, int]]:  # type: ignore
+    def _parse_path(self, path: str, /) -> Tuple[List[str], Collection, Union[str, int]]:
         """Parses the path.
 
         Args:
@@ -38,7 +38,7 @@ class MongoManager:
         _id = maybe_int(path.pop(0))
         return path, collection, _id
 
-    async def get(self, path: str, /, *, default: Any = None) -> Any:
+    async def get(self, path: str, /, *, default: Optional[Any] = None) -> Any:
         """Fetches the variable from the database.
 
         Args:
@@ -46,13 +46,13 @@ class MongoManager:
             default (Any): The default value to return if the variable is not found.
 
         Returns:
-            Any: The value of the variable.
+            Optional[Any]: The value of the variable.
         """
-        path, collection, _id = self._parse_path(path)  # type: ignore
-        if path:
+        ppath, collection, _id = self._parse_path(path)
+        if ppath:
             return find_in_dict(
-                await collection.find_one({"_id": _id}, {"_id": 0, ".".join(path): 1}),
-                path,  # type: ignore
+                await collection.find_one({"_id": _id}, {"_id": 0, ".".join(ppath): 1}),
+                ppath,
                 default=default,
             )
         return collection.find_one({"_id": _id}) or default
@@ -64,23 +64,23 @@ class MongoManager:
             path (str): The path to the variable. Must be at least 2 elements long: Collection and _id.
             value (Any): The value to set the key to.
         """
-        path, collection, _id = self._parse_path(path)  # type: ignore
-        if not path and not isinstance(value, dict):
+        ppath, collection, _id = self._parse_path(path)
+        if not ppath and not isinstance(value, dict):
             raise ValueError("Value must be a dictionary if whole document is wanted to be updated.")
         if await collection.find_one({"_id": _id}, {"_id": 1}):
-            val = {"$set": {".".join(path): value}} if path else value
+            val = {"$set": {".".join(ppath): value}} if ppath else value
             await collection.update_one({"_id": _id}, val)
         else:
-            val = assemble_dict(path, value) if path else value  # type: ignore
+            val = assemble_dict(ppath, value) if ppath else value
             await collection.insert_one({"_id": _id, **val})
 
-    async def push(self, path: str, value: Any, /, *, allow_dupes: bool = True) -> bool:
+    async def push(self, path: str, value: Any, /, *, allow_dupes: Optional[bool] = True) -> bool:
         """Appends the variable to a list in the database.
 
         Args:
             path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
             value (Any): The value to append to the list.
-            allow_dupes (bool): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
+            allow_dupes (Optional[bool]): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
 
         Returns:
             bool: If the value was pushed.
@@ -88,14 +88,14 @@ class MongoManager:
         Raises:
             ValueError: If the path is too short.
         """
-        path, collection, _id = self._parse_path(path)  # type: ignore
-        if not path:
+        ppath, collection, _id = self._parse_path(path)
+        if not ppath:
             raise ValueError("Path must be at least 3 elements long: Collection, _id and key for the push operation.")
         if doc := await collection.find_one({"_id": _id}) is None:
-            await collection.insert_one({"_id": _id, **assemble_dict(path, [value])})  # type: ignore
+            await collection.insert_one({"_id": _id, **assemble_dict(ppath, [value])})
             return True
-        elif allow_dupes or value not in find_in_dict(doc, path, default=[]):  # type: ignore
-            await collection.update_one({"_id": _id}, {"$push": {".".join(path): value}})
+        elif allow_dupes or value not in find_in_dict(doc, ppath, default=[]):
+            await collection.update_one({"_id": _id}, {"$push": {".".join(ppath): value}})
             return True
         return False
 
@@ -112,13 +112,13 @@ class MongoManager:
         Raises:
             ValueError: If the path is too short.
         """
-        path, collection, _id = self._parse_path(path)  # type: ignore
-        if not path:
+        ppath, collection, _id = self._parse_path(path)
+        if not ppath:
             raise ValueError("Path must be at least 3 elements long: Collection, _id and key for the pull operation.")
         if value in find_in_dict(
-            await collection.find_one({"_id": _id}, {".".join(path): 1}), path, default=[]  # type: ignore
+            await collection.find_one({"_id": _id}, {".".join(ppath): 1}), ppath, default=[]
         ):
-            await collection.update_one({"_id": _id}, {"$pull": {".".join(path): value}})
+            await collection.update_one({"_id": _id}, {"$pull": {".".join(ppath): value}})
             return True
         return False
 

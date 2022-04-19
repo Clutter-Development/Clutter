@@ -85,7 +85,7 @@ class Clutter(commands.AutoShardedBot):
             help_command=None,
             allowed_mentions=allowed_mentions,
             member_cache_flags=stuff_to_cache,
-            chunk_guilds_at_startup=True,  # TODO: remove this
+            chunk_guilds_at_startup=True,  # TODO: remove this and make it work wihout it
             max_messages=1000,
             strip_after_prefix=True,
             tree_cls=ClutterCommandTree,

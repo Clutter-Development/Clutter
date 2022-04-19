@@ -1,4 +1,4 @@
-from typing import Any, Callable, Union
+from typing import Callable, Union
 
 __all__ = (
     "black",
@@ -33,7 +33,7 @@ __all__ = (
 )
 
 
-def t(b: Union[bytes, Any], /) -> str:
+def t(b: Union[bytes, str], /) -> str:
     """Ensures that the given bytes are decoded as a string.
 
     Args:

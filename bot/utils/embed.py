@@ -17,11 +17,14 @@ class EmbedBuilder:
         self.warning = self._assemble_embed("warning")
         self.info = self._assemble_embed("info")
 
-    def _assemble_embed(self, asset_type: str, /) -> Callable:
+    def _assemble_embed(self, asset_type: str, /) -> Callable[[str, str], Embed]:
         """Makes a function that returns an embed with the given asset type.
 
         Args:
             asset_type (str): The asset type to use.
+
+        Returns:
+            Callable[[str, str], Embed]: A function that returns an embed with the given asset type.
         """
 
         def create_embed(title: str, description: str, /) -> Embed:
@@ -30,6 +33,9 @@ class EmbedBuilder:
             Args:
                 title (str): The title of the embed.
                 description (str): The description of the embed.
+
+            Returns:
+                Embed: The embed.
             """
             color = self._style["COLORS"][asset_type.upper()]
             emoji = self._style["EMOJIS"][asset_type.upper()]
@@ -44,5 +50,8 @@ class EmbedBuilder:
             asset_type (str): The asset type to use.
             title (str): The title of the embed.
             description (str): The description of the embed.
+
+        Returns:
+            Embed: The embed.
         """
         return self._assemble_embed(asset_type)(title, description)

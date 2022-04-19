@@ -1,9 +1,11 @@
-from typing import Any, Dict, List, TypeVar, Union
+from typing import Any, Dict, List, TypeVar, Union, Optional
 
 __all__ = ("assemble_dict", "find_in_dict", "maybe_int")
 
+NestedDict = Dict[str, Union["NestedDict", Any]]
 
-def assemble_dict(path: List[str], value: Any, /) -> Dict[str, Any]:
+
+def assemble_dict(path: List[str], value: Any, /) -> NestedDict:
     """Assembles a nested dictionary from the path and value.
 
     Args:
@@ -11,7 +13,7 @@ def assemble_dict(path: List[str], value: Any, /) -> Dict[str, Any]:
         value (Any): The value to set.
 
     Returns:
-        Dict[str, Any]: The assembled dictionary.
+        NestedDict: The assembled dictionary.
     """
     to_asm, i = {}, 0
     ref = to_asm
@@ -27,7 +29,7 @@ def assemble_dict(path: List[str], value: Any, /) -> Dict[str, Any]:
     return ref
 
 
-def find_in_dict(get_from: dict, path: List[str], /, *, default: Any = None) -> Any:
+def find_in_dict(get_from: dict, path: List[str], /, *, default: Optional[Any] = None) -> Any:
     """Finds the key value pair in the specified dictionary.
 
     Args:
@@ -36,7 +38,7 @@ def find_in_dict(get_from: dict, path: List[str], /, *, default: Any = None) -> 
         default (Any): The default value to return if the key is not found.
 
     Returns:
-        Any: The value. Returns the default value if the key is not found.
+        Optional[Any]: The value. Returns the default value if the key is not found.
     """
     key = path.pop(-1)
     for _ in path:

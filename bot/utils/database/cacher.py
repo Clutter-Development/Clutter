@@ -1,7 +1,7 @@
 import asyncio
-from math import floor
-from time import time
-from typing import Any, List, Union
+import math
+import time
+from typing import Any, List, Union, Optional, Dict, Any
 
 from .manager import MongoManager
 
@@ -9,10 +9,10 @@ __all__ = ("CachedMongoManager",)
 
 
 class CachedMongoManager(MongoManager):
-    def __init__(self, connect_url: str, port: int = None, /, *, database: str, cooldown: int) -> None:  # type: ignore
-        self._cache = {}
-        self._start_time = floor(time())
-        self.cooldown = cooldown
+    def __init__(self, connect_url: str, port: Optional[int] = None, /, *, database: str, cooldown: float) -> None:
+        self._cache: Dict[str, Any] = {}
+        self._start_time: int = math.floor(time.time())
+        self.cooldown: float = cooldown
         super().__init__(connect_url, port, database=database)
 
     def _current_time(self) -> int:
@@ -21,7 +21,7 @@ class CachedMongoManager(MongoManager):
         Returns:
             int: The current time in seconds.
         """
-        return floor(time()) - self._start_time
+        return math.floor(time.time()) - self._start_time
 
     def _get_last_used(self, path: str, /) -> int:
         """Returns the time in seconds since the last used time of the variable.
@@ -50,15 +50,14 @@ class CachedMongoManager(MongoManager):
         """
         await asyncio.sleep(self.cooldown)
         if self._get_last_used(path) >= self.cooldown:
-            # print(f"Uncached Variable: {path}")
             self._cache.pop(path, None)
 
-    def refresh(self, path: Union[str, List[str]], /, *, match: bool = False) -> None:
+    def refresh(self, path: Union[str, List[str]], /, *, match: Optional[bool] = False) -> None:
         """Uncaches all variables that start with the given path. If match is True, only uncaches the given path.
 
         Args:
             path (Union[str, List[str]]): The variable(s) to uncache.
-            match (bool): Whether to match the path exactly or to start with it.
+            match (Optional[bool]): Whether to match the path exactly or to start with it.
         """
         if isinstance(path, str):
             if match:
@@ -71,7 +70,7 @@ class CachedMongoManager(MongoManager):
         for _ in path:
             self.refresh(_)
 
-    async def get(self, path: str, /, *, default: Any = None) -> Any:
+    async def get(self, path: str, /, *, default: Optional[Any] = None) -> Any:
         """Fetches the variable from the database.
 
         Args:
@@ -79,13 +78,11 @@ class CachedMongoManager(MongoManager):
             default (Any): The default value to return if the variable is not found.
 
         Returns:
-            Any: The value of the variable.
+            Optional[Any]: The value of the variable.
         """
         if path in self._cache:
-            # print("Cache used: {}".format(path))
             self._use(path)
         else:
-            # print("DB used: {}".format(path))
             self._cache[path] = [await super().get(path), self._current_time()]
         asyncio.create_task(self._remove_after_cooldown(path))
         if self._cache.get(path, [None])[0] is None:
@@ -102,13 +99,13 @@ class CachedMongoManager(MongoManager):
         await super().set(path, value)
         self.refresh(path)
 
-    async def push(self, path: str, value: Any, /, *, allow_dupes: bool = True) -> bool:
+    async def push(self, path: str, value: Any, /, *, allow_dupes: Optional[bool] = True) -> bool:
         """Appends the variable to a list in the database.
 
         Args:
             path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
             value (Any): The value to append to the list.
-            allow_dupes (bool): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
+            allow_dupes (Optional[bool]): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
 
         Returns:
             bool: If the value was pushed.

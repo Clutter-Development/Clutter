@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands as app
 
-__all__ = ("ClutterError", "NotAnAdmin", "Blacklisted")
+__all__ = ("ClutterError", "NotAnAdmin", "InDevelopmentMode", "Blacklisted")
 
 
 class ClutterError(discord.DiscordException):
@@ -11,7 +11,13 @@ class ClutterError(discord.DiscordException):
 
 
 class NotAnAdmin(app.AppCommandError):
-    """Raised when a user is not a bot admin when using an app command."""
+    """Raised when a user is not an admin."""
+
+    pass
+
+
+class InDevelopmentMode(app.AppCommandError):
+    """Raised when a user is not a bot admin and bot is in development mode when using an app command."""
 
     pass
 
