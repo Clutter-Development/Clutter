@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Dict, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Dict, Union
 
 from discord import Embed
 
