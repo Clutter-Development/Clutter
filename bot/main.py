@@ -5,7 +5,7 @@ import pathlib
 import sys
 import time
 import traceback
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 import aiohttp
 import discord
@@ -181,6 +181,7 @@ class Clutter(commands.AutoShardedBot):
 
     # async def get_context(self, message: Union[discord.Message, discord.Interaction], /, *, cls: Optional[commands.Context]) -> :
     # note: make dev servers a list
+
 
 if __name__ == "__main__":
     bot = Clutter()
