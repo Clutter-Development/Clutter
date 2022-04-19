@@ -1,4 +1,5 @@
 import asyncio
+import collections
 import math
 import os
 import pathlib
@@ -6,7 +7,6 @@ import sys
 import time
 import traceback
 from typing import List, Optional, Type, Union
-import collections
 
 import aiohttp
 import discord
@@ -16,7 +16,15 @@ from core.slash_tree import ClutterCommandTree
 from discord.ext import commands
 from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
-from utils import CachedMongoManager, CommandChecks, EmbedBuilder, color, listify, UserHasBeenBlacklisted, GlobalCooldownReached
+from utils import (
+    CachedMongoManager,
+    CommandChecks,
+    EmbedBuilder,
+    GlobalCooldownReached,
+    UserHasBeenBlacklisted,
+    color,
+    listify,
+)
 
 os.system("cls" if sys.platform == "win32" else "clear")
 
@@ -66,7 +74,9 @@ class Clutter(commands.AutoShardedBot):
         self.invite_url = self.config["BOT"]["INVITE_URL"]
         self.default_prefix = self.config["BOT"]["DEFAULT_PREFIX"]
         self.default_language = self.config["BOT"]["DEFAULT_LANGUAGE"]
-        self.development_servers = [discord.Object(id=guild_id) for guild_id in self.config["BOT"]["DEVELOPMENT_SERVER_IDS"]]
+        self.development_servers = [
+            discord.Object(id=guild_id) for guild_id in self.config["BOT"]["DEVELOPMENT_SERVER_IDS"]
+        ]
         self.in_development = self.config["BOT"]["DEVELOPMENT_MODE"]
 
         # Auto spam control for commands
@@ -179,13 +189,20 @@ class Clutter(commands.AutoShardedBot):
 
     async def log_spammer(self, ctx: commands.Context, /) -> None:
         embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")
-        embed.add_field(name="User Info", value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}")
+        embed.add_field(
+            name="User Info", value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}"
+        )
         if guild := ctx.guild:
             embed.add_field(name="Guild Info", value=f"**Name:** {guild.name}\n**ID:** {guild.id}")
-            embed.add_field(name="Channel Info", value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})")
+            embed.add_field(
+                name="Channel Info",
+                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",
+            )
         await self.log_webhook.send(embed=embed)
 
-    async def process_commands(self, message: discord.Message, /) -> None:  # idk why im doing this here instead of a global check
+    async def process_commands(
+        self, message: discord.Message, /
+    ) -> None:  # idk why im doing this here instead of a global check
         if message.author.bot:
             return
 
@@ -211,8 +228,18 @@ class Clutter(commands.AutoShardedBot):
                 await self.blacklist_user(author_id)
                 del self.spam_counter[author_id]
                 await self.log_spammer(ctx)
-                return self.dispatch("command_error", ctx, UserHasBeenBlacklisted("You have been blacklisted for frequently spamming commands."))
-            return self.dispatch("command_error", ctx, GlobalCooldownReached(retry_after, f"You have been ratelimited for spamming commands. Retry in {retry_after} seconds."))
+                return self.dispatch(
+                    "command_error",
+                    ctx,
+                    UserHasBeenBlacklisted("You have been blacklisted for frequently spamming commands."),
+                )
+            return self.dispatch(
+                "command_error",
+                ctx,
+                GlobalCooldownReached(
+                    retry_after, f"You have been ratelimited for spamming commands. Retry in {retry_after} seconds."
+                ),
+            )
         else:
             self.spam_counter.pop(author_id, None)
 

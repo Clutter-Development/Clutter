@@ -1,7 +1,14 @@
 import discord
 from discord import app_commands as app
 
-__all__ = ("ClutterError", "InDevelopmentMode", "UserIsBlacklisted", "GuildIsBlacklisted", "UserHasBeenBlacklisted", "GlobalCooldownReached")
+__all__ = (
+    "ClutterError",
+    "InDevelopmentMode",
+    "UserIsBlacklisted",
+    "GuildIsBlacklisted",
+    "UserHasBeenBlacklisted",
+    "GlobalCooldownReached",
+)
 
 
 class ClutterError(discord.DiscordException):
