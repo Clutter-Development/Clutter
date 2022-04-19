@@ -45,8 +45,8 @@ class Clutter(commands.AutoShardedBot):
             cooldown=self.config["DATABASE"]["CACHE_COOLDOWN"],
         )
 
-        # initialize EmbedBuilder)
-        self.embed = EmbedBuilder(self.config["STYLE"])
+        # initialize EmbedBuilder
+        self.embed = EmbedBuilder(self)
 
         # initialize CommandChecks
         self.checks = CommandChecks(self)

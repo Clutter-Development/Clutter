@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-from typing import Callable, Dict, Union
+from typing import Callable, Dict, Union, TYPE_CHECKING
 
 from discord import Embed
+
+if TYPE_CHECKING:
+    from ..main import Clutter
 
 __all__ = ("EmbedBuilder",)
 
 
 class EmbedBuilder:
-    def __init__(self, style: Dict[str, Dict[str, Union[str, int]]], /) -> None:
-        self._style = style
+    def __init__(self, bot: Clutter, /) -> None:
+        self._style = bot.config["STYLE"]
 
         # Predefined embeds
         self.success = self._assemble_embed("success")
