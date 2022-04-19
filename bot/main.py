@@ -186,6 +186,23 @@ class Clutter(commands.AutoShardedBot):
     ) -> Union[ClutterContext, ContextT]:
         return await super().get_context(message, cls=cls)
 
+    async def getch_member(self, guild: discord.Guild, user_id: int, /) -> Optional[discord.Member]:
+        if member := guild.get_member(user_id) is not None:
+            return member
+        if self.get_shard(guild.shard_id).is_ws_ratelimited():
+            try:
+                return await guild.fetch_member(user_id)
+            except discord.HTTPException:
+                return None
+
+        members = await guild.query_members(limit=1, user_ids=[user_id], cache=True)
+        if not members:
+            return None
+        return members[0]
+
+
+    
+
 
 if __name__ == "__main__":
     bot = Clutter()
