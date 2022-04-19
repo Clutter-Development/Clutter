@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Dict, Union
+from typing import TYPE_CHECKING, Callable, Optional
 
 from discord import Embed
 
@@ -30,7 +30,7 @@ class EmbedBuilder:
             Callable[[str, str], Embed]: A function that returns an embed with the given asset type.
         """
 
-        def create_embed(title: str, description: str, /) -> Embed:
+        def create_embed(title: str, description: Optional[str] = None, /) -> Embed:
             """Creates an embed with the colors and emojis from the server configuration.
 
             Args:
