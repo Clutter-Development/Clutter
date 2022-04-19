@@ -100,7 +100,7 @@ class Clutter(commands.AutoShardedBot):
 
     async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
         if guild := message.guild:
-            prefix = await self.db.get(f"guilds{guild.id}.prefix", default=self.default_prefix)
+            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
