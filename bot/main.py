@@ -52,7 +52,7 @@ class Clutter(commands.AutoShardedBot):
         self.checks = CommandChecks(self)
 
         # get miscellaneous info
-        self.admin_ids = self.config["BOT"]["ADMIN_IDS"]
+        self.admin_ids = set(self.config["BOT"]["ADMIN_IDS"])
         self.version = self.config["BOT"]["VERSION"]
         self.github = self.config["BOT"]["GITHUB_REPO_URL"]
         self.discord_invite = self.config["BOT"]["DISCORD_INVITE_URL"]
