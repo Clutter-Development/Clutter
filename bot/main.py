@@ -5,7 +5,7 @@ import pathlib
 import sys
 import time
 import traceback
-from typing import List, Union
+from typing import List, Union, Optional
 
 import aiohttp
 import discord
@@ -179,6 +179,8 @@ class Clutter(commands.AutoShardedBot):
             await ctx.trigger_typing()
         await self.invoke(ctx)
 
+    # async def get_context(self, message: Union[discord.Message, discord.Interaction], /, *, cls: Optional[commands.Context]) -> :
+    # note: make dev servers a list
 
 if __name__ == "__main__":
     bot = Clutter()
