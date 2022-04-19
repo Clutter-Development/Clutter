@@ -6,6 +6,7 @@ import sys
 import time
 import traceback
 from typing import List, Optional, Type, Union
+import collections
 
 import aiohttp
 import discord
@@ -64,6 +65,11 @@ class Clutter(commands.AutoShardedBot):
         self.default_language = self.config["BOT"]["DEFAULT_LANGUAGE"]
         self.development_server = discord.Object(id=self.config["BOT"]["DEVELOPMENT_SERVER_ID"])
         self.in_development = self.config["BOT"]["DEVELOPMENT_MODE"]
+
+        # Auto spam control for commands
+        # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist
+        self.spam_control = commands.CooldownMapping.from_cooldown(10, 12, commands.BucketType.user)
+        self.spam_counter = collections.Counter()
 
         self.uptime = 0
         self.startup_log = ""
@@ -165,18 +171,25 @@ class Clutter(commands.AutoShardedBot):
         return True
 
     def add_command(self, command: commands.Command, /) -> None:
-        super().add_command(command)
         command.cooldown_after_parsing = True
-        if not getattr(command._buckets, "_cooldown", None):  # noqa: 170
-            command._buckets = commands.CooldownMapping.from_cooldown(
-                1, 3, commands.BucketType.user
-            )  # default cooldown is 1 per 3s
+        super().add_command(command)
 
     async def process_commands(self, message: discord.Message, /) -> None:
         if message.author.bot:
             return
 
         ctx = await self.get_context(message)
+
+        if ctx.command is None:
+            return
+
+        if self.db.get(f"users.{ctx.author.id}.blacklisted", default=False):
+            return
+
+        if guild := ctx.guild:
+            if self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
+                return
+            
         if ctx.valid and getattr(ctx.cog, "qualified_name", None) != "Jishaku":
             await ctx.trigger_typing()
         await self.invoke(ctx)

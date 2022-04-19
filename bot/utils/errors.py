@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands as app
 
-__all__ = ("ClutterError", "InDevelopmentMode", "Blacklisted")
+__all__ = ("ClutterError", "InDevelopmentMode", "UserBlacklisted", "GuildBlacklisted")
 
 
 class ClutterError(discord.DiscordException):
@@ -16,7 +16,13 @@ class InDevelopmentMode(ClutterError, app.AppCommandError):
     pass
 
 
-class Blacklisted(ClutterError, app.AppCommandError):
+class UserBlacklisted(ClutterError, app.AppCommandError):
     """Raised when a user is blacklisted when using an app command."""
+
+    pass
+
+
+class GuildBlacklisted(ClutterError, app.AppCommandError):
+    """Raised when a guild is blacklisted when using an app command."""
 
     pass
