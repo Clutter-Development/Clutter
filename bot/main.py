@@ -5,17 +5,16 @@ import pathlib
 import sys
 import time
 import traceback
-from typing import List, Union, Optional, Type
+from typing import List, Optional, Type, Union
 
 import aiohttp
 import discord
 import json5
+from core.context import ClutterContext
+from core.slash_tree import ClutterCommandTree
 from discord.ext import commands
 from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
-
-from core.context import ClutterContext
-from core.slash_tree import ClutterCommandTree
 from utils import CachedMongoManager, CommandChecks, EmbedBuilder, color, listify
 
 os.system("cls" if sys.platform == "win32" else "clear")
@@ -109,8 +108,8 @@ class Clutter(commands.AutoShardedBot):
         loaded = []
         failed = {}
         for fn in map(
-                lambda file_path: ".".join(file_path.paths)[:-3],
-                pathlib.Path("./modules").glob(f"**/*.py"),
+            lambda file_path: ".".join(file_path.paths)[:-3],
+            pathlib.Path("./modules").glob(f"**/*.py"),
         ):
             try:
                 await self.load_extension(fn)
@@ -182,8 +181,9 @@ class Clutter(commands.AutoShardedBot):
             await ctx.trigger_typing()
         await self.invoke(ctx)
 
-    async def get_context(self, message: Union[discord.Message, discord.Interaction], /, *,
-                          cls: Optional[Type[ContextT]] = ClutterContext) -> Union[ClutterContext, ContextT]:
+    async def get_context(
+        self, message: Union[discord.Message, discord.Interaction], /, *, cls: Optional[Type[ContextT]] = ClutterContext
+    ) -> Union[ClutterContext, ContextT]:
         return await super().get_context(message, cls=cls)
 
 
