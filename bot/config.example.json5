@@ -1,3 +1,4 @@
+// WARNING: All the keys are required unless otherwise specified.
 {
   // Set this to true if you want to store critical info in a .env file (or enviroment variables).
   USE_ENV: false,
@@ -16,11 +17,11 @@
     // The bot's version.
     VERSION: '0.0.1',
     // The bot's GitHub repo's url.
-    GITHUB_REPO_URL: '',
+    GITHUB_REPO_URL: 'https://github.com/Clutter-Development/Clutter',
     // The bot's support server invite url.
-    DISCORD_INVITE_URL: '',
+    DISCORD_INVITE_URL: 'https://discord.com/invite/mVKkMZRPQE',
     // The bot's documentation url.
-    DOCUMENTATION_URL: '',
+    DOCUMENTATION_URL: 'https://clutter-development.github.io/',
     // The bot's invite link.
     INVITE_URL: 'https://discord.com/oauth2/authorize?client_id=902405088138653726&permissions=8&scope=bot',
     // The bot's default prefix (for traditional commands).
@@ -34,7 +35,7 @@
   },
   // Basic database config.
   DATABASE: {
-    // The MongoDB connect URI.
+    // The MongoDB connect URI. Optional if USE_ENV is true.
     URI: '',
     // The MongoDB database name.
     NAME: 'Clutter',
@@ -53,7 +54,7 @@
       SUCCESS: '',
       ERROR: '',
       WARNING: '️',
-      INFO: 'ℹ'
+      INFO: ''
     },
   }
 }
