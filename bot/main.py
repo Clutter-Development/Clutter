@@ -3,7 +3,6 @@ import collections
 import math
 import os
 import pathlib
-import sys
 import time
 import traceback
 from typing import List, Optional, Type, Union
@@ -28,8 +27,6 @@ from utils import (
     color,
     listify,
 )
-
-os.system("cls" if sys.platform == "win32" else "clear")
 
 
 class Clutter(commands.AutoShardedBot):
