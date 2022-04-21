@@ -17,4 +17,4 @@ def text_file(text: str, file_name: str, /, *, spoiler: Optional[bool] = False) 
     Returns:
         discord.File: The discord.File object.
     """
-    return discord.File(BytesIO(bytes(text)), file_name, spoiler=spoiler)
+    return discord.File(BytesIO(bytes(text)), file_name, spoiler=spoiler)  # type: ignore

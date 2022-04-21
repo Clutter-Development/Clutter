@@ -148,7 +148,7 @@ class Clutter(commands.AutoShardedBot):
         loaded = []
         failed = {}
         for fn in map(
-            lambda file_path: ".".join(file_path.paths)[:-3],
+            lambda file_path: str(file_path).replace(os.pathsep, ".")[:-3],
             pathlib.Path("./modules").rglob(f"*.py"),
         ):
             try:
@@ -188,7 +188,7 @@ class Clutter(commands.AutoShardedBot):
         return True
 
     async def log_spammer(self, ctx: commands.Context, /) -> None:
-        embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")
+        embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")  # type: ignore
         embed.add_field(
             name="User Info", value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}"
         )
@@ -199,7 +199,7 @@ class Clutter(commands.AutoShardedBot):
             )
             embed.add_field(
                 name="Channel Info",
-                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",
+                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",  # type: ignore
             )
         await self.log_webhook.send(embed=embed)
 
@@ -214,12 +214,12 @@ class Clutter(commands.AutoShardedBot):
     async def get_context(
         self, message: Union[discord.Message, discord.Interaction], /, *, cls: Optional[Type[ContextT]] = ClutterContext
     ) -> Union[ClutterContext, ContextT]:
-        return await super().get_context(message, cls=cls)
+        return await super().get_context(message, cls=cls)  # type: ignore
 
     async def getch_member(self, guild: discord.Guild, user_id: int, /) -> Optional[discord.Member]:
         if member := guild.get_member(user_id) is not None:
-            return member
-        if self.get_shard(guild.shard_id).is_ws_ratelimited():
+            return member  # type: ignore
+        if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
             try:
                 return await guild.fetch_member(user_id)
             except discord.HTTPException:
@@ -252,8 +252,9 @@ async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
 
 @bot.check
 async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
-    if bot.db.get(f"guilds.{ctx.guild.id}.blacklisted", default=False):
-        raise GuildIsBlacklisted("This guild is blacklisted from using this bot.")
+    if guild := ctx.guild:
+        if bot.db.get(f"guilds.{guild.id}.blacklisted", default=False):
+            raise GuildIsBlacklisted("This guild is blacklisted from using this bot.")
     return True
 
 

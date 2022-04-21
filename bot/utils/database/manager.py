@@ -31,12 +31,12 @@ class MongoManager:
         Raises:
             ValueError: If the path is too short
         """
-        path: List[str] = [_ for _ in path.split(".") if _ != ""]
-        if len(path) < 2:
+        ppath = [_ for _ in path.split(".") if _ != ""]
+        if len(ppath) < 2:
             raise ValueError("Path must be at least 2 elements long: Collection and _id")
-        collection = self._db[path.pop(0)]
-        _id = maybe_int(path.pop(0))
-        return path, collection, _id
+        collection = self._db[ppath.pop(0)]
+        _id = maybe_int(ppath.pop(0))
+        return ppath, collection, _id
 
     async def get(self, path: str, /, *, default: Optional[Any] = None) -> Any:
         """Fetches the variable from the database.
@@ -94,7 +94,7 @@ class MongoManager:
         if doc := await collection.find_one({"_id": _id}) is None:
             await collection.insert_one({"_id": _id, **assemble_dict(ppath, [value])})
             return True
-        elif allow_dupes or value not in find_in_dict(doc, ppath, default=[]):
+        elif allow_dupes or value not in find_in_dict(doc, ppath, default=[]):  # type: ignore
             await collection.update_one({"_id": _id}, {"$push": {".".join(ppath): value}})
             return True
         return False

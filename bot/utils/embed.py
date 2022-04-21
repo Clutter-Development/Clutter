@@ -46,7 +46,7 @@ class EmbedBuilder:
 
         return create_embed
 
-    def __call__(self, asset_type: str, title: str, description: str, /) -> Embed:
+    def __call__(self, asset_type: str, title: str, description: Optional[str] = None, /) -> Embed:
         """Creates an embed with the colors and emojis from the configuration.
 
         Args:
@@ -57,4 +57,4 @@ class EmbedBuilder:
         Returns:
             Embed: The embed.
         """
-        return self._assemble_embed(asset_type)(title, description)
+        return self._assemble_embed(asset_type)(title, description)  # type: ignore

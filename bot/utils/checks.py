@@ -25,4 +25,4 @@ class CommandChecks:
                 return None
             return app.Cooldown(rate, per)
 
-        return app.checks.dynamic_cooldown(predicate)
+        return app.checks.dynamic_cooldown(predicate)  # type: ignore
