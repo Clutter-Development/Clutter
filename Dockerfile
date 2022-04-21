@@ -6,9 +6,7 @@ WORKDIR /bot
 
 COPY requirements.txt requirements.txt
 
-RUN apk add --no-cache git zlib-dev jpeg-dev musl-dev gcc
-
-RUN pip3 install -U -r requirements.txt
+RUN apk add --no-cache git zlib-dev jpeg-dev musl-dev gcc && pip3 install --no-cache-dir -U -r requirements.txt
 
 COPY /bot .
 
