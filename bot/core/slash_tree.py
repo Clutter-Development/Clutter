@@ -8,12 +8,12 @@ class ClutterCommandTree(app.CommandTree):
         user_id = inter.user.id
 
         if self.client.in_development and not self.client.is_owner(inter.user):
-            raise InDevelopmentMode("The bot is currently in development mode.")
+            raise InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
 
-        elif self.client.db.get(f"users.{user_id}.blacklisted", default=False):
+        if self.client.db.get(f"users.{user_id}.blacklisted", default=False):
             raise UserIsBlacklisted(f"You are blacklisted from using the bot.")
 
-        elif guild_id := inter.guild_id:
+        if guild_id := inter.guild_id:
             if self.client.db.get(f"guilds.{guild_id}.blacklisted", default=False):
                 raise GuildIsBlacklisted(f"This guild is blacklisted from using the bot.")
 

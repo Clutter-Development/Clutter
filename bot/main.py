@@ -272,8 +272,7 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
             await bot.log_spammer(ctx)
             raise UserHasBeenBlacklisted("You have been blacklisted from using this bot for exessive command spam.")
         raise GlobalCooldownReached(retry_after, "Global command cooldown has been reached")
-    else:
-        bot.spam_counter.pop(author_id, None)
+    bot.spam_counter.pop(author_id, None)
     return True
 
 

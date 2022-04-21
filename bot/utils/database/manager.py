@@ -94,7 +94,7 @@ class MongoManager:
         if doc := await collection.find_one({"_id": _id}) is None:
             await collection.insert_one({"_id": _id, **assemble_dict(ppath, [value])})
             return True
-        elif allow_dupes or value not in find_in_dict(doc, ppath, default=[]):  # type: ignore
+        if allow_dupes or value not in find_in_dict(doc, ppath, default=[]):  # type: ignore
             await collection.update_one({"_id": _id}, {"$push": {".".join(ppath): value}})
             return True
         return False
