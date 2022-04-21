@@ -1,5 +1,4 @@
 import asyncio
-import collections
 import math
 import os
 import pathlib
@@ -7,6 +6,7 @@ import sys
 import time
 import traceback
 from typing import List, Optional, Type, Union
+import collections
 
 import aiohttp
 import discord
@@ -16,15 +16,7 @@ from core.slash_tree import ClutterCommandTree
 from discord.ext import commands
 from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
-from utils import (
-    CachedMongoManager,
-    CommandChecks,
-    EmbedBuilder,
-    GlobalCooldownReached,
-    UserHasBeenBlacklisted,
-    color,
-    listify,
-)
+from utils import CachedMongoManager, CommandChecks, EmbedBuilder, color, listify, UserHasBeenBlacklisted, GlobalCooldownReached, InDevelopmentMode, UserIsBlacklisted, GuildIsBlacklisted
 
 os.system("cls" if sys.platform == "win32" else "clear")
 
@@ -74,9 +66,7 @@ class Clutter(commands.AutoShardedBot):
         self.invite_url = self.config["BOT"]["INVITE_URL"]
         self.default_prefix = self.config["BOT"]["DEFAULT_PREFIX"]
         self.default_language = self.config["BOT"]["DEFAULT_LANGUAGE"]
-        self.development_servers = [
-            discord.Object(id=guild_id) for guild_id in self.config["BOT"]["DEVELOPMENT_SERVER_IDS"]
-        ]
+        self.development_servers = [discord.Object(id=guild_id) for guild_id in self.config["BOT"]["DEVELOPMENT_SERVER_IDS"]]
         self.in_development = self.config["BOT"]["DEVELOPMENT_MODE"]
 
         # Auto spam control for commands
@@ -117,11 +107,32 @@ class Clutter(commands.AutoShardedBot):
         await self.load_extensions()
         print(self.startup_log)
 
+    async def on_ready(self) -> None:
+        self.uptime = math.floor(time.time())
+        discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
+        bot_info = listify(
+            "Bot Info",
+            f"{color.bold('User:')} {self.user}"
+            f"\n{color.bold('ID:')} {self.user.id}"  # type: ignore
+            f"\n{color.bold('Total Guilds:')} {len(self.guilds)}"
+            f"\n{color.bold('Total Users:')} {len(self.users)}"
+            f"\n{color.bold('Total Shards: ')} {self.shard_count}",
+        )
+        print(
+            "\n\n".join(
+                [color.cyan(discord_info), color.magenta(bot_info), color.yellow(f"Running on Clutter v{self.version}")]
+            )
+        )
+
     async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
         if guild := message.guild:
             prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
+
+    def add_command(self, command: commands.Command, /) -> None:
+        command.cooldown_after_parsing = True
+        super().add_command(command)
 
     async def load_extensions(self) -> None:
         loaded = []
@@ -152,23 +163,6 @@ class Clutter(commands.AutoShardedBot):
 
             asyncio.run(stop())
 
-    async def on_ready(self) -> None:
-        self.uptime = math.floor(time.time())
-        discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
-        bot_info = listify(
-            "Bot Info",
-            f"{color.bold('User:')} {self.user}"
-            f"\n{color.bold('ID:')} {self.user.id}"  # type: ignore
-            f"\n{color.bold('Total Guilds:')} {len(self.guilds)}"
-            f"\n{color.bold('Total Users:')} {len(self.users)}"
-            f"\n{color.bold('Total Shards: ')} {self.shard_count}",
-        )
-        print(
-            "\n\n".join(
-                [color.cyan(discord_info), color.magenta(bot_info), color.yellow(f"Running on Clutter v{self.version}")]
-            )
-        )
-
     async def blacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
         user_id = user if isinstance(user, int) else user.id
         if await self.db.get(f"users.{user_id}.blacklisted", default=False):
@@ -183,66 +177,20 @@ class Clutter(commands.AutoShardedBot):
         await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
 
-    def add_command(self, command: commands.Command, /) -> None:
-        command.cooldown_after_parsing = True
-        super().add_command(command)
-
     async def log_spammer(self, ctx: commands.Context, /) -> None:
         embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")
-        embed.add_field(
-            name="User Info", value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}"
-        )
+        embed.add_field(name="User Info", value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}")
         if guild := ctx.guild:
-            embed.add_field(name="Guild Info", value=f"**Name:** {guild.name}\n**ID:** {guild.id}")
-            embed.add_field(
-                name="Channel Info",
-                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",
-            )
+            embed.add_field(name="Guild Info", value=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump to Guild](https://discord.com/channels/{guild.id})")
+            embed.add_field(name="Channel Info", value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})")
         await self.log_webhook.send(embed=embed)
 
-    async def process_commands(
-        self, message: discord.Message, /
-    ) -> None:  # idk why im doing this here instead of a global check
+    async def process_commands(self, message: discord.Message, /) -> None:
         if message.author.bot:
             return
-
         ctx = await self.get_context(message)
-
         if ctx.command is None:
             return
-
-        if self.db.get(f"users.{ctx.author.id}.blacklisted", default=False):
-            return
-
-        if guild := ctx.guild:
-            if self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
-                return
-
-        bucket = self.spam_control.get_bucket(message)
-        ts = message.created_at.timestamp()
-        retry_after = bucket.update_rate_limit(ts)
-        author_id = message.author.id
-        if retry_after and not self.is_owner(ctx.author):
-            self.spam_counter[author_id] += 1
-            if self.spam_counter[author_id] >= 3:
-                await self.blacklist_user(author_id)
-                del self.spam_counter[author_id]
-                await self.log_spammer(ctx)
-                return self.dispatch(
-                    "command_error",
-                    ctx,
-                    UserHasBeenBlacklisted("You have been blacklisted for frequently spamming commands."),
-                )
-            return self.dispatch(
-                "command_error",
-                ctx,
-                GlobalCooldownReached(
-                    retry_after, f"You have been ratelimited for spamming commands. Retry in {retry_after} seconds."
-                ),
-            )
-        else:
-            self.spam_counter.pop(author_id, None)
-
         await self.invoke(ctx)
 
     async def get_context(
@@ -265,6 +213,50 @@ class Clutter(commands.AutoShardedBot):
         return members[0]
 
 
+bot = Clutter()
+
+# -- Base Checks -- #
+
+
+@bot.check
+async def maintenance_check(ctx: ClutterContext, /) -> bool:
+    if bot.in_development and not bot.is_owner(ctx.author):
+        raise InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
+    return True
+
+
+@bot.check
+async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
+    if bot.db.get(f"users.{ctx.author.id}.blacklisted", default=False):
+        raise UserIsBlacklisted("You are blacklisted from using this bot.")
+    return True
+
+
+@bot.check
+async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
+    if bot.db.get(f"guilds.{ctx.guild.id}.blacklisted", default=False):
+        raise GuildIsBlacklisted("This guild is blacklisted from using this bot.")
+    return True
+
+
+@bot.check
+async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
+    bucket = bot.spam_control.get_bucket(ctx.message)
+    ts = ctx.message.created_at.timestamp()
+    retry_after = bucket.update_rate_limit(ts)
+    author_id = ctx.message.author.id
+    if retry_after and not bot.is_owner(ctx.author):
+        bot.spam_counter[author_id] += 1
+        if bot.spam_counter[author_id] >= 3:
+            await bot.blacklist_user(author_id)
+            del bot.spam_counter[author_id]
+            await bot.log_spammer(ctx)
+            raise UserHasBeenBlacklisted("You have been blacklisted from using this bot for exessive command spam.")
+        raise GlobalCooldownReached(retry_after, "Global command cooldown has been reached")
+    else:
+        bot.spam_counter.pop(author_id, None)
+    return True
+
+
 if __name__ == "__main__":
-    bot = Clutter()
     bot.run()

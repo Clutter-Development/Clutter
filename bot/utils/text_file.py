@@ -1,4 +1,4 @@
-from io import StringIO
+from io import BytesIO
 from typing import Optional
 
 import discord
@@ -17,4 +17,4 @@ def text_file(text: str, file_name: str, /, *, spoiler: Optional[bool] = False) 
     Returns:
         discord.File: The discord.File object.
     """
-    return discord.File(StringIO(text), file_name, spoiler=spoiler)  # type: ignore
+    return discord.File(BytesIO(bytes(text)), file_name, spoiler=spoiler)

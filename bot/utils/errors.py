@@ -46,3 +46,7 @@ class GlobalCooldownReached(ClutterError, app.AppCommandError):
 
     def __init__(self, retry_after: float, message: str, /):
         self.retry_after = retry_after
+        self.message = message
+
+    def __str__(self):
+        return self.message
