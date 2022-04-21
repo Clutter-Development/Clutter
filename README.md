@@ -2,7 +2,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/clutter-development/clutter/badge)](https://www.codefactor.io/repository/github/clutter-development/clutter)
 ![Total Lines](https://img.shields.io/tokei/lines/github/Clutter-Development/Clutter)
-[![License](https://img.shields.io/badge/license-ccc0-success)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL_3.0-success)](LICENSE)
 [![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
 
 Clutter is a multipurpose, compact, extremely configurable Discord bot.
