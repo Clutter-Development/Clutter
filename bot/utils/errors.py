@@ -14,31 +14,21 @@ __all__ = (
 class ClutterError(discord.DiscordException):
     """Base class for all Clutter errors."""
 
-    pass
-
 
 class InDevelopmentMode(ClutterError, app.AppCommandError):
     """Raised when a user is not a bot admin and bot is in development mode when using an app command."""
-
-    pass
 
 
 class UserIsBlacklisted(ClutterError, app.AppCommandError):
     """Raised when a user is blacklisted when using an app command."""
 
-    pass
-
 
 class GuildIsBlacklisted(ClutterError, app.AppCommandError):
     """Raised when a guild is blacklisted when using an app command."""
 
-    pass
-
 
 class UserHasBeenBlacklisted(ClutterError, app.AppCommandError):
     """Raised when a user is blacklisted when using an app command."""
-
-    pass
 
 
 class GlobalCooldownReached(ClutterError, app.AppCommandError):
