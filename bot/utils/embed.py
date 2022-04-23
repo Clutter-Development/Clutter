@@ -27,7 +27,7 @@ class EmbedBuilder:
 
     def __call__(
         self, asset_type: str, title: Optional[str] = None, description: Optional[str] = None, /
-    ) -> Union[Embed, Callable[[str, Optional[str]], Embed]]:
+    ) -> Union[Embed, Callable[[Optional[str], Optional[str]], Embed]]:
         def embed(title_: Optional[str] = None, description_: Optional[str] = None) -> Embed:
             color = self._style["COLORS"][asset_type.upper()]
             emoji = self._style["EMOJIS"][asset_type.upper()]
