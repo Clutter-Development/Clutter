@@ -38,11 +38,7 @@ class EmbedBuilder:
         ...
 
     def __call__(
-            self,
-            asset_type: str,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            /
+        self, asset_type: str, title: Optional[str] = None, description: Optional[str] = None, /
     ) -> Union[Callable[[Optional[str], Optional[str]], Embed], Embed]:
         def embed(title_: Optional[str] = None, description_: Optional[str] = None) -> Embed:
             color = self._style["COLORS"][asset_type.upper()]
