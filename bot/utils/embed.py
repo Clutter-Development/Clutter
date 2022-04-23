@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional, Union
+from typing import TYPE_CHECKING, Callable, Optional, Union, overload
 
 from discord import Embed
 
@@ -25,9 +25,21 @@ class EmbedBuilder:
         """
         return self.__call__(item)
 
+    @overload
+    def __call__(self, item: str, /) -> Callable[[Optional[str]], Embed]:
+        ...
+
+    @overload
+    def __call__(self, item: str, title: Optional[str], description: Optional[str], /) -> Embed:
+        ...
+
     def __call__(
-        self, asset_type: str, title: Optional[str] = None, description: Optional[str] = None, /
-    ) -> Union[Embed, Callable[[Optional[str], Optional[str]], Embed]]:
+            self,
+            asset_type: str,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            /
+    ) -> Union[Callable[[str, Optional[str]], Embed], Embed]:
         def embed(title_: Optional[str] = None, description_: Optional[str] = None) -> Embed:
             color = self._style["COLORS"][asset_type.upper()]
             emoji = self._style["EMOJIS"][asset_type.upper()]
