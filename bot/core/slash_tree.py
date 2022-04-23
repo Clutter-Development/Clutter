@@ -16,7 +16,7 @@ class ClutterCommandTree(app.CommandTree):
         super().__init__(bot)
         self.checks = []
 
-    def interaction_check(self, inter: discord.Interaction, /) -> bool:
+    async def interaction_check(self, inter: discord.Interaction, /) -> bool:
         for check in self.checks:
             try:
                 val = await check(inter)

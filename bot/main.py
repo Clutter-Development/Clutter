@@ -287,21 +287,21 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
 
 
 @bot.tree.check
-async def maintenance_check(inter: discord.Interaction, /) -> bool:
+async def app_maintenance_check(inter: discord.Interaction, /) -> bool:
     if bot.in_development and not bot.is_owner(inter.user):
         raise errors.InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
     return True
 
 
 @bot.tree.check
-async def user_blacklist_check(inter: discord.Interaction, /) -> bool:
+async def app_user_blacklist_check(inter: discord.Interaction, /) -> bool:
     if bot.db.get(f"users.{inter.user.id}.blacklisted", default=False):
         raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
     return True
 
 
 @bot.tree.check
-async def guild_blacklist_check(inter: discord.Interaction, /) -> bool:
+async def app_guild_blacklist_check(inter: discord.Interaction, /) -> bool:
     if guild_id := inter.guild_id:
         if bot.db.get(f"guilds.{guild_id}.blacklisted", default=False):
             raise errors.GuildIsBlacklisted("This guild is blacklisted from using this bot.")
@@ -309,7 +309,7 @@ async def guild_blacklist_check(inter: discord.Interaction, /) -> bool:
 
 
 @bot.tree.check
-async def global_cooldown_check(inter: discord.Interaction, /) -> bool:
+async def app_global_cooldown_check(inter: discord.Interaction, /) -> bool:
     return True  # TODO: implement global cooldown for application commands
 
 
