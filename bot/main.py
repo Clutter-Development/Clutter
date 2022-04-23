@@ -19,8 +19,8 @@ from utils import (
     CachedMongoManager,
     CommandChecks,
     EmbedBuilder,
-    errors,
     color,
+    errors,
     listify,
 )
 
@@ -275,10 +275,13 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
             await bot.blacklist_user(author_id)
             del bot.spam_counter[author_id]
             await bot.log_spammer(ctx)
-            raise errors.UserHasBeenBlacklisted("You have been blacklisted from using this bot for exessive command spam.")
+            raise errors.UserHasBeenBlacklisted(
+                "You have been blacklisted from using this bot for exessive command spam."
+            )
         raise errors.GlobalCooldownReached(retry_after, "Global command cooldown has been reached")
     bot.spam_counter.pop(author_id, None)
     return True
+
 
 # -- Base Checks For Application Commands -- #
 

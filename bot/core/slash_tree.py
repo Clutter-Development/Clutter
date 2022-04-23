@@ -1,7 +1,9 @@
 from __future__ import annotations
+
+from typing import TYPE_CHECKING, TypeVar
+
 import discord
 from discord import app_commands as app
-from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
     from main import Clutter
