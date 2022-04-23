@@ -1,6 +1,6 @@
 <div align="center">
     <p style="margin-bottom: 0 !important;">
-        <img alt="Clutter Logo" src="logo.png" width=200>
+        <img alt="Clutter Logo" src="https://github.com/Clutter-Development/clutter-development.github.io/blob/master/assets/logo.png" width=200>
     </p>
     <h1 style="font-size: 3em">Clutter</h1>
 
