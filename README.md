@@ -1,6 +1,6 @@
 <div align="center">
     <p style="margin-bottom: 0 !important;">
-        <img alt="Clutter Logo" src="https://media.discordapp.net/attachments/945900675391455252/967450119324725278/clutter_logo.png" width=200>
+        <img alt="Clutter Logo" src="logo.png" width=200>
     </p>
     <h1 style="font-size: 3em">Clutter</h1>
 
