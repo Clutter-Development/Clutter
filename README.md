@@ -1,4 +1,4 @@
-<div align="centre">
+<div align="center">
     <p>
         <img src="https://media.discordapp.net/attachments/945900675391455252/967450119324725278/clutter_logo.png" width=200>
     </p>
