@@ -17,14 +17,14 @@ class ClutterCommandTree(app.CommandTree):
     def interaction_check(self, inter: discord.Interaction, /) -> bool:
         for check in self.checks:
             try:
-                val = check(inter)
-            except app.AppCommandError:
+                val = await check(inter)
+            except app.AppCommandError as e:
+                await self.on_error(inter, e)
                 return False
-            if not val:
+            if val is False:
                 return False
         return True
 
     def check(self, func: T) -> T:
         self.checks.append(func)
         return func
-

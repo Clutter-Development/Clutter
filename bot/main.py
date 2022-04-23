@@ -26,6 +26,8 @@ from utils import (
 
 
 class Clutter(commands.AutoShardedBot):
+    tree: ClutterCommandTree  # stopping typecheckers from complaining
+
     def __init__(self):
         self.session = aiohttp.ClientSession()
 
@@ -109,6 +111,8 @@ class Clutter(commands.AutoShardedBot):
             owner_ids=self.admin_ids,
         )
 
+    # -- Library-Used Attributes -- #
+
     async def startup_hook(self) -> None:
         await self.load_extensions()
         print(self.startup_log)
@@ -136,9 +140,7 @@ class Clutter(commands.AutoShardedBot):
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
-    def add_command(self, command: commands.Command, /) -> None:
-        command.cooldown_after_parsing = True
-        super().add_command(command)
+    # -- Custom Attributes -- #
 
     async def load_extensions(self) -> None:
         loaded = []
@@ -158,16 +160,6 @@ class Clutter(commands.AutoShardedBot):
         for name, error in failed.items():
             log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
         self.startup_log = "\n".join(log)
-
-    def run(self) -> None:
-        try:
-            super().run(self.token, reconnect=True)
-        finally:
-
-            async def stop():
-                await self.session.close()
-
-            asyncio.run(stop())
 
     async def blacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
         user_id = user if isinstance(user, int) else user.id
@@ -199,19 +191,6 @@ class Clutter(commands.AutoShardedBot):
             )
         await self.log_webhook.send(embed=embed)
 
-    async def process_commands(self, message: discord.Message, /) -> None:
-        if message.author.bot:
-            return
-        ctx = await self.get_context(message)
-        if ctx.command is None:
-            return
-        await self.invoke(ctx)
-
-    async def get_context(
-        self, message: Union[discord.Message, discord.Interaction], /, *, cls: Optional[Type[ContextT]] = ClutterContext
-    ) -> Union[ClutterContext, ContextT]:
-        return await super().get_context(message, cls=cls)  # type: ignore
-
     async def getch_member(self, guild: discord.Guild, user_id: int, /) -> Optional[discord.Member]:
         if member := guild.get_member(user_id) is not None:
             return member  # type: ignore
@@ -226,10 +205,40 @@ class Clutter(commands.AutoShardedBot):
             return None
         return members[0]
 
+    # -- Overrides -- #
+
+    def run(self) -> None:
+        try:
+            super().run(self.token, reconnect=True)
+        finally:
+
+            async def stop():
+                await self.session.close()
+
+            asyncio.run(stop())
+
+    def add_command(self, command: commands.Command, /) -> None:
+        command.cooldown_after_parsing = True
+        super().add_command(command)
+
+    async def process_commands(self, message: discord.Message, /) -> None:
+        if message.author.bot:
+            return
+        ctx = await self.get_context(message)
+        if ctx.command is None:
+            return
+        if cog := ctx.command.cog:
+            if cog.qualified_name != "Jishaku":
+                await ctx.trigger_typing()
+        await self.invoke(ctx)
+
+    async def get_context(self, message: discord.Message, /, cls: Type = None) -> ClutterContext:
+        return await super().get_context(message, cls=ClutterContext)
+
 
 bot = Clutter()
 
-# -- Base Checks -- #
+# -- Base Checks For Traditional Commands-- #
 
 
 @bot.check
@@ -270,6 +279,35 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
         raise errors.GlobalCooldownReached(retry_after, "Global command cooldown has been reached")
     bot.spam_counter.pop(author_id, None)
     return True
+
+# -- Base Checks For Application Commands -- #
+
+
+@bot.tree.check
+async def maintenance_check(inter: discord.Interaction, /) -> bool:
+    if bot.in_development and not bot.is_owner(inter.user):
+        raise errors.InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
+    return True
+
+
+@bot.tree.check
+async def user_blacklist_check(inter: discord.Interaction, /) -> bool:
+    if bot.db.get(f"users.{inter.user.id}.blacklisted", default=False):
+        raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
+    return True
+
+
+@bot.tree.check
+async def guild_blacklist_check(inter: discord.Interaction, /) -> bool:
+    if guild_id := inter.guild_id:
+        if bot.db.get(f"guilds.{guild_id}.blacklisted", default=False):
+            raise errors.GuildIsBlacklisted("This guild is blacklisted from using this bot.")
+    return True
+
+
+@bot.tree.check
+async def global_cooldown_check(inter: discord.Interaction, /) -> bool:
+    return True  # TODO: implement global cooldown for application commands
 
 
 if __name__ == "__main__":
