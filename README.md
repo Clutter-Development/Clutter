@@ -9,6 +9,7 @@
 [![License](https://img.shields.io/badge/license-GPL_3.0-success)](LICENSE)
 [![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
 </div>
+
 Clutter is a multipurpose, compact, extremely configurable Discord bot.
 
 This application was designed to work on Linux and has been tested in the following distros:
