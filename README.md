@@ -1,10 +1,13 @@
-# Clutter
-
-[![CodeFactor](https://www.codefactor.io/repository/github/clutter-development/clutter/badge)](https://www.codefactor.io/repository/github/clutter-development/clutter)
-![Total Lines](https://img.shields.io/tokei/lines/github/Clutter-Development/Clutter)
-[![License](https://img.shields.io/badge/license-GPL_3.0-success)](LICENSE)
-[![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
-
+<div align="centre">
+    <p>
+        <img src="https://media.discordapp.net/attachments/945900675391455252/967450119324725278/clutter_logo.png" width=200>
+    </p>
+    <h1>Clutter</h1>
+    [![CodeFactor](https://www.codefactor.io/repository/github/clutter-development/clutter/badge)](https://www.codefactor.io/repository/github/clutter-development/clutter)
+    ![Total Lines](https://img.shields.io/tokei/lines/github/Clutter-Development/Clutter)
+    [![License](https://img.shields.io/badge/license-GPL_3.0-success)](LICENSE)
+    [![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
+</div>
 Clutter is a multipurpose, compact, extremely configurable Discord bot.
 
 This application was designed to work on Linux and has been tested in the following distros:
