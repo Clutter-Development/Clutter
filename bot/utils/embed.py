@@ -26,7 +26,7 @@ class EmbedBuilder:
         return self.__call__(item)
 
     @overload
-    def __call__(self, item: str, /) -> Callable[[Optional[str]], Embed]:
+    def __call__(self, item: str, /) -> Callable[[Optional[str], Optional[str]], Embed]:
         ...
 
     @overload
@@ -39,7 +39,7 @@ class EmbedBuilder:
             title: Optional[str] = None,
             description: Optional[str] = None,
             /
-    ) -> Union[Callable[[str, Optional[str]], Embed], Embed]:
+    ) -> Union[Callable[[Optional[str], Optional[str]], Embed], Embed]:
         def embed(title_: Optional[str] = None, description_: Optional[str] = None) -> Embed:
             color = self._style["COLORS"][asset_type.upper()]
             emoji = self._style["EMOJIS"][asset_type.upper()]
