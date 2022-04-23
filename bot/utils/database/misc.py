@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional, TypeVar, Union
 
 __all__ = ("assemble_dict", "find_in_dict", "maybe_int")
 
+T = TypeVar("T")
 NestedDict = Dict[str, Union["NestedDict", Any]]
 
 
@@ -47,9 +48,6 @@ def find_in_dict(get_from: dict, path: List[str], /, *, default: Optional[Any] =
         except (KeyError, TypeError, AttributeError):
             return None
     return get_from.get(key, default)
-
-
-T = TypeVar("T")
 
 
 def maybe_int(value: T, /) -> Union[int, T]:

@@ -24,9 +24,10 @@ class MongoManager:
             path (str): The path to parse.
 
         Returns:
-            0: The left path as a list. Might be empty.
-            1: The MongoDB collection.
-            2: The _id of the document. Can be a string or an integer.
+            Tuple:
+                0: The left path as a list. Might be empty.
+                1: The MongoDB collection.
+                2: The _id of the document. Can be a string or an integer.
 
         Raises:
             ValueError: If the path is too short
@@ -129,15 +130,15 @@ class MongoManager:
         Raises:
             ValueError: If the path is too short.
         """
-        path = [_ for _ in path.split(".") if _ != ""]  # type: ignore
-        if not path:
+        ppath = [_ for _ in path.split(".") if _ != ""]
+        if not ppath:
             raise ValueError("Path not given. Cannot delete entire database.")
-        collection = self._db[path.pop(0)]  # type: ignore
-        if not path:
+        collection = self._db[ppath.pop(0)]
+        if not ppath:
             await collection.drop()
             return
-        _id = maybe_int(path.pop(0))  # type: ignore
-        if not path:
+        _id = maybe_int(ppath.pop(0))
+        if not ppath:
             await collection.delete_one({"_id": _id})
         else:
-            await collection.update_one({"_id": _id}, {"$unset": {".".join(path): ""}})
+            await collection.update_one({"_id": _id}, {"$unset": {".".join(ppath): ""}})

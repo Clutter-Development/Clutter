@@ -19,11 +19,7 @@ from utils import (
     CachedMongoManager,
     CommandChecks,
     EmbedBuilder,
-    GlobalCooldownReached,
-    GuildIsBlacklisted,
-    InDevelopmentMode,
-    UserHasBeenBlacklisted,
-    UserIsBlacklisted,
+    errors,
     color,
     listify,
 )
@@ -239,14 +235,14 @@ bot = Clutter()
 @bot.check
 async def maintenance_check(ctx: ClutterContext, /) -> bool:
     if bot.in_development and not bot.is_owner(ctx.author):
-        raise InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
+        raise errors.InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
     return True
 
 
 @bot.check
 async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
     if bot.db.get(f"users.{ctx.author.id}.blacklisted", default=False):
-        raise UserIsBlacklisted("You are blacklisted from using this bot.")
+        raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
     return True
 
 
@@ -254,7 +250,7 @@ async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
 async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
     if guild := ctx.guild:
         if bot.db.get(f"guilds.{guild.id}.blacklisted", default=False):
-            raise GuildIsBlacklisted("This guild is blacklisted from using this bot.")
+            raise errors.GuildIsBlacklisted("This guild is blacklisted from using this bot.")
     return True
 
 
@@ -270,8 +266,8 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
             await bot.blacklist_user(author_id)
             del bot.spam_counter[author_id]
             await bot.log_spammer(ctx)
-            raise UserHasBeenBlacklisted("You have been blacklisted from using this bot for exessive command spam.")
-        raise GlobalCooldownReached(retry_after, "Global command cooldown has been reached")
+            raise errors.UserHasBeenBlacklisted("You have been blacklisted from using this bot for exessive command spam.")
+        raise errors.GlobalCooldownReached(retry_after, "Global command cooldown has been reached")
     bot.spam_counter.pop(author_id, None)
     return True
 

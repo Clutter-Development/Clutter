@@ -1,20 +1,30 @@
+from __future__ import annotations
 import discord
 from discord import app_commands as app
-from utils import GuildIsBlacklisted, InDevelopmentMode, UserIsBlacklisted
+from typing import TYPE_CHECKING, TypeVar
+
+if TYPE_CHECKING:
+    from main import Clutter
+
+T = TypeVar("T")
 
 
 class ClutterCommandTree(app.CommandTree):
+    def __init__(self, bot: Clutter, /):
+        super().__init__(bot)
+        self.checks = []
+
     def interaction_check(self, inter: discord.Interaction, /) -> bool:
-        user_id = inter.user.id
-
-        if self.client.in_development and not self.client.is_owner(inter.user):
-            raise InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
-
-        if self.client.db.get(f"users.{user_id}.blacklisted", default=False):
-            raise UserIsBlacklisted(f"You are blacklisted from using the bot.")
-
-        if guild_id := inter.guild_id:
-            if self.client.db.get(f"guilds.{guild_id}.blacklisted", default=False):
-                raise GuildIsBlacklisted(f"This guild is blacklisted from using the bot.")
-
+        for check in self.checks:
+            try:
+                val = check(inter)
+            except app.AppCommandError:
+                return False
+            if not val:
+                return False
         return True
+
+    def check(self, func: T) -> T:
+        self.checks.append(func)
+        return func
+
