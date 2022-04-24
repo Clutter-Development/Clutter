@@ -117,6 +117,14 @@ class Clutter(commands.AutoShardedBot):
         await self.load_extensions()
         print(self.startup_log)
 
+    async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
+        if guild := message.guild:
+            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
+            return commands.when_mentioned_or(prefix)(bot_, message)
+        return commands.when_mentioned_or(self.default_prefix)(bot_, message)
+
+    # -- Events -- #
+
     async def on_ready(self) -> None:
         self.uptime = math.floor(time.time())
         discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
@@ -133,12 +141,13 @@ class Clutter(commands.AutoShardedBot):
                 [color.cyan(discord_info), color.magenta(bot_info), color.yellow(f"Running on Clutter v{self.version}")]
             )
         )
+        for guild in self.guilds:
+            if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
+                await guild.leave()
 
-    async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
-        if guild := message.guild:
-            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
-            return commands.when_mentioned_or(prefix)(bot_, message)
-        return commands.when_mentioned_or(self.default_prefix)(bot_, message)
+    async def on_guild_join(self, guild: discord.Guild) -> None:
+        if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
+            await guild.leave()
 
     # -- Custom Attributes -- #
 
