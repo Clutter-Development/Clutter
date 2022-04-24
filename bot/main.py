@@ -12,7 +12,7 @@ import discord
 import json5
 from core.context import ClutterContext
 from core.slash_tree import ClutterCommandTree
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
 from utils import (
@@ -141,13 +141,18 @@ class Clutter(commands.AutoShardedBot):
                 [color.cyan(discord_info), color.magenta(bot_info), color.yellow(f"Running on Clutter v{self.version}")]
             )
         )
-        for guild in self.guilds:
-            if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
-                await guild.leave()
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
         if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
             await guild.leave()
+            
+    # -- Tasks -- #
+
+    @tasks.loop(hours=12)
+    async def leave_blacklisted_guilds(self) -> None:
+        for guild in self.guilds:
+            if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
+                await guild.leave()
 
     # -- Custom Attributes -- #
 
