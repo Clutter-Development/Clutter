@@ -14,7 +14,7 @@ class EmbedBuilder:
     def __init__(self, bot: Clutter, /) -> None:
         self._style = bot.config["STYLE"]
 
-    def __getattr__(self, item: str, /) -> Callable[[str, Optional[str]], Embed]:
+    def __getattr__(self, item: str, /) -> Callable[[Optional[str], Optional[str]], Embed]:
         """Returns an embed with the given asset type.
 
         Args:
@@ -30,7 +30,7 @@ class EmbedBuilder:
         ...
 
     @overload
-    def __call__(self, item: str, title: str, /, description: Optional[str] = None) -> Embed:
+    def __call__(self, item: str, title: Optional[str] = None, /, description: Optional[str] = None) -> Embed:
         ...
 
     def __call__(
