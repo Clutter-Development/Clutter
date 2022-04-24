@@ -145,7 +145,7 @@ class Clutter(commands.AutoShardedBot):
     async def on_guild_join(self, guild: discord.Guild) -> None:
         if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
             await guild.leave()
-            
+
     # -- Tasks -- #
 
     @tasks.loop(hours=12)
