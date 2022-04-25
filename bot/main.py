@@ -17,7 +17,6 @@ from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
 from utils import (
     CachedMongoManager,
-    CommandChecks,
     EmbedBuilder,
     color,
     errors,
@@ -59,9 +58,6 @@ class Clutter(commands.AutoShardedBot):
 
         # initialize EmbedBuilder
         self.embed = EmbedBuilder(self)
-
-        # initialize CommandChecks
-        self.checks = CommandChecks(self)
 
         # get miscellaneous info
         self.admin_ids = set(self.config["BOT"]["ADMIN_IDS"])
