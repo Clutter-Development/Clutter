@@ -70,12 +70,13 @@ class CachedMongoManager(MongoManager):
         for _ in path:
             self.refresh(_)
 
-    async def get(self, path: str, /, *, default: Optional[Any] = None) -> Any:
+    async def get(self, path: str, /, *, default: Optional[Any] = None, cache_forever: bool = True) -> Any:
         """Fetches the variable from the database.
 
         Args:
             path (str): The path to the variable. Must be at least 2 elements long: Collection and _id.
             default (Any): The default value to return if the variable is not found.
+            cache_forever (bool): Whether to cache the variable forever/until it is removed.
 
         Returns:
             Optional[Any]: The value of the variable.
@@ -84,7 +85,8 @@ class CachedMongoManager(MongoManager):
             self._use(path)
         else:
             self._cache[path] = [await super().get(path), self._current_time()]
-        asyncio.create_task(self._remove_after_cooldown(path))
+        if not cache_forever:
+            asyncio.create_task(self._remove_after_cooldown(path))
         if self._cache.get(path, [None])[0] is None:
             return default
         return self._cache[path][0]
