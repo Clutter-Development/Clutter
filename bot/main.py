@@ -115,7 +115,7 @@ class Clutter(commands.AutoShardedBot):
 
     async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
         if guild := message.guild:
-            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
+            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix, cache_forever=True)
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
@@ -139,7 +139,7 @@ class Clutter(commands.AutoShardedBot):
         )
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
-        if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
+        if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
             await guild.leave()
 
     # -- Tasks -- #
@@ -147,7 +147,7 @@ class Clutter(commands.AutoShardedBot):
     @tasks.loop(hours=12)
     async def leave_blacklisted_guilds(self) -> None:
         for guild in self.guilds:
-            if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
+            if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
                 await guild.leave()
 
     # -- Custom Attributes -- #
@@ -173,14 +173,14 @@ class Clutter(commands.AutoShardedBot):
 
     async def blacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
         user_id = user if isinstance(user, int) else user.id
-        if await self.db.get(f"users.{user_id}.blacklisted", default=False):
+        if await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
             return False
         await self.db.set(f"users.{user_id}.blacklisted", True)
         return True
 
     async def unblacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
         user_id = user if isinstance(user, int) else user.id
-        if not await self.db.get(f"users.{user_id}.blacklisted", default=False):
+        if not await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
             return False
         await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
@@ -260,7 +260,7 @@ async def maintenance_check(ctx: ClutterContext, /) -> bool:
 
 @bot.check
 async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
-    if bot.db.get(f"users.{ctx.author.id}.blacklisted", default=False):
+    if bot.db.get(f"users.{ctx.author.id}.blacklisted", default=False, cache_forever=True):
         raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
     return True
 
@@ -268,7 +268,7 @@ async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
 @bot.check
 async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
     if guild := ctx.guild:
-        if bot.db.get(f"guilds.{guild.id}.blacklisted", default=False):
+        if bot.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
             raise errors.GuildIsBlacklisted("This guild is blacklisted from using this bot.")
     return True
 
@@ -305,7 +305,7 @@ async def app_maintenance_check(inter: discord.Interaction, /) -> bool:
 
 @bot.tree.check
 async def app_user_blacklist_check(inter: discord.Interaction, /) -> bool:
-    if bot.db.get(f"users.{inter.user.id}.blacklisted", default=False):
+    if bot.db.get(f"users.{inter.user.id}.blacklisted", default=False, cache_forever=True):
         raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
     return True
 
@@ -313,7 +313,7 @@ async def app_user_blacklist_check(inter: discord.Interaction, /) -> bool:
 @bot.tree.check
 async def app_guild_blacklist_check(inter: discord.Interaction, /) -> bool:
     if guild_id := inter.guild_id:
-        if bot.db.get(f"guilds.{guild_id}.blacklisted", default=False):
+        if bot.db.get(f"guilds.{guild_id}.blacklisted", default=False, cache_forever=True):
             raise errors.GuildIsBlacklisted("This guild is blacklisted from using this bot.")
     return True
 
