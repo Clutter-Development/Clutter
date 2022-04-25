@@ -238,7 +238,7 @@ class Clutter(commands.AutoShardedBot):
         return await super().get_context(message, cls=ClutterContext)
 
 
-with open("../config.json5") as f:
+with open("./config.json5") as f:
     bot = Clutter(json5.load(f))
 
 # -- Base Checks For Traditional Commands-- #
