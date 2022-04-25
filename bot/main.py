@@ -27,12 +27,10 @@ from utils import (
 class Clutter(commands.AutoShardedBot):
     tree: ClutterCommandTree  # stopping typecheckers from complaining
 
-    def __init__(self):
+    def __init__(self, config: dict, /):
         self.session = aiohttp.ClientSession()
 
-        # load config
-        with open("./config.json5") as f:
-            self.config = json5.load(f)
+        self.config = config
 
         # get critical info
         if self.config.get("USE_ENV", False):
@@ -246,7 +244,8 @@ class Clutter(commands.AutoShardedBot):
         return await super().get_context(message, cls=ClutterContext)
 
 
-bot = Clutter()
+with open("config.json5") as f:
+    bot = Clutter(json5.load(f))
 
 # -- Base Checks For Traditional Commands-- #
 
