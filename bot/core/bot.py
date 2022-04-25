@@ -238,7 +238,7 @@ class Clutter(commands.AutoShardedBot):
         return await super().get_context(message, cls=ClutterContext)
 
 
-with open("config.json5") as f:
+with open("../config.json5") as f:
     bot = Clutter(json5.load(f))
 
 # -- Base Checks For Traditional Commands-- #
@@ -314,7 +314,3 @@ async def app_guild_blacklist_check(inter: discord.Interaction, /) -> bool:
 @bot.tree.check
 async def app_global_cooldown_check(inter: discord.Interaction, /) -> bool:
     return True  # TODO: implement global cooldown for application commands
-
-
-if __name__ == "__main__":
-    bot.run()

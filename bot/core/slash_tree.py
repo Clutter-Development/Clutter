@@ -6,7 +6,7 @@ import discord
 from discord import app_commands as app
 
 if TYPE_CHECKING:
-    from main import Clutter
+    from core.bot import Clutter
 
 T = TypeVar("T")
 

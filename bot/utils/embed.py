@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Callable, Optional, Union, overload
 from discord import Embed
 
 if TYPE_CHECKING:
-    from ..main import Clutter
+    from core.bot import Clutter
 
 __all__ = ("EmbedBuilder",)
 
