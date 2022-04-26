@@ -160,7 +160,7 @@ class Clutter(commands.AutoShardedBot):
         failed = {}
         for fn in map(
             lambda file_path: str(file_path).replace(os.pathsep, ".")[:-3],
-            pathlib.Path("./modules").rglob(f"*.py"),
+            pathlib.Path("./modules").rglob("*.py"),
         ):
             try:
                 await self.load_extension(fn)
@@ -174,8 +174,11 @@ class Clutter(commands.AutoShardedBot):
                     listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))
                 )
             )
-        for name, error in failed.items():
-            log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
+        log.extend(
+            color.red(listify(f"Failed to load {color.bold(name)}", error))
+            for name, error in failed.items()
+        )
+
         self.startup_log = "\n".join(log)
 
     async def blacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
