@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING  # , Callable, overload
+from typing import TYPE_CHECKING, Callable, Any  # , overload
 
 from discord import Embed
 
