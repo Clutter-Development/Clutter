@@ -1,5 +1,5 @@
 motor==2.5.1
-pymongo==3.12.3
+pymongo[srv]==3.12.3
 discord.py @ git+https://github.com/Rapptz/discord.py
 json5==0.9.6
 python-dotenv==0.20.0
