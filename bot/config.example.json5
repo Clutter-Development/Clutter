@@ -30,7 +30,7 @@
     DEFAULT_LANGUAGE: 'en-US',
     // The bot development server IDs.
     DEVELOPMENT_SERVER_IDS: [944535258722861106],
-    // Development mode, if true the bot will not accept and commands unless the user is a bot admin.
+    // Development mode, if true the bot will not accept any commands unless the user is a bot admin.
     DEVELOPMENT_MODE: false,
   },
   // Basic database config.
