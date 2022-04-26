@@ -1,6 +1,6 @@
 from typing import Any, TypeVar
 
-__all__ = ("assemble_dict", "find_in_dict", "maybe_int")
+__all__ = ("assemble_dict", "find_in_dict", "maybe_int", "NestedDict")
 
 T = TypeVar("T")
 NestedDict = dict[str, Any | "NestedDict"]
@@ -10,12 +10,12 @@ def assemble_dict(path: list[str], value: Any, /) -> NestedDict:
     """Assembles a nested dictionary from the path and value.
 
     Args:
-        path (List[str]): The path to the value.
+        path (list[str]): The path to the value.
         value (Any): The value to set.
 
     Returns:
         NestedDict: The assembled dictionary.
-    """
+    """    
     to_asm, i = {}, 0
     ref = to_asm
     if not path:
@@ -35,12 +35,12 @@ def find_in_dict(get_from: dict, path: list[str], /, *, default: Any = None) -> 
 
     Args:
         get_from (dict): The dictionary to get the value from.
-        path (List[str]): The path to the value.
-        default (Any): The default value to return if the key is not found.
+        path (list[str]): The path to the value.
+        default (Any, optional): The default value to return if the key is not found. Defaults to None.
 
     Returns:
-        Optional[Any]: The value. Returns the default value if the key is not found.
-    """
+        Any: The value. Returns the default value if the key is not found.
+    """    
     key = path.pop(-1)
     for _ in path:
         try:
@@ -57,7 +57,7 @@ def maybe_int(value: T, /) -> int | T:
         value (T): The value to convert.
 
     Returns:
-        Union[int, T]: The converted? value.
+        int | T: The converted value. returns the original value if it couldn't be converter to an integer.
     """
     try:
         value = int(value)  # type: ignore

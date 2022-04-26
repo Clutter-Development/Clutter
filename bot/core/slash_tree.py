@@ -13,10 +13,15 @@ T = TypeVar("T")
 
 class ClutterCommandTree(app.CommandTree):
     def __init__(self, bot: Clutter, /):
+        """Initialize the ClutterCommandTree class.
+
+        Args:
+            bot (Clutter): The bot to use the command tree in.
+        """        
         super().__init__(bot)
         self.checks = []
 
-    async def interaction_check(self, inter: discord.Interaction, /) -> bool:
+    async def interaction_check(self, inter: discord.Interaction, /) -> bool:     
         for check in self.checks:
             try:
                 val = await check(inter)
@@ -28,5 +33,13 @@ class ClutterCommandTree(app.CommandTree):
         return True
 
     def check(self, func: T) -> T:
+        """Appends a check to the checks that get executed before every interaction
+
+        Args:
+            func (T): The check.
+
+        Returns:
+            T: The check.
+        """        
         self.checks.append(func)
         return func

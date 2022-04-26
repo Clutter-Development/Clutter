@@ -14,24 +14,28 @@ __all__ = ("MongoManager",)
 
 class MongoManager:
     def __init__(self, connect_url: str, port: int | None = None, /, *, database: str) -> None:
+        """Initialize the MongoManager class.
+
+        Args:
+            connect_url (str): The MongoDB URI to use to connect to the database
+            database (str): The database to use.
+            port (int | None, optional): The port of the MongoDB instance, used when the db is hosted locally. Defaults to None.
+        """        
         self._client = motor_asyncio.AsyncIOMotorClient(connect_url, port)
         self._db = self._client[database]
 
     def _parse_path(self, path: str, /) -> tuple[list[str], Collection, str | int]:
-        """Parses the path.
+        """Parses a path string and returns the excess, a mongo collection and a str or int.
 
         Args:
-            path (str): The path to parse.
-
-        Returns:
-            Tuple:
-                0: The left path as a list. Might be empty.
-                1: The MongoDB collection.
-                2: The _id of the document. Can be a string or an integer.
+            path (str): The path to parse
 
         Raises:
             ValueError: If the path is too short
-        """
+
+        Returns:
+            tuple[list[str], Collection, str | int]: The excess path as a list, the MongoDB collection, the _id of the document. can be a str or an int
+        """        
         ppath = [_ for _ in path.split(".") if _ != ""]
         if len(ppath) < 2:
             raise ValueError("Path must be at least 2 elements long: Collection and _id")
@@ -39,15 +43,15 @@ class MongoManager:
         _id = maybe_int(ppath.pop(0))
         return ppath, collection, _id
 
-    async def get(self, path: str, /, *, default: Any = None) -> Any:
+    async def get(self, path: str, /, *, default: Any = None) -> Any:     
         """Fetches the variable from the database.
 
         Args:
             path (str): The path to the variable. Must be at least 2 elements long: Collection and _id.
-            default (Any): The default value to return if the variable is not found.
+            default (Any, optional): The default value to return if the variable is not found.
 
         Returns:
-            Optional[Any]: The value of the variable.
+            Any: The value of the variable.
         """
         ppath, collection, _id = self._parse_path(path)
         if ppath:
@@ -83,13 +87,13 @@ class MongoManager:
         Args:
             path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
             value (Any): The value to append to the list.
-            allow_dupes (Optional[bool]): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
-
-        Returns:
-            bool: If the value was pushed.
+            allow_dupes (bool, optional): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
 
         Raises:
             ValueError: If the path is too short.
+
+        Returns:
+            bool: If the value was pushed.
         """
         ppath, collection, _id = self._parse_path(path)
         if not ppath:
@@ -111,11 +115,11 @@ class MongoManager:
             path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
             value (Any): The value to remove from the list.
 
-        Returns:
-            bool: If the value was removed.
-
         Raises:
             ValueError: If the path is too short.
+
+        Returns:
+            bool: If the value was removed.
         """
         ppath, collection, _id = self._parse_path(path)
         if not ppath:

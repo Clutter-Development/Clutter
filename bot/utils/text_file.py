@@ -11,9 +11,9 @@ def text_file(text: str, file_name: str, /, *, spoiler: bool = False) -> discord
     Args:
         text (str): The text to be converted to a discord.File object.
         file_name (str): The name of the file.
-        spoiler (Optional[bool]): Whether or not the file is a spoiler. Defaults to False.
+        spoiler (bool, optional): Whether or not the file is a spoiler. Defaults to False.
 
     Returns:
         discord.File: The discord.File object.
-    """
+    """    
     return discord.File(BytesIO(bytes(text, "utf-8")), file_name, spoiler=spoiler)

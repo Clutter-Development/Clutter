@@ -58,8 +58,8 @@ class CachedMongoManager(MongoManager):
         """Uncaches all variables that start with the given path. If match is True, only uncaches the given path.
 
         Args:
-            path (Union[str, List[str]]): The variable(s) to uncache.
-            match (bool): Whether to match the path exactly or to start with it.
+            path (str | list[str]): The variable(s) to uncache.
+            match (bool, optional): Whether to match the path exactly or to start with it. Defaults to False.
         """
         if isinstance(path, str):
             if match:
@@ -73,14 +73,14 @@ class CachedMongoManager(MongoManager):
             self.refresh(_)
 
     async def get(
-        self, path: str, /, *, default: Any = None, cache_forever: bool = True
+        self, path: str, /, *, default: Any = None, cache_forever: bool = False
     ) -> Any:
         """Fetches the variable from the database.
 
         Args:
             path (str): The path to the variable. Must be at least 2 elements long: Collection and _id.
-            default (Any): The default value to return if the variable is not found.
-            cache_forever (bool): Whether to cache the variable forever/until it is removed.
+            default (Any, optional): The default value to return if the variable is not found.
+            cache_forever (bool, optional): Wheter or not to cache the value forever. Defaults to False
 
         Returns:
             Any: The value of the variable.
@@ -96,58 +96,19 @@ class CachedMongoManager(MongoManager):
         return self._cache[path][0]
 
     async def set(self, path: str, value: Any, /) -> None:
-        """Sets the variable in the database.
-
-        Args:
-            path (str): The path to the variable. Must be at least 2 elements long: Collection and _id.
-            value (Any): The value to set the key to.
-        """
         await super().set(path, value)
         self.refresh(path)
 
     async def push(self, path: str, value: Any, /, *, allow_dupes: bool = True) -> bool:
-        """Appends the variable to a list in the database.
-
-        Args:
-            path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
-            value (Any): The value to append to the list.
-            allow_dupes (bool): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
-
-        Returns:
-            bool: If the value was pushed.
-
-        Raises:
-            ValueError: If the path is too short.
-        """
         val = await super().push(path, value, allow_dupes=allow_dupes)
         self.refresh(path)
         return val
 
     async def pull(self, path: str, value: Any, /) -> bool:
-        """Removes the variable from a list in the database.
-
-        Args:
-            path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
-            value (Any): The value to remove from the list.
-
-        Returns:
-            bool: If the value was removed.
-
-        Raises:
-            ValueError: If the path is too short.
-        """
         val = await super().pull(path, value)
         self.refresh(path)
         return val
 
     async def rem(self, path: str, /) -> None:
-        """Removes the col/doc/var from the database.
-
-        Args:
-            path (str): The path to the col/doc/var. Must be at least 1 element long.
-
-        Raises:
-            ValueError: If the path is too short.
-        """
         await super().rem(path)
         self.refresh(path)

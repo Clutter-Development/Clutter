@@ -15,14 +15,19 @@ from core.slash_tree import ClutterCommandTree
 from discord.ext import commands, tasks
 from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
-from utils import CachedMongoManager, EmbedBuilder, color, errors, listify
+from utils import CachedMongoManager, EmbedBuilder, color, errors, listify, NestedDict
 
 
 class Clutter(commands.AutoShardedBot):
-    tree: ClutterCommandTree  # stopping typecheckers from complaining
+    tree: ClutterCommandTree
     user: discord.ClientUser
 
-    def __init__(self, config: dict, /):
+    def __init__(self, config: NestedDict, /):
+        """Initialize the bot itself.
+
+        Args:
+            config (dict): The bot configuration
+        """        
         self.session = aiohttp.ClientSession()
 
         self.config = config
@@ -100,7 +105,8 @@ class Clutter(commands.AutoShardedBot):
             owner_ids=self.admin_ids,
         )
 
-    # -- Library-Used Attributes -- #
+    # ---- Library-Used Attributes  ---- #
+    # -- No Docstrings Since Lib Used -- #
 
     async def startup_hook(self) -> None:
         await self.load_extensions()
@@ -116,7 +122,8 @@ class Clutter(commands.AutoShardedBot):
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
-    # -- Events -- #
+    # -- GateWay Events -- #
+    # -- Same As Above  -- #
 
     async def on_ready(self) -> None:
         self.uptime = math.floor(time.time())
@@ -156,6 +163,7 @@ class Clutter(commands.AutoShardedBot):
     # -- Custom Attributes -- #
 
     async def load_extensions(self) -> None:
+        """Loads all the extensions in the ./modules directory and sets the self.startup_log."""        
         loaded = []
         failed = {}
         for fn in map(
@@ -182,6 +190,14 @@ class Clutter(commands.AutoShardedBot):
         self.startup_log = "\n".join(log)
 
     async def blacklist_user(self, user: discord.User | discord.Member | int, /) -> bool:
+        """Blacklists a user.
+
+        Args:
+            user (discord.User | discord.Member | int): The user (user_id) to blacklist.
+
+        Returns:
+            bool: Wheter or not the user was blacklisted.
+        """        
         user_id = user if isinstance(user, int) else user.id
         if await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
             return False
@@ -189,6 +205,14 @@ class Clutter(commands.AutoShardedBot):
         return True
 
     async def unblacklist_user(self, user: discord.User | discord.Member | int, /) -> bool:
+        """Unblacklists a user.
+
+        Args:
+            user (discord.User | discord.Member | int): The user (user_id) to unblacklist.
+
+        Returns:
+            bool: Wheter or not the user was unblacklisted.
+        """        
         user_id = user if isinstance(user, int) else user.id
         if not await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
             return False
@@ -196,6 +220,11 @@ class Clutter(commands.AutoShardedBot):
         return True
 
     async def log_spammer(self, ctx: commands.Context, /) -> None:
+        """Logs a spammer.
+
+        Args:
+            ctx (commands.Context): The context to use.
+        """        
         embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")
         embed.add_field(
             name="User Info",
@@ -213,6 +242,15 @@ class Clutter(commands.AutoShardedBot):
         await self.log_webhook.send(embed=embed)
 
     async def getch_member(self, guild: discord.Guild, user_id: int, /) -> discord.Member | None:
+        """Gets a member from the cache, if it doesnt exits it fetches it via the gateway or http.
+
+        Args:
+            guild (discord.Guild): The guild to get the member from.
+            user_id (int): The user_id that belongs to the member
+
+        Returns:
+            discord.Member | None: The member.
+        """        
         if (member := guild.get_member(user_id)) is not None:
             return member
         if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
@@ -227,8 +265,9 @@ class Clutter(commands.AutoShardedBot):
         return members[0]
 
     # -- Overrides -- #
+    # -- No DocStr -- #
 
-    def run(self) -> None:
+    def run(self) -> None:       
         try:
             super().run(self.token, reconnect=True)
         finally:
@@ -238,7 +277,7 @@ class Clutter(commands.AutoShardedBot):
 
             asyncio.run(stop())
 
-    def add_command(self, command: commands.Command, /) -> None:
+    def add_command(self, command: commands.Command, /) -> None:       
         command.cooldown_after_parsing = True
         super().add_command(command)
 

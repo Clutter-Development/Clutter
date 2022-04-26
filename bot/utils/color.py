@@ -34,22 +34,20 @@ __all__ = (
 
 
 def t(b: bytes | str, /) -> str:
-    """Ensures that the given bytes are decoded as a string.
+    """Ensures that the given bytes are decoded as a string.Ensures that the given bytes are decoded as a string.
 
     Args:
-        b (Union[bytes, Any]): The bytes to decode.
+        b (bytes | str): The bytes to decode.
 
     Returns:
         str: The encoded string.
-    """
+    """    
     return b.decode() if isinstance(b, bytes) else b
 
 
 def esc(*codes: int | str) -> str:
     """Returns the ANSI escape sequence for the given codes.
 
-    Args:
-        codes (Union[int, str]): The codes to use.
 
     Returns:
         str: The ANSI escape sequence.
@@ -67,7 +65,7 @@ def make_color(start: str, end: str, /) -> Callable[[str], str]:
     Returns:
         Callable[[str], str]: The color function.
     """
-
+    
     def color_func(s: str, /) -> str:
         return start + t(s) + end
 
