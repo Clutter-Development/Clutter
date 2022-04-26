@@ -4,7 +4,7 @@ WORKDIR /bot
 
 COPY requirements.txt requirements.txt
 
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN apk add --no-cache git && pip3 install --no-cache-dir -r requirements.txt
 
 COPY /bot .
 
