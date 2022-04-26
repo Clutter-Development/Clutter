@@ -12,10 +12,6 @@
 
 Clutter is a multipurpose, compact, extremely configurable Discord bot.
 
-This application was designed to work on Linux and has been tested in the following distros:
-
-* Manjaro (Tested on 21.2.5)
-
 <!-- More Soon -->
 
 # Installation
