@@ -196,7 +196,7 @@ class Clutter(commands.AutoShardedBot):
         return True
 
     async def log_spammer(self, ctx: commands.Context, /) -> None:
-        embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")  # type: ignore
+        embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")
         embed.add_field(
             name="User Info",
             value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}",

@@ -30,7 +30,7 @@ class EmbedBuilder:
         ...
 
     @overload
-    def __call__(self, item: str, title: Optional[str], /, self) -> Embed:
+    def __call__(self, item: str, title: Optional[str], /, description: Optional[str] = None) -> Embed:  # sourcery skip: instance-method-first-arg-name
         ...
 
     def __call__(
