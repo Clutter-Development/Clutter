@@ -9,7 +9,9 @@ __all__ = ("CachedMongoManager",)
 
 
 class CachedMongoManager(MongoManager):
-    def __init__(self, connect_url: str, port: Optional[int] = None, /, *, database: str, cooldown: float) -> None:
+    def __init__(
+        self, connect_url: str, port: Optional[int] = None, /, *, database: str, cooldown: float
+    ) -> None:
         self._cache: Dict[str, Any] = {}
         self._start_time: int = math.floor(time.time())
         self.cooldown: float = cooldown
@@ -70,7 +72,9 @@ class CachedMongoManager(MongoManager):
         for _ in path:
             self.refresh(_)
 
-    async def get(self, path: str, /, *, default: Optional[Any] = None, cache_forever: bool = True) -> Any:
+    async def get(
+        self, path: str, /, *, default: Optional[Any] = None, cache_forever: bool = True
+    ) -> Any:
         """Fetches the variable from the database.
 
         Args:

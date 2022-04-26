@@ -30,7 +30,9 @@ class EmbedBuilder:
         ...
 
     @overload
-    def __call__(self, item: str, title: Optional[str] = None, /, description: Optional[str] = None) -> Embed:
+    def __call__(
+        self, item: str, title: Optional[str] = None, /, description: Optional[str] = None
+    ) -> Embed:
         ...
 
     def __call__(

@@ -106,9 +106,13 @@ class Clutter(commands.AutoShardedBot):
         await self.load_extensions()
         print(self.startup_log)
 
-    async def determine_prefix(self, bot_: commands.AutoShardedBot, message: discord.Message, /) -> List[str]:
+    async def determine_prefix(
+        self, bot_: commands.AutoShardedBot, message: discord.Message, /
+    ) -> List[str]:
         if guild := message.guild:
-            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix, cache_forever=True)
+            prefix = await self.db.get(
+                f"guilds.{guild.id}.prefix", default=self.default_prefix, cache_forever=True
+            )
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
@@ -127,7 +131,11 @@ class Clutter(commands.AutoShardedBot):
         )
         print(
             "\n\n".join(
-                [color.cyan(discord_info), color.magenta(bot_info), color.yellow(f"Running on Clutter v{self.version}")]
+                [
+                    color.cyan(discord_info),
+                    color.magenta(bot_info),
+                    color.yellow(f"Running on Clutter v{self.version}"),
+                ]
             )
         )
 
@@ -140,7 +148,9 @@ class Clutter(commands.AutoShardedBot):
     @tasks.loop(hours=12)
     async def leave_blacklisted_guilds(self) -> None:
         for guild in self.guilds:
-            if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
+            if await self.db.get(
+                f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True
+            ):
                 await guild.leave()
 
     # -- Custom Attributes -- #
@@ -159,7 +169,11 @@ class Clutter(commands.AutoShardedBot):
                 failed[fn] = traceback.format_exc()
         log = []
         if loaded:
-            log.append(color.green(listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))))
+            log.append(
+                color.green(
+                    listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))
+                )
+            )
         for name, error in failed.items():
             log.append(color.red(listify(f"Failed to load {color.bold(name)}", error)))
         self.startup_log = "\n".join(log)
@@ -181,7 +195,8 @@ class Clutter(commands.AutoShardedBot):
     async def log_spammer(self, ctx: commands.Context, /) -> None:
         embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")  # type: ignore
         embed.add_field(
-            name="User Info", value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}"
+            name="User Info",
+            value=f"**Mention:** {ctx.author.mention}\n**Tag:** {ctx.author}\n**ID:** {ctx.author.id}",
         )
         if guild := ctx.guild:
             embed.add_field(
@@ -190,7 +205,7 @@ class Clutter(commands.AutoShardedBot):
             )
             embed.add_field(
                 name="Channel Info",
-                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})", # type: ignore
+                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",  # type: ignore
             )
         await self.log_webhook.send(embed=embed)
 
@@ -248,7 +263,9 @@ with open("./config.json5") as f:
 @bot.check
 async def maintenance_check(ctx: ClutterContext, /) -> bool:
     if bot.in_development and not bot.is_owner(ctx.author):
-        raise errors.InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
+        raise errors.InDevelopmentMode(
+            "This bot is currently in development mode. Only bot admins can use commands."
+        )
     return True
 
 
@@ -293,7 +310,9 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
 @bot.tree.check
 async def app_maintenance_check(inter: discord.Interaction, /) -> bool:
     if bot.in_development and not bot.is_owner(inter.user):
-        raise errors.InDevelopmentMode("This bot is currently in development mode. Only bot admins can use commands.")
+        raise errors.InDevelopmentMode(
+            "This bot is currently in development mode. Only bot admins can use commands."
+        )
     return True
 
 

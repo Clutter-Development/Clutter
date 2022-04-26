@@ -67,7 +67,9 @@ class MongoManager:
         """
         ppath, collection, _id = self._parse_path(path)
         if not ppath and not isinstance(value, dict):
-            raise ValueError("Value must be a dictionary if whole document is wanted to be updated.")
+            raise ValueError(
+                "Value must be a dictionary if whole document is wanted to be updated."
+            )
         if await collection.find_one({"_id": _id}, {"_id": 1}):
             val = {"$set": {".".join(ppath): value}} if ppath else value
             await collection.update_one({"_id": _id}, val)
@@ -91,7 +93,9 @@ class MongoManager:
         """
         ppath, collection, _id = self._parse_path(path)
         if not ppath:
-            raise ValueError("Path must be at least 3 elements long: Collection, _id and key for the push operation.")
+            raise ValueError(
+                "Path must be at least 3 elements long: Collection, _id and key for the push operation."
+            )
         if (doc := await collection.find_one({"_id": _id})) is None:
             await collection.insert_one({"_id": _id, **assemble_dict(ppath, [value])})
             return True
@@ -115,8 +119,12 @@ class MongoManager:
         """
         ppath, collection, _id = self._parse_path(path)
         if not ppath:
-            raise ValueError("Path must be at least 3 elements long: Collection, _id and key for the pull operation.")
-        if value in find_in_dict(await collection.find_one({"_id": _id}, {".".join(ppath): 1}), ppath, default=[]):
+            raise ValueError(
+                "Path must be at least 3 elements long: Collection, _id and key for the pull operation."
+            )
+        if value in find_in_dict(
+            await collection.find_one({"_id": _id}, {".".join(ppath): 1}), ppath, default=[]
+        ):
             await collection.update_one({"_id": _id}, {"$pull": {".".join(ppath): value}})
             return True
         return False
