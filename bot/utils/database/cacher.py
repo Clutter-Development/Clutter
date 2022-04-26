@@ -1,7 +1,7 @@
 import asyncio
 import math
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from .manager import MongoManager
 
@@ -10,9 +10,9 @@ __all__ = ("CachedMongoManager",)
 
 class CachedMongoManager(MongoManager):
     def __init__(
-        self, connect_url: str, port: Optional[int] = None, /, *, database: str, cooldown: float
+        self, connect_url: str, port: int | None = None, /, *, database: str, cooldown: float
     ) -> None:
-        self._cache: Dict[str, Any] = {}
+        self._cache: dict[str, Any] = {}
         self._start_time: int = math.floor(time.time())
         self.cooldown: float = cooldown
         super().__init__(connect_url, port, database=database)
@@ -54,12 +54,12 @@ class CachedMongoManager(MongoManager):
         if self._get_last_used(path) >= self.cooldown:
             self._cache.pop(path, None)
 
-    def refresh(self, path: Union[str, List[str]], /, *, match: Optional[bool] = False) -> None:
+    def refresh(self, path: str | list[str], /, *, match: bool = False) -> None:
         """Uncaches all variables that start with the given path. If match is True, only uncaches the given path.
 
         Args:
             path (Union[str, List[str]]): The variable(s) to uncache.
-            match (Optional[bool]): Whether to match the path exactly or to start with it.
+            match (bool): Whether to match the path exactly or to start with it.
         """
         if isinstance(path, str):
             if match:
@@ -73,7 +73,7 @@ class CachedMongoManager(MongoManager):
             self.refresh(_)
 
     async def get(
-        self, path: str, /, *, default: Optional[Any] = None, cache_forever: bool = True
+        self, path: str, /, *, default: Any = None, cache_forever: bool = True
     ) -> Any:
         """Fetches the variable from the database.
 
@@ -83,7 +83,7 @@ class CachedMongoManager(MongoManager):
             cache_forever (bool): Whether to cache the variable forever/until it is removed.
 
         Returns:
-            Optional[Any]: The value of the variable.
+            Any: The value of the variable.
         """
         if path in self._cache:
             self._use(path)
@@ -105,13 +105,13 @@ class CachedMongoManager(MongoManager):
         await super().set(path, value)
         self.refresh(path)
 
-    async def push(self, path: str, value: Any, /, *, allow_dupes: Optional[bool] = True) -> bool:
+    async def push(self, path: str, value: Any, /, *, allow_dupes: bool = True) -> bool:
         """Appends the variable to a list in the database.
 
         Args:
             path (str): The path to the list. Must be at least 3 elements long: Collection and _id.
             value (Any): The value to append to the list.
-            allow_dupes (Optional[bool]): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
+            allow_dupes (bool): If true, the value will be appended to the list. If false, the value will be appended if it is not in the list.
 
         Returns:
             bool: If the value was pushed.

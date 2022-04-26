@@ -1,12 +1,12 @@
-from typing import Any, Dict, List, Optional, TypeVar, Union
+from typing import Any, TypeVar
 
 __all__ = ("assemble_dict", "find_in_dict", "maybe_int")
 
 T = TypeVar("T")
-NestedDict = Dict[str, Union["NestedDict", Any]]
+NestedDict = dict[str, Any | "NestedDict"]
 
 
-def assemble_dict(path: List[str], value: Any, /) -> NestedDict:
+def assemble_dict(path: list[str], value: Any, /) -> NestedDict:
     """Assembles a nested dictionary from the path and value.
 
     Args:
@@ -30,7 +30,7 @@ def assemble_dict(path: List[str], value: Any, /) -> NestedDict:
     return ref
 
 
-def find_in_dict(get_from: dict, path: List[str], /, *, default: Optional[Any] = None) -> Any:
+def find_in_dict(get_from: dict, path: list[str], /, *, default: Any = None) -> Any:
     """Finds the key value pair in the specified dictionary.
 
     Args:
@@ -50,7 +50,7 @@ def find_in_dict(get_from: dict, path: List[str], /, *, default: Optional[Any] =
     return get_from.get(key, default)
 
 
-def maybe_int(value: T, /) -> Union[int, T]:
+def maybe_int(value: T, /) -> int | T:
     """Converts the value to an int if possible.
 
     Args:

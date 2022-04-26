@@ -1,12 +1,10 @@
-from typing import Optional, Tuple
-
 import discord
 from discord.ext import commands
 
 
 class ClutterContext(commands.Context):
     async def reply_embed(
-        self, asset_type: str, title: str, description: Optional[str] = None, /
+        self, asset_type: str, title: str, description: str | None = None, /
     ) -> discord.Message:
         return await self.reply(embed=self.bot.embed(asset_type, title, description))
 
@@ -15,8 +13,8 @@ class ClutterContext(commands.Context):
         return await self.message.add_reaction(emojis["SUCCESS" if value else "ERROR"])
 
     async def maybe_dm_embed(
-        self, asset_type: str, title: str, description: Optional[str] = None, /
-    ) -> Tuple[Optional[discord.Message], bool]:
+        self, asset_type: str, title: str, description: str | None = None, /
+    ) -> tuple[discord.Message | None, bool]:
         try:
             return (
                 await self.author.send(embed=self.bot.embed(asset_type, title, description)),

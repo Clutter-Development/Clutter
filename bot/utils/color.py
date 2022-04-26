@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable
 
 __all__ = (
     "black",
@@ -33,7 +33,7 @@ __all__ = (
 )
 
 
-def t(b: Union[bytes, str], /) -> str:
+def t(b: bytes | str, /) -> str:
     """Ensures that the given bytes are decoded as a string.
 
     Args:
@@ -45,7 +45,7 @@ def t(b: Union[bytes, str], /) -> str:
     return b.decode() if isinstance(b, bytes) else b
 
 
-def esc(*codes: Union[int, str]) -> str:
+def esc(*codes: int | str) -> str:
     """Returns the ANSI escape sequence for the given codes.
 
     Args:

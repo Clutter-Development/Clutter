@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional, Union, overload
+from typing import TYPE_CHECKING, Callable, overload
 
 from discord import Embed
 
@@ -14,7 +14,7 @@ class EmbedBuilder:
     def __init__(self, bot: Clutter, /) -> None:
         self._style = bot.config["STYLE"]
 
-    def __getattr__(self, item: str, /) -> Callable[[Optional[str], Optional[str]], Embed]:
+    def __getattr__(self, item: str, /) -> Callable[[str | None, str | None], Embed]:
         """Returns an embed with the given asset type.
 
         Args:
@@ -26,19 +26,21 @@ class EmbedBuilder:
         return self.__call__(item)
 
     @overload
-    def __call__(self, item: str, /) -> Callable[[Optional[str], Optional[str]], Embed]:
+    def __call__(self, item: str, /) -> Callable[[str | None, str | None], Embed]:
         ...
 
     @overload
-    def __call__(self, item: str, title: Optional[str], /, description: Optional[str] = None) -> Embed:  # sourcery skip: instance-method-first-arg-name
+    def __call__(self, item: str, title: str | None, /, description: str | None = None) -> Embed:  # sourcery skip: instance-method-first-arg-name
         ...
 
     def __call__(
-        self, asset_type: str, title: Optional[str] = None, /, description: Optional[str] = None
-    ) -> Union[Callable[[Optional[str], Optional[str]], Embed], Embed]:
-        def embed(title_: Optional[str] = None, description_: Optional[str] = None) -> Embed:
-            color = self._style["COLORS"][asset_type.upper()]
-            emoji = self._style["EMOJIS"][asset_type.upper()]
+        self, asset_type: str, title: str | None = None, /, description: str | None = None
+    ) -> Callable[[str | None, str | None], Embed] | Embed:
+        def embed(title_: str | None = None, description_: str | None = None) -> Embed:
+            nonlocal asset_type
+            asset_type = asset_type.upper()
+            color = self._style["COLORS"][asset_type]
+            emoji = self._style["EMOJIS"][asset_type]
             return Embed(title=f"{emoji} {title_}", description=description_, color=color)
 
         if title or description:

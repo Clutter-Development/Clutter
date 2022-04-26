@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any
 
 from motor import motor_asyncio
 
@@ -13,11 +13,11 @@ __all__ = ("MongoManager",)
 
 
 class MongoManager:
-    def __init__(self, connect_url: str, port: Optional[int] = None, /, *, database: str) -> None:
+    def __init__(self, connect_url: str, port: int | None = None, /, *, database: str) -> None:
         self._client = motor_asyncio.AsyncIOMotorClient(connect_url, port)
         self._db = self._client[database]
 
-    def _parse_path(self, path: str, /) -> Tuple[List[str], Collection, Union[str, int]]:
+    def _parse_path(self, path: str, /) -> tuple[list[str], Collection, str | int]:
         """Parses the path.
 
         Args:
@@ -39,7 +39,7 @@ class MongoManager:
         _id = maybe_int(ppath.pop(0))
         return ppath, collection, _id
 
-    async def get(self, path: str, /, *, default: Optional[Any] = None) -> Any:
+    async def get(self, path: str, /, *, default: Any = None) -> Any:
         """Fetches the variable from the database.
 
         Args:
@@ -77,7 +77,7 @@ class MongoManager:
             val = assemble_dict(ppath, value) if ppath else value
             await collection.insert_one({"_id": _id, **val})
 
-    async def push(self, path: str, value: Any, /, *, allow_dupes: Optional[bool] = True) -> bool:
+    async def push(self, path: str, value: Any, /, *, allow_dupes: bool = True) -> bool:
         """Appends the variable to a list in the database.
 
         Args:

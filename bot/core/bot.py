@@ -5,7 +5,7 @@ import os
 import pathlib
 import time
 import traceback
-from typing import List, Optional, Type, Union
+from typing import Type
 
 import aiohttp
 import discord
@@ -108,7 +108,7 @@ class Clutter(commands.AutoShardedBot):
 
     async def determine_prefix(
         self, bot_: commands.AutoShardedBot, message: discord.Message, /
-    ) -> List[str]:
+    ) -> list[str]:
         if guild := message.guild:
             prefix = await self.db.get(
                 f"guilds.{guild.id}.prefix", default=self.default_prefix, cache_forever=True
@@ -181,14 +181,14 @@ class Clutter(commands.AutoShardedBot):
 
         self.startup_log = "\n".join(log)
 
-    async def blacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
+    async def blacklist_user(self, user: discord.User | discord.Member | int, /) -> bool:
         user_id = user if isinstance(user, int) else user.id
         if await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
             return False
         await self.db.set(f"users.{user_id}.blacklisted", True)
         return True
 
-    async def unblacklist_user(self, user: Union[discord.User, discord.Member, int], /) -> bool:
+    async def unblacklist_user(self, user: discord.User | discord.Member | int, /) -> bool:
         user_id = user if isinstance(user, int) else user.id
         if not await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
             return False
@@ -212,7 +212,7 @@ class Clutter(commands.AutoShardedBot):
             )
         await self.log_webhook.send(embed=embed)
 
-    async def getch_member(self, guild: discord.Guild, user_id: int, /) -> Optional[discord.Member]:
+    async def getch_member(self, guild: discord.Guild, user_id: int, /) -> discord.Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
         if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
