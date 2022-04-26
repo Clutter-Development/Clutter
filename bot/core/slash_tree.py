@@ -17,11 +17,11 @@ class ClutterCommandTree(app.CommandTree):
 
         Args:
             bot (Clutter): The bot to use the command tree in.
-        """        
+        """
         super().__init__(bot)
         self.checks = []
 
-    async def interaction_check(self, inter: discord.Interaction, /) -> bool:     
+    async def interaction_check(self, inter: discord.Interaction, /) -> bool:
         for check in self.checks:
             try:
                 val = await check(inter)
@@ -40,6 +40,6 @@ class ClutterCommandTree(app.CommandTree):
 
         Returns:
             T: The check.
-        """        
+        """
         self.checks.append(func)
         return func

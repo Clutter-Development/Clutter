@@ -20,7 +20,7 @@ class MongoManager:
             connect_url (str): The MongoDB URI to use to connect to the database
             database (str): The database to use.
             port (int | None, optional): The port of the MongoDB instance, used when the db is hosted locally. Defaults to None.
-        """        
+        """
         self._client = motor_asyncio.AsyncIOMotorClient(connect_url, port)
         self._db = self._client[database]
 
@@ -35,7 +35,7 @@ class MongoManager:
 
         Returns:
             tuple[list[str], Collection, str | int]: The excess path as a list, the MongoDB collection, the _id of the document. can be a str or an int
-        """        
+        """
         ppath = [_ for _ in path.split(".") if _ != ""]
         if len(ppath) < 2:
             raise ValueError("Path must be at least 2 elements long: Collection and _id")
@@ -43,7 +43,7 @@ class MongoManager:
         _id = maybe_int(ppath.pop(0))
         return ppath, collection, _id
 
-    async def get(self, path: str, /, *, default: Any = None) -> Any:     
+    async def get(self, path: str, /, *, default: Any = None) -> Any:
         """Fetches the variable from the database.
 
         Args:

@@ -41,7 +41,7 @@ def t(b: bytes | str, /) -> str:
 
     Returns:
         str: The encoded string.
-    """    
+    """
     return b.decode() if isinstance(b, bytes) else b
 
 
@@ -65,7 +65,7 @@ def make_color(start: str, end: str, /) -> Callable[[str], str]:
     Returns:
         Callable[[str], str]: The color function.
     """
-    
+
     def color_func(s: str, /) -> str:
         return start + t(s) + end
 

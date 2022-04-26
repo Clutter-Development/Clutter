@@ -15,7 +15,7 @@ from core.slash_tree import ClutterCommandTree
 from discord.ext import commands, tasks
 from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
-from utils import CachedMongoManager, EmbedBuilder, color, errors, listify, NestedDict
+from utils import CachedMongoManager, EmbedBuilder, NestedDict, color, errors, listify
 
 
 class Clutter(commands.AutoShardedBot):
@@ -27,7 +27,7 @@ class Clutter(commands.AutoShardedBot):
 
         Args:
             config (dict): The bot configuration
-        """        
+        """
         self.session = aiohttp.ClientSession()
 
         self.config = config
@@ -163,7 +163,7 @@ class Clutter(commands.AutoShardedBot):
     # -- Custom Attributes -- #
 
     async def load_extensions(self) -> None:
-        """Loads all the extensions in the ./modules directory and sets the self.startup_log."""        
+        """Loads all the extensions in the ./modules directory and sets the self.startup_log."""
         loaded = []
         failed = {}
         for fn in map(
@@ -197,7 +197,7 @@ class Clutter(commands.AutoShardedBot):
 
         Returns:
             bool: Wheter or not the user was blacklisted.
-        """        
+        """
         user_id = user if isinstance(user, int) else user.id
         if await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
             return False
@@ -212,7 +212,7 @@ class Clutter(commands.AutoShardedBot):
 
         Returns:
             bool: Wheter or not the user was unblacklisted.
-        """        
+        """
         user_id = user if isinstance(user, int) else user.id
         if not await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
             return False
@@ -224,7 +224,7 @@ class Clutter(commands.AutoShardedBot):
 
         Args:
             ctx (commands.Context): The context to use.
-        """        
+        """
         embed = self.embed.warning(f"**{ctx.author}** has been blacklisted for spamming!")
         embed.add_field(
             name="User Info",
@@ -250,7 +250,7 @@ class Clutter(commands.AutoShardedBot):
 
         Returns:
             discord.Member | None: The member.
-        """        
+        """
         if (member := guild.get_member(user_id)) is not None:
             return member
         if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
@@ -267,7 +267,7 @@ class Clutter(commands.AutoShardedBot):
     # -- Overrides -- #
     # -- No DocStr -- #
 
-    def run(self) -> None:       
+    def run(self) -> None:
         try:
             super().run(self.token, reconnect=True)
         finally:
@@ -277,7 +277,7 @@ class Clutter(commands.AutoShardedBot):
 
             asyncio.run(stop())
 
-    def add_command(self, command: commands.Command, /) -> None:       
+    def add_command(self, command: commands.Command, /) -> None:
         command.cooldown_after_parsing = True
         super().add_command(command)
 

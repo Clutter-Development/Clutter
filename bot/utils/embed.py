@@ -16,7 +16,7 @@ class EmbedBuilder:
 
         Args:
             bot (Clutter): The bot to use to get the needed info from.
-        """        
+        """
         self._style = bot.config["STYLE"]
 
     def __getattr__(self, item: str, /) -> Callable[[str | None, str | None], Embed]:
@@ -27,7 +27,7 @@ class EmbedBuilder:
 
         Returns:
             Callable[[str | None, str | None], Embed]: A function that returns an embed with the given asset type.
-        """        
+        """
         return self.__call__(item)
 
     @overload
@@ -35,7 +35,9 @@ class EmbedBuilder:
         ...
 
     @overload
-    def __call__(self, item: str, title: str | None, /, description: str | None = None) -> Embed:  # sourcery skip: instance-method-first-arg-name
+    def __call__(
+        self, item: str, title: str | None, /, description: str | None = None
+    ) -> Embed:  # sourcery skip: instance-method-first-arg-name
         ...
 
     def __call__(
@@ -50,7 +52,8 @@ class EmbedBuilder:
 
         Returns:
             Callable[[str | None, str | None], Embed] | Embed: The result embed/function.
-        """    
+        """
+
         def embed(title_: str | None = None, description_: str | None = None) -> Embed:
             nonlocal asset_type
             asset_type = asset_type.upper()

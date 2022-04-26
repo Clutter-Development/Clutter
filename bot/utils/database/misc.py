@@ -15,7 +15,7 @@ def assemble_dict(path: list[str], value: Any, /) -> NestedDict:
 
     Returns:
         NestedDict: The assembled dictionary.
-    """    
+    """
     to_asm, i = {}, 0
     ref = to_asm
     if not path:
@@ -40,7 +40,7 @@ def find_in_dict(get_from: dict, path: list[str], /, *, default: Any = None) -> 
 
     Returns:
         Any: The value. Returns the default value if the key is not found.
-    """    
+    """
     key = path.pop(-1)
     for _ in path:
         try:

@@ -72,9 +72,7 @@ class CachedMongoManager(MongoManager):
         for _ in path:
             self.refresh(_)
 
-    async def get(
-        self, path: str, /, *, default: Any = None, cache_forever: bool = False
-    ) -> Any:
+    async def get(self, path: str, /, *, default: Any = None, cache_forever: bool = False) -> Any:
         """Fetches the variable from the database.
 
         Args:
