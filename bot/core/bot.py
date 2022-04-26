@@ -158,7 +158,10 @@ class Clutter(commands.AutoShardedBot):
     async def load_extensions(self) -> None:
         loaded = []
         failed = {}
-        for fn in map(lambda file_path: str(file_path).replace(os.pathsep, ".")[:-3], pathlib.Path("./modules").rglob("*.py")):
+        for fn in map(
+            lambda file_path: str(file_path).replace(os.pathsep, ".")[:-3],
+            pathlib.Path("./modules").rglob("*.py"),
+        ):
             try:
                 await self.load_extension(fn)
                 loaded.append(fn)
