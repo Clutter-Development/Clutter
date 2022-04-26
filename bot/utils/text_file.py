@@ -6,7 +6,7 @@ import discord
 __all__ = ("text_file",)
 
 
-def text_file(text: str, file_name: str, /, *, spoiler: Optional[bool] = False) -> discord.File:
+def text_file(text: str, file_name: str, /, *, spoiler: bool = False) -> discord.File:
     """Creates a discord.File object from a string.
 
     Args:
@@ -17,4 +17,4 @@ def text_file(text: str, file_name: str, /, *, spoiler: Optional[bool] = False) 
     Returns:
         discord.File: The discord.File object.
     """
-    return discord.File(BytesIO(bytes(text)), file_name, spoiler=spoiler)  # type: ignore
+    return discord.File(BytesIO(bytes(text, "utf-8")), file_name, spoiler=spoiler)

@@ -6,22 +6,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.8" ]
+        python-version: [ "3.10" ]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Install Isort, Black, and Flynt
         run: |
           python -m pip install --upgrade pip
-          pip install flynt black isort[requirements_deprecated_finder]
-      - name: isort
-        run: isort . --profile black
-      - name: Black
-        run: black ./ --line-length=120
-      - name: Flynt
+          pip install isort black flynt
+      - name: Run Isort
+        run: isort ./ --profile black
+      - name: Run Black
+        run: black ./ --line-length=100
+      - name: Run Flynt
         run: flynt ./ -tc
       - name: Setup Git
         run: |
@@ -29,6 +29,6 @@ jobs:
       - name: Push To Git
         run: |
           git pull
-          git add . || exit 0
+          git add ./ || exit 0
           git commit --reuse-message=HEAD || exit 0
           git push || exit 0

@@ -60,6 +60,6 @@ def maybe_int(value: T, /) -> Union[int, T]:
         Union[int, T]: The converted? value.
     """
     try:
-        return int(value)  # type: ignore
-    except (ValueError, TypeError):
+        value = int(value)  # type: ignore
+    finally:
         return value

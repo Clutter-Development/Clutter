@@ -20,6 +20,7 @@ from utils import CachedMongoManager, EmbedBuilder, color, errors, listify
 
 class Clutter(commands.AutoShardedBot):
     tree: ClutterCommandTree  # stopping typecheckers from complaining
+    user: discord.ClientUser
 
     def __init__(self, config: dict, /):
         self.session = aiohttp.ClientSession()
@@ -119,7 +120,7 @@ class Clutter(commands.AutoShardedBot):
         bot_info = listify(
             "Bot Info",
             f"{color.bold('User:')} {self.user}"
-            f"\n{color.bold('ID:')} {self.user.id}"  # type: ignore
+            f"\n{color.bold('ID:')} {self.user.id}"
             f"\n{color.bold('Total Guilds:')} {len(self.guilds)}"
             f"\n{color.bold('Total Users:')} {len(self.users)}"
             f"\n{color.bold('Total Shards: ')} {self.shard_count}",
@@ -189,13 +190,13 @@ class Clutter(commands.AutoShardedBot):
             )
             embed.add_field(
                 name="Channel Info",
-                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",  # type: ignore
+                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})", # type: ignore
             )
         await self.log_webhook.send(embed=embed)
 
     async def getch_member(self, guild: discord.Guild, user_id: int, /) -> Optional[discord.Member]:
-        if member := guild.get_member(user_id) is not None:
-            return member  # type: ignore
+        if (member := guild.get_member(user_id)) is not None:
+            return member
         if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
             try:
                 return await guild.fetch_member(user_id)
