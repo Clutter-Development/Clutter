@@ -12,7 +12,6 @@ import json5
 from core.context import ClutterContext
 from core.slash_tree import ClutterCommandTree
 from discord.ext import commands, tasks
-from discord.ext.commands._types import ContextT  # noqa: 12
 from dotenv import load_dotenv
 from utils import CachedMongoManager, EmbedBuilder, color, errors, listify
 
