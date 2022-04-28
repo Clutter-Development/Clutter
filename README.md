@@ -12,8 +12,6 @@
 
 Clutter is a multipurpose, compact, extremely configurable Discord bot.
 
-<!-- More Soon -->
-
 # Installation
 
 The preffered method for running this bot is Docker.
