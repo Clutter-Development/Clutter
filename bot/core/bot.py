@@ -5,7 +5,6 @@ import os
 import pathlib
 import time
 import traceback
-from typing import Type
 
 import aiohttp
 import discord
@@ -292,7 +291,7 @@ class Clutter(commands.AutoShardedBot):
                 await ctx.trigger_typing()
         await self.invoke(ctx)
 
-    async def get_context(self, message: discord.Message, /, cls: Type = None) -> ClutterContext:
+    async def get_context(self, message: discord.Message, /, cls: type = None) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
 
 
