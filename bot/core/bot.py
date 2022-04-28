@@ -242,7 +242,7 @@ class Clutter(commands.AutoShardedBot):
         await self.log_webhook.send(embed=embed)
 
     async def getch_member(self, guild: discord.Guild, user_id: int, /) -> discord.Member | None:
-        """Gets a member from the cache, if it doesnt exits it fetches it via the gateway or http.
+        """Gets a member from the cache, if it doesn't exist, it fetches it via the gateway or http.
 
         Args:
             guild (discord.Guild): The guild to get the member from.
