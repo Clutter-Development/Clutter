@@ -290,7 +290,7 @@ class Clutter(commands.AutoShardedBot):
                 await ctx.trigger_typing()
         await self.invoke(ctx)
 
-    async def get_context(self, message: discord.Message, /, cls: type = None) -> ClutterContext:
+    async def get_context(self, message: discord.Message, /, cls: type | None = None) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
 
 
