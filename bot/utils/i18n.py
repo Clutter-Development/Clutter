@@ -22,10 +22,22 @@ class I18N:
                 with open(os.path.join(lang_file_dir, lang_file)) as f:
                     self.languages[lang_file[:-6]] = json5.load(f)
 
-    def translate_with_locale(self, locale: str, text: str, /) -> str:
+    def translate_with_locale(self, language: str, text: str, /) -> str:
+        """Translate a string with a locale. If the translation is not found, the fallback translation is used. If the fallback translation is not found, an error is raised.
+
+        Args:
+            language (str): The language to use.
+            text (str): The string code to get translation of.
+
+        Raises:
+            UnknownTranstaionString: If the fallback translation is not found.
+
+        Returns:
+            str: The translated string.
+        """
         path = text.split(".")
         value = find_in_dict(
-            self.languages[locale], path, default=find_in_dict(self.languages[self.fallback], path)
+            self.languages[language], path, default=find_in_dict(self.languages[self.fallback], path)
         )
         if value is None:
             raise UnknownTranstaionString(f"Could not find translation for {text.join('.')}")
@@ -39,6 +51,16 @@ class I18N:
         *,
         use_guild: bool = False,
     ) -> str:
+        """Translates a string code.
+
+        Args:
+            ctx (discord.Message | discord.Interaction | commands.Context): The language context to use.
+            text (str | list[str]): The string code to get translation of.
+            use_guild (bool, optional): To just use the guild language and ignoret the user's language. Defaults to False.
+
+        Returns:
+            str: The translated string.
+        """    
         is_interaction = isinstance(ctx, discord.Interaction)
 
         async def determine_guild_language() -> str:
