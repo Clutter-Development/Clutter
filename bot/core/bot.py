@@ -56,9 +56,6 @@ class Clutter(commands.AutoShardedBot):
         # initialize EmbedBuilder
         self.embed = EmbedBuilder(self)
 
-        # initialize I18N
-        self.i18n = I18N(self, os.path.abspath("./i18n"), fallback=bot_conf["FALLBACK_LANGUAGE"])
-
         # get miscellaneous info
         self.admin_ids = set(bot_conf["ADMIN_IDS"])
         self.version = bot_conf["VERSION"]
@@ -72,6 +69,9 @@ class Clutter(commands.AutoShardedBot):
             discord.Object(id=guild_id) for guild_id in bot_conf["DEVELOPMENT_SERVER_IDS"]
         ]
         self.in_development = bot_conf["DEVELOPMENT_MODE"]
+
+        # initialize I18N
+        self.i18n = I18N(self, os.path.abspath("./i18n"), fallback=self.default_language)
 
         # Auto spam control for commands
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist
