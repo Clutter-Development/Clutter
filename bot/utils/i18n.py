@@ -48,7 +48,7 @@ class I18N:
     async def __call__(
         self,
         ctx: discord.Message | discord.Interaction | commands.Context,
-        text: str | list[str],
+        text: str,
         /,
         *,
         use_guild: bool = False,
@@ -66,9 +66,11 @@ class I18N:
         is_interaction = isinstance(ctx, discord.Interaction)
 
         async def determine_guild_language() -> str:
-            g_locale = ctx.guild_locale if is_interaction else ctx.guild.preferred_locale
+            if (is_interaction and not ctx.guild_id) or (not is_interaction and not ctx.guild):  # type: ignore
+                return self.fallback
+            g_locale = ctx.guild_locale if is_interaction else ctx.guild.preferred_locale  # type: ignore
             return await self._db.get(
-                f"guilds.{ctx.guild.id}.language", default=g_locale or self.fallback
+                f"guilds.{ctx.guild_id if is_interaction else ctx.guild.id}.language", default=g_locale or self.fallback  # type: ignore
             )
 
         guild_exists = bool(ctx.guild_id if is_interaction else ctx.guild)
