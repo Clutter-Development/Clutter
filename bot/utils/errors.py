@@ -8,7 +8,7 @@ __all__ = (
     "GuildIsBlacklisted",
     "UserHasBeenBlacklisted",
     "GlobalCooldownReached",
-    "UnknownTranstaionString",
+    "UnknownTranslaionString",
 )
 
 
@@ -43,5 +43,5 @@ class GlobalCooldownReached(ClutterError, app.AppCommandError):
         return self.message
 
 
-class UnknownTranstaionString(ClutterError, app.AppCommandError):
+class UnknownTranslaionString(ClutterError, app.AppCommandError):
     """Raised when a transtalion string is missing"""

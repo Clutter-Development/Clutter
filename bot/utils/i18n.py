@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 import json5
 
 from .database import find_in_dict
-from .errors import UnknownTranstaionString
+from .errors import UnknownTranslaionString
 
 if TYPE_CHECKING:
     import discord
@@ -30,7 +30,7 @@ class I18N:
             text (str): The string code to get translation of.
 
         Raises:
-            UnknownTranstaionString: If the fallback translation is not found.
+            UnknownTranslaionString: If the fallback translation is not found.
 
         Returns:
             str: The translated string.
@@ -42,7 +42,7 @@ class I18N:
             default=find_in_dict(self.languages[self.fallback], path),
         )
         if value is None:
-            raise UnknownTranstaionString(f"Could not find translation for {text.join('.')}")
+            raise UnknownTranslaionString(f"Could not find translation for {text.join('.')}")
         return value
 
     async def __call__(
