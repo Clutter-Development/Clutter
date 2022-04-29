@@ -37,7 +37,9 @@ class I18N:
         """
         path = text.split(".")
         value = find_in_dict(
-            self.languages[language], path, default=find_in_dict(self.languages[self.fallback], path)
+            self.languages[language],
+            path,
+            default=find_in_dict(self.languages[self.fallback], path),
         )
         if value is None:
             raise UnknownTranstaionString(f"Could not find translation for {text.join('.')}")
@@ -60,7 +62,7 @@ class I18N:
 
         Returns:
             str: The translated string.
-        """    
+        """
         is_interaction = isinstance(ctx, discord.Interaction)
 
         async def determine_guild_language() -> str:
