@@ -10,7 +10,7 @@ import aiohttp
 import discord
 import json5
 from core.context import ClutterContext
-from core.slash_tree import ClutterCommandTree
+from core.command_tree import ClutterCommandTree
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from utils import I18N, CachedMongoManager, EmbedBuilder, color, errors, listify
