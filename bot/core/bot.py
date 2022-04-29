@@ -13,7 +13,7 @@ from core.context import ClutterContext
 from core.slash_tree import ClutterCommandTree
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
-from utils import CachedMongoManager, EmbedBuilder, color, errors, listify
+from utils import CachedMongoManager, EmbedBuilder, color, errors, listify, I18N
 
 
 class Clutter(commands.AutoShardedBot):
@@ -29,45 +29,49 @@ class Clutter(commands.AutoShardedBot):
         self.session = aiohttp.ClientSession()
 
         self.config = config
-
+        bot_conf = config["BOT"]
+        db_conf = config["DATABASE"]
         # get critical info
-        if self.config.get("USE_ENV", False):
+        if config.get("USE_ENV", False):
             load_dotenv()
             self.token = os.getenv("BOT_TOKEN")
             error_webhook_url = os.getenv("ERROR_WEBHOOK_URL")
             log_webhook_url = os.getenv("LOG_WEBHOOK_URL")
             db_uri = os.getenv("DATABASE_URI")
         else:
-            self.token = self.config["BOT"]["TOKEN"]
-            error_webhook_url = self.config["BOT"]["ERROR_WEBHOOK_URL"]
-            log_webhook_url = self.config["BOT"]["LOG_WEBHOOK_URL"]
-            db_uri = self.config["DATABASE"]["URI"]
+            self.token = bot_conf["TOKEN"]
+            error_webhook_url = bot_conf["ERROR_WEBHOOK_URL"]
+            log_webhook_url = bot_conf["LOG_WEBHOOK_URL"]
+            db_uri = db_conf["URI"]
 
         # initialize webhook and database
         self.error_webhook = discord.Webhook.from_url(error_webhook_url, session=self.session)
         self.log_webhook = discord.Webhook.from_url(log_webhook_url, session=self.session)
         self.db = CachedMongoManager(
             db_uri,
-            database=self.config["DATABASE"]["NAME"],
-            cooldown=self.config["DATABASE"]["CACHE_COOLDOWN"],
+            database=db_conf["NAME"],
+            cooldown=db_conf["CACHE_COOLDOWN"],
         )
 
         # initialize EmbedBuilder
         self.embed = EmbedBuilder(self)
 
+        # initialize I18N
+        self.i18n = I18N(self, os.path.abspath("./i18n"), fallback=bot_conf["FALLBACK_LANGUAGE"])
+
         # get miscellaneous info
-        self.admin_ids = set(self.config["BOT"]["ADMIN_IDS"])
-        self.version = self.config["BOT"]["VERSION"]
-        self.github = self.config["BOT"]["GITHUB_REPO_URL"]
-        self.discord_invite = self.config["BOT"]["DISCORD_INVITE_URL"]
-        self.documentation_url = self.config["BOT"]["DOCUMENTATION_URL"]
-        self.invite_url = self.config["BOT"]["INVITE_URL"]
-        self.default_prefix = self.config["BOT"]["DEFAULT_PREFIX"]
-        self.default_language = self.config["BOT"]["DEFAULT_LANGUAGE"]
+        self.admin_ids = set(bot_conf["ADMIN_IDS"])
+        self.version = bot_conf["VERSION"]
+        self.github = bot_conf["GITHUB_REPO_URL"]
+        self.discord_invite = bot_conf["DISCORD_INVITE_URL"]
+        self.documentation_url = bot_conf["DOCUMENTATION_URL"]
+        self.invite_url = bot_conf["INVITE_URL"]
+        self.default_prefix = bot_conf["DEFAULT_PREFIX"]
+        self.default_language = bot_conf["DEFAULT_LANGUAGE"]
         self.development_servers = [
-            discord.Object(id=guild_id) for guild_id in self.config["BOT"]["DEVELOPMENT_SERVER_IDS"]
+            discord.Object(id=guild_id) for guild_id in bot_conf["DEVELOPMENT_SERVER_IDS"]
         ]
-        self.in_development = self.config["BOT"]["DEVELOPMENT_MODE"]
+        self.in_development = bot_conf["DEVELOPMENT_MODE"]
 
         # Auto spam control for commands
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist

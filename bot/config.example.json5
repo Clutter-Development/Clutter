@@ -10,6 +10,8 @@
     ERROR_WEBHOOK_URL: '',
     // The webhook where logs will be sent, optional if USE_ENV is true.
     LOG_WEBHOOK_URL: '',
+    // The default bot language. Available languages are: en-US, tr
+    FALLBACK_LANGUAGE: 'en-US',
     // Bot admin ids.
     ADMIN_IDS: [
       512640455834337290
