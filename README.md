@@ -31,18 +31,5 @@ cd Clutter # Go to the Clutter directory
 
 The bot configuration can be found in the `config.example.json5` file in the `./bot` directory.
 
-There is already an example configuration in the file, so this chapter will not be very long.
-
-If you want to use an .env file to store critical info (mongodb URI, bot token, error webhook), you can set
-the `USE_ENV` key to `true` in the `config.example.json5` file. This will make it, so you need to put the critical info
-in the env and not in the json file.
+There is already an example configuration in the file, so this chapter will not be very long
 > Don't forget to rename `config.example.json5` to `config.json5`
-
-Example env file:
-
-```
-DATABASE_URI=
-BOT_TOKEN=
-ERROR_WEBHOOK_URL=
-LOG_WEBHOOK_URL=
-```
