@@ -59,7 +59,7 @@ class Clutter(commands.AutoShardedBot):
             bot_cfg["LOG_WEBHOOK_URL"], session=self.session, bot_token=self.token
         )
         self.embed = EmbedBuilder(self)
-        self.i18n = I18N(self, os.path.abspath("./i18n"))
+        self.i18n = I18N(self, os.path.abspath("./bot/i18n"))
 
         # Auto spam control for commands
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist
@@ -288,7 +288,7 @@ class Clutter(commands.AutoShardedBot):
         return await super().get_context(message, cls=ClutterContext)
 
 
-with open("./config.json5") as f:
+with open("./bot/config.json5") as f:
     bot = Clutter(json5.load(f))
 
 # -- Base Checks For Traditional Commands-- #
