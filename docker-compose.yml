@@ -4,3 +4,5 @@ services:
     restart: unless-stopped
     image: clutter-bot-image
     container_name: ClutterBot
+    environment:
+      - USING_DOCKER=true
