@@ -24,7 +24,7 @@
     INVITE_URL: 'https://discord.com/oauth2/authorize?client_id=902405088138653726&permissions=8&scope=bot',
     // The bot's default prefix (for traditional commands).
     DEFAULT_PREFIX: '>',
-    // The bot's default language.
+    // The bot's default language. Available languages: en-US, tr.
     DEFAULT_LANGUAGE: 'en-US',
     // The bot development server IDs.
     DEVELOPMENT_SERVER_IDS: [944535258722861106],
