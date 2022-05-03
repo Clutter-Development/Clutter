@@ -14,7 +14,7 @@ from core.context import ClutterContext
 from discord.ext import commands, tasks
 from utils import I18N, CachedMongoManager, EmbedBuilder, color, errors, listify
 
-BASE_PATH = "./" + "" if os.getenv("USING_DOCKER") else "bot/"
+BASE_PATH = f"./" if os.getenv("USING_DOCKER") else "bot/"
 
 
 class Clutter(commands.AutoShardedBot):
