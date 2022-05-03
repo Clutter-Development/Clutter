@@ -1,14 +1,12 @@
 // WARNING: All the keys are required unless otherwise specified.
 {
-  // Set this to true if you want to store critical info in a .env file (or enviroment variables).
-  USE_ENV: false,
   // Basic bot config.
   BOT: {
-    // The bot's token, optional if USE_ENV is true.
+    // The bot's token.
     TOKEN: '',
-    // The webhook where erros will be sent, optional if USE_ENV is true.
+    // The webhook where erros will be sent.
     ERROR_WEBHOOK_URL: '',
-    // The webhook where logs will be sent, optional if USE_ENV is true.
+    // The webhook where logs will be sent.
     LOG_WEBHOOK_URL: '',
     // Bot admin ids.
     ADMIN_IDS: [
@@ -35,7 +33,7 @@
   },
   // Basic database config.
   DATABASE: {
-    // The MongoDB connect URI. Optional if USE_ENV is true.
+    // The MongoDB connect URI.
     URI: '',
     // The MongoDB database name.
     NAME: 'Clutter',

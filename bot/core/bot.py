@@ -12,7 +12,6 @@ import json5
 from core.command_tree import ClutterCommandTree
 from core.context import ClutterContext
 from discord.ext import commands, tasks
-from dotenv import load_dotenv
 from utils import I18N, CachedMongoManager, EmbedBuilder, color, errors, listify
 
 
@@ -29,48 +28,31 @@ class Clutter(commands.AutoShardedBot):
         self.session = aiohttp.ClientSession()
 
         self.config = config
-        bot_conf = config["BOT"]
-        db_conf = config["DATABASE"]
-        # get critical info
-        if config.get("USE_ENV", False):
-            load_dotenv()
-            self.token = os.getenv("BOT_TOKEN")
-            error_webhook_url = os.getenv("ERROR_WEBHOOK_URL")
-            log_webhook_url = os.getenv("LOG_WEBHOOK_URL")
-            db_uri = os.getenv("DATABASE_URI")
-        else:
-            self.token = bot_conf["TOKEN"]
-            error_webhook_url = bot_conf["ERROR_WEBHOOK_URL"]
-            log_webhook_url = bot_conf["LOG_WEBHOOK_URL"]
-            db_uri = db_conf["URI"]
+        bot_cfg = config["BOT"]
 
-        # initialize webhook and database
-        self.error_webhook = discord.Webhook.from_url(error_webhook_url, session=self.session)
-        self.log_webhook = discord.Webhook.from_url(log_webhook_url, session=self.session)
+        # Properties
+        self.token = bot_cfg["TOKEN"]
+        self.admin_ids = set(bot_cfg["ADMIN_IDS"])
+        self.version = bot_cfg["VERSION"]
+        self.github = bot_cfg["GITHUB_REPO_URL"]
+        self.discord_invite = bot_cfg["DISCORD_INVITE_URL"]
+        self.documentation_url = bot_cfg["DOCUMENTATION_URL"]
+        self.invite_url = bot_cfg["INVITE_URL"]
+        self.default_prefix = bot_cfg["DEFAULT_PREFIX"]
+        self.default_language = bot_cfg["DEFAULT_LANGUAGE"]
+        self.in_development = bot_cfg["DEVELOPMENT_MODE"]
+
+        self.development_servers = [discord.Object(id=g_id) for g_id in bot_cfg["DEVELOPMENT_SERVER_IDS"]]
+
+        # Classes
         self.db = CachedMongoManager(
-            db_uri,
-            database=db_conf["NAME"],
-            cooldown=db_conf["CACHE_COOLDOWN"],
+            config["DATABASE"]["URI"],
+            database=config["DATABASE"]["NAME"],
+            cooldown=config["DATABASE"]["CACHE_COOLDOWN"],
         )
-
-        # initialize EmbedBuilder
+        self.error_webhook = discord.Webhook.from_url(bot_cfg["ERROR_WEBHOOK_URL"], session=self.session, bot_token=self.token)
+        self.log_webhook = discord.Webhook.from_url(bot_cfg["LOG_WEBHOOK_URL"], session=self.session, bot_token=self.token)
         self.embed = EmbedBuilder(self)
-
-        # get miscellaneous info
-        self.admin_ids = set(bot_conf["ADMIN_IDS"])
-        self.version = bot_conf["VERSION"]
-        self.github = bot_conf["GITHUB_REPO_URL"]
-        self.discord_invite = bot_conf["DISCORD_INVITE_URL"]
-        self.documentation_url = bot_conf["DOCUMENTATION_URL"]
-        self.invite_url = bot_conf["INVITE_URL"]
-        self.default_prefix = bot_conf["DEFAULT_PREFIX"]
-        self.default_language = bot_conf["DEFAULT_LANGUAGE"]
-        self.development_servers = [
-            discord.Object(id=guild_id) for guild_id in bot_conf["DEVELOPMENT_SERVER_IDS"]
-        ]
-        self.in_development = bot_conf["DEVELOPMENT_MODE"]
-
-        # initialize I18N
         self.i18n = I18N(self, os.path.abspath("./i18n"))
 
         # Auto spam control for commands
@@ -291,7 +273,7 @@ class Clutter(commands.AutoShardedBot):
             return
         if cog := ctx.command.cog:
             if cog.qualified_name != "Jishaku":
-                await ctx.trigger_typing()
+                await ctx.typing()
         await self.invoke(ctx)
 
     async def get_context(
