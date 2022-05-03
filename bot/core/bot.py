@@ -42,7 +42,9 @@ class Clutter(commands.AutoShardedBot):
         self.default_language = bot_cfg["DEFAULT_LANGUAGE"]
         self.in_development = bot_cfg["DEVELOPMENT_MODE"]
 
-        self.development_servers = [discord.Object(id=g_id) for g_id in bot_cfg["DEVELOPMENT_SERVER_IDS"]]
+        self.development_servers = [
+            discord.Object(id=g_id) for g_id in bot_cfg["DEVELOPMENT_SERVER_IDS"]
+        ]
 
         # Classes
         self.db = CachedMongoManager(
@@ -50,8 +52,12 @@ class Clutter(commands.AutoShardedBot):
             database=config["DATABASE"]["NAME"],
             cooldown=config["DATABASE"]["CACHE_COOLDOWN"],
         )
-        self.error_webhook = discord.Webhook.from_url(bot_cfg["ERROR_WEBHOOK_URL"], session=self.session, bot_token=self.token)
-        self.log_webhook = discord.Webhook.from_url(bot_cfg["LOG_WEBHOOK_URL"], session=self.session, bot_token=self.token)
+        self.error_webhook = discord.Webhook.from_url(
+            bot_cfg["ERROR_WEBHOOK_URL"], session=self.session, bot_token=self.token
+        )
+        self.log_webhook = discord.Webhook.from_url(
+            bot_cfg["LOG_WEBHOOK_URL"], session=self.session, bot_token=self.token
+        )
         self.embed = EmbedBuilder(self)
         self.i18n = I18N(self, os.path.abspath("./i18n"))
 
