@@ -71,7 +71,7 @@ class Clutter(commands.AutoShardedBot):
         self.in_development = bot_conf["DEVELOPMENT_MODE"]
 
         # initialize I18N
-        self.i18n = I18N(self, os.path.abspath("./i18n"), fallback=self.default_language)
+        self.i18n = I18N(self, os.path.abspath("./i18n"))
 
         # Auto spam control for commands
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist

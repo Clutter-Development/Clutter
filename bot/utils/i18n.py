@@ -13,10 +13,10 @@ if TYPE_CHECKING:
 
 
 class I18N:
-    def __init__(self, bot: Clutter, lang_file_dir: str, /, *, fallback: str = "en-US"):
+    def __init__(self, bot: Clutter, lang_file_dir: str, /):
         self._db = bot.db
         self.languages = {}
-        self.fallback = fallback
+        self.fallback = bot.default_language
         for lang_file in os.listdir(lang_file_dir):
             if lang_file.endswith(".json5"):
                 with open(os.path.join(lang_file_dir, lang_file)) as f:
