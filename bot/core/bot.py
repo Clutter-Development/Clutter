@@ -31,6 +31,7 @@ class Clutter(commands.AutoShardedBot):
 
         self.config = config
         bot_cfg = config["BOT"]
+        db_cfg = config["DATABASE"]
 
         # Properties
         self.token = bot_cfg["TOKEN"]
@@ -50,9 +51,9 @@ class Clutter(commands.AutoShardedBot):
 
         # Classes
         self.db = CachedMongoManager(
-            config["DATABASE"]["URI"],
-            database=config["DATABASE"]["NAME"],
-            cooldown=config["DATABASE"]["CACHE_COOLDOWN"],
+            db_cfg["URI"],
+            database=db_cfg["NAME"],
+            cooldown=db_cfg["CACHE_COOLDOWN"],
         )
         self.error_webhook = discord.Webhook.from_url(
             bot_cfg["ERROR_WEBHOOK_URL"], session=self.session, bot_token=self.token
