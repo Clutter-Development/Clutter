@@ -127,7 +127,7 @@ class MongoManager:
                 "Path must be at least 3 elements long: Collection, _id and key for the pull operation."
             )
         if value in find_in_dict(
-                await collection.find_one({"_id": _id}, {".".join(ppath): 1}), ppath, default=[]
+            await collection.find_one({"_id": _id}, {".".join(ppath): 1}), ppath, default=[]
         ):
             await collection.update_one({"_id": _id}, {"$pull": {".".join(ppath): value}})
             return True
