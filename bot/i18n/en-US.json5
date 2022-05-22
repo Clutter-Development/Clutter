@@ -9,6 +9,22 @@
     HELP: {
       BRIEF: "Sends help about the bot and its commands.",
       HELP: "Sends help about the bot and its commands.\nIt can also send specific help about a command or a module."
+    },
+    PING: {
+      BRIEF: "Sends the bots latency.",
+      HELP: "Sends the bots websocket, message and database latency.",
+      RESPONSE: {
+        TITLE: "Bot Latency",
+        BODY: "Websocket latency: `{ws_ping}ms`\nMessage latency: `{message_ping}ms`\nDatabase latency: `{db_ping}ms`"
+      },
+      INVITE: {
+        BRIEF: "Sends the bot and support server invite.",
+        HELP: "Sends the bot and support server invite.",
+        BUTTONS: {
+          BOT_INVITE: "Invite me!",
+          DISCORD_INVITE: "Join the support server!"
+        }
+      }
     }
   }
 }

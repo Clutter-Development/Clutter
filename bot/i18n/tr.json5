@@ -7,8 +7,23 @@
   },
   COMMANDS: {
     HELP: {
-      BRIEF: "Robot ve robotun komutları hakkında bilgi verir.",
-      HELP: "Robot ve robotun komutları hakkında bilgi verir.\nBir komut veya modül hakkında detaylı bilgi de verebilir."
+      BRIEF: "Bot ve bot'un komutları hakkında bilgi verir.",
+      HELP: "Bot ve bot'un komutları hakkında bilgi verir.\nBir komut veya modül hakkında detaylı bilgi de verebilir."
+    },
+    PING: {
+      BRIEF: "Bot'un gecikme süresini atar.",
+      HELP: "Bot'un websocket, mesaj ve veritabası gecikme süresini atar.",
+      RESPONSE: {
+        TITLE: "Bot Gecikme Süresi",
+        BODY: "Websocket g.s.: `{ws_ping}ms`\nMesaj g.s: `{message_ping}ms`\nVeritabası g.s.: `{db_ping}ms`"
+      },
+      INVITE: {
+        BRIEF: "Bot'un ve destek sunucusunun davetini atar.",
+        HELP: "Bot'un ve destek sunucusunun davetini atar.",
+        BUTTONS: {
+          BOT_INVITE: "Beni davet et!",
+          DISCORD_INVITE: "Destek sunucusuna katıl!"
+        }
     }
   }
 }
