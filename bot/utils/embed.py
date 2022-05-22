@@ -26,7 +26,7 @@ class EmbedBuilder:
             item (str): The asset type to use.
 
         Returns:
-            Callable[[str | None, str | None], Embed]: A function that returns an embed with the given asset type.
+            Callable[[str | None, str | None], discord.Embed]: A function that returns an embed with the given asset type.
         """
         return self.__call__(item)
 
@@ -49,7 +49,7 @@ class EmbedBuilder:
             description (str | None, optional): The description of the embed. Defaults to None.
 
         Returns:
-            Callable[[str | None, str | None], Embed] | Embed: The result embed/function.
+            Callable[[str | None, str | None], discord.Embed] | discord.Embed: The result embed/function.
         """
 
         def embed(title_: str | None = None, description_: str | None = None) -> discord.Embed:
