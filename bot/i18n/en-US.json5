@@ -1,2 +1,14 @@
 {
+  MODULES: {
+    MISCELLANIOUS: {
+      NAME: "\uD83D\uDD27 Miscellanious",
+      DESCRIPTION: "Miscellanious Commands"
+    }
+  },
+  COMMANDS: {
+    HELP: {
+      BRIEF: "Sends help about the bot and its commands.",
+      HELP: "Sends help about the bot and its commands.\nIt can also send specific help about a command or a module."
+    }
+  }
 }

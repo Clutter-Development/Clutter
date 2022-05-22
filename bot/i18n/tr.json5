@@ -1,2 +1,14 @@
 {
+  MODULES: {
+    MISCELLANIOUS: {
+      NAME: "\uD83D\uDD27 Diğer",
+      DESCRIPTION: "Diğer Komutlar"
+    }
+  },
+  COMMANDS: {
+    HELP: {
+      BRIEF: "Robot ve robotun komutları hakkında bilgi verir.",
+      HELP: "Robot ve robotun komutları hakkında bilgi verir.\nBir komut veya modül hakkında detaylı bilgi de verebilir."
+    }
+  }
 }
