@@ -39,7 +39,7 @@ class EmbedBuilder:
     #     ...
 
     def __call__(
-        self, asset_type: str, title: str | None = None, /, description: str | None = None
+            self, asset_type: str, title: str | None = None, /, description: str | None = None
     ):  # -> Callable[[str | None, str | None], Embed] | Embed:
         """Returns either an embed or a function that returns an embed
 
