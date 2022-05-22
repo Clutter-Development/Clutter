@@ -5,7 +5,6 @@ __all__ = (
     "ClutterError",
     "InDevelopmentMode",
     "UserIsBlacklisted",
-    "GuildIsBlacklisted",
     "UserHasBeenBlacklisted",
     "GlobalCooldownReached",
     "UnknownTranslationString",
@@ -22,10 +21,6 @@ class InDevelopmentMode(ClutterError, app.AppCommandError):
 
 class UserIsBlacklisted(ClutterError, app.AppCommandError):
     """Raised when a user is blacklisted when using an app command."""
-
-
-class GuildIsBlacklisted(ClutterError, app.AppCommandError):
-    """Raised when a guild is blacklisted when using an app command."""
 
 
 class UserHasBeenBlacklisted(ClutterError, app.AppCommandError):

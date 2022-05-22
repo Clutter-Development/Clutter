@@ -25,7 +25,7 @@ class Clutter(commands.AutoShardedBot):
         """Initialize the bot itself.
 
         Args:
-            config (dict): The bot configuration
+            config (dict): The bot configuration.
         """
         self.session = aiohttp.ClientSession()
 
@@ -323,7 +323,7 @@ async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
 async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
     if guild := ctx.guild:
         if bot.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
-            raise errors.GuildIsBlacklisted("This guild is blacklisted from using this bot.")
+            await ctx.guild.leave()
     return True
 
 
@@ -370,7 +370,8 @@ async def app_user_blacklist_check(inter: discord.Interaction, /) -> bool:
 async def app_guild_blacklist_check(inter: discord.Interaction, /) -> bool:
     if guild_id := inter.guild_id:
         if bot.db.get(f"guilds.{guild_id}.blacklisted", default=False, cache_forever=True):
-            raise errors.GuildIsBlacklisted("This guild is blacklisted from using this bot.")
+            guild = bot.get_guild(guild_id) or await bot.fetch_guild(guild_id)
+            await guild.leave()
     return True
 
 
