@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable  # , overload
 
-from discord import Embed
+import discord
 
 if TYPE_CHECKING:
     from core.bot import Clutter
@@ -52,12 +52,12 @@ class EmbedBuilder:
             Callable[[str | None, str | None], Embed] | Embed: The result embed/function.
         """
 
-        def embed(title_: str | None = None, description_: str | None = None) -> Embed:
+        def embed(title_: str | None = None, description_: str | None = None) -> discord.Embed:
             nonlocal asset_type
             asset_type = asset_type.upper()
             color = self._style["COLORS"][asset_type]
             emoji = self._style["EMOJIS"][asset_type]
-            return Embed(title=f"{emoji} {title_}", description=description_, color=color)
+            return discord.Embed(title=f"{emoji} {title_}", description=description_, color=color)
 
         if title or description:
             return embed(title, description)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from motor import motor_asyncio
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from .misc import assemble_dict, find_in_dict, maybe_int
 
@@ -21,7 +21,7 @@ class MongoManager:
             database (str): The database to use.
             port (int | None, optional): The port of the MongoDB instance, used when the db is hosted locally. Defaults to None.
         """
-        self._client = motor_asyncio.AsyncIOMotorClient(connect_url, port)
+        self._client = AsyncIOMotorClient(connect_url, port)
         self._db = self._client[database]
 
     def _parse_path(self, path: str, /) -> tuple[list[str], Collection, str | int]:

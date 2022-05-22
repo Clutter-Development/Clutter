@@ -1,4 +1,4 @@
-from io import BytesIO
+import io
 
 import discord
 
@@ -16,4 +16,4 @@ def text_file(text: str, file_name: str, /, *, spoiler: bool = False) -> discord
     Returns:
         discord.File: The discord.File object.
     """
-    return discord.File(BytesIO(bytes(text, "utf-8")), file_name, spoiler=spoiler)
+    return discord.File(io.BytesIO(bytes(text, "utf-8")), file_name, spoiler=spoiler)
