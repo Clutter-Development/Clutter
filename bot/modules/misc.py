@@ -33,7 +33,7 @@ class Misc(commands.Cog, name="MODULES.MISCELLANIOUS.NAME", description="MODULES
     async def cog_unload(self) -> None:
         self.bot.help_command = self._original_help_command
 
-    @commands.command(brief="COMMANDS.PING.BRIEF", help="COMMANDS.PING.HELP")
+    @commands.command(aliases=["latency"], brief="COMMANDS.PING.BRIEF", help="COMMANDS.PING.HELP")
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
     async def ping(self, ctx: ClutterContext):
         ts = time.monotonic()
@@ -43,7 +43,7 @@ class Misc(commands.Cog, name="MODULES.MISCELLANIOUS.NAME", description="MODULES
                                                          ws_ping=self.bot.latency * 1000,
                                                          message_ping=int((time.monotonic() - ts) * 1000), db_ping=0)))  # TODO: database ping
 
-    @commands.command(brief="COMMANDS.INVITE.BRIEF", help="COMMANDS.INVITE.HELP")
+    @commands.command(aliases=["support"], brief="COMMANDS.INVITE.BRIEF", help="COMMANDS.INVITE.HELP")
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
     async def invite(self, ctx: ClutterContext):
         view = discord.ui.View()
