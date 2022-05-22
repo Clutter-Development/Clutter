@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 import discord
-from discord.ext import commands
 from discord import app_commands as app
+from discord.ext import commands
 
 if TYPE_CHECKING:
     from core.bot import Clutter
@@ -24,8 +26,12 @@ class Misc(commands.Cog, name="🔧 Miscellanious", description="Miscellanious C
 
         # help command is basically in this cog
         self._original_help_command = bot.help_command
-        bot.help_command = ClutterHelpCommand(verify_checks=False, brief="Sends help about the bot and its commands", help="Sends help about the bot and its commands."
-                                                                                                                           "\nIt can also send specific help about a command or a module.")
+        bot.help_command = ClutterHelpCommand(
+            verify_checks=False,
+            brief="Sends help about the bot and its commands",
+            help="Sends help about the bot and its commands."
+            "\nIt can also send specific help about a command or a module.",
+        )
         bot.help_command.cog = self
 
     async def cog_unload(self) -> None:
