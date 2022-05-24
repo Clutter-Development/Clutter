@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 class I18N:
     def __init__(self, bot: Clutter, lang_file_dir: str, /):
-        self._db = bot.db
+        self._bot = bot
         self.languages = {}
         self.fallback = bot.default_language
         for lang_file in os.listdir(lang_file_dir):
@@ -71,7 +71,7 @@ class I18N:
             if (is_interaction and not ctx.guild_id) or (not is_interaction and not ctx.guild):  # type: ignore
                 return self.fallback
             g_locale = ctx.guild_locale if is_interaction else ctx.guild.preferred_locale  # type: ignore
-            return await self._db.get(
+            return await self._bot.db.get(
                 f"guilds.{ctx.guild_id if is_interaction else ctx.guild.id}.language",  # type: ignore
                 default=g_locale or self.fallback
                 # type: ignore
@@ -83,7 +83,7 @@ class I18N:
             lang = await determine_guild_language()
         else:
             user_locale = ctx.locale if is_interaction else None
-            lang = await self._db.get(
+            lang = await self._bot.db.get(
                 f"users.{ctx.user.id if is_interaction else ctx.author.id}.language",
                 default=user_locale or await determine_guild_language(),
             )
