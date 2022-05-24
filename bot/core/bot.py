@@ -266,13 +266,14 @@ class Clutter(commands.AutoShardedBot):
 
         async def runner():
             async with self, aiohttp.ClientSession() as session, CachedMongoManager(
-                    db_cfg["URI"],
-                    database=db_cfg["NAME"],
-                    cooldown=db_cfg["CACHE_COOLDOWN"],
+                db_cfg["URI"],
+                database=db_cfg["NAME"],
+                cooldown=db_cfg["CACHE_COOLDOWN"],
             ) as db:
                 self.session = session
                 self.db = db
                 await self.start(self.token, reconnect=True)
+
         asyncio.run(runner())
 
     def add_command(self, command: commands.Command, /) -> None:

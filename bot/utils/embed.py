@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING , Any, Callable, overload
+from typing import TYPE_CHECKING, Any, Callable, overload
 
 import discord
 
@@ -35,7 +35,9 @@ class EmbedBuilder:
         ...
 
     @overload
-    def __call__(self, item: str, title: str | None = None, /, description: str | None = None) -> discord.Embed:  # sourcery skip: instance-method-first-arg-name
+    def __call__(
+        self, item: str, title: str | None = None, /, description: str | None = None
+    ) -> discord.Embed:  # sourcery skip: instance-method-first-arg-name
         ...
 
     def __call__(

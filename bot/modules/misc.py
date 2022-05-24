@@ -20,9 +20,9 @@ class ClutterHelpCommand(commands.HelpCommand):
         parent: commands.Group | None = command.parent  # type: ignore
         entries = []
         while parent:
-            entries.append(f'{parent.name} {parent.signature}'.strip())
+            entries.append(f"{parent.name} {parent.signature}".strip())
             parent = parent.parent  # type: ignore
-        parent_signature = ' '.join(reversed(entries))
+        parent_signature = " ".join(reversed(entries))
         return f"{self.context.prefix}{parent_signature} {command.signature}"
 
     async def send_bot_help(self, mapping: CommandMapping, /):
@@ -69,7 +69,8 @@ class Misc(
         view = discord.ui.View()
         view.add_item(
             discord.ui.Button(
-                label=await self.bot.i18n("COMMANDS.INVITE.BUTTONS.BOT_INVITE"), url=self.bot.invite_url
+                label=await self.bot.i18n("COMMANDS.INVITE.BUTTONS.BOT_INVITE"),
+                url=self.bot.invite_url,
             )
         )
         view.add_item(
