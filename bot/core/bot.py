@@ -274,7 +274,6 @@ class Clutter(commands.AutoShardedBot):
 
         asyncio.run(runner())
 
-
     def add_command(self, command: commands.Command, /) -> None:
         command.cooldown_after_parsing = True
         super().add_command(command)
