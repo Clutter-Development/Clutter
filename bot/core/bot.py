@@ -89,7 +89,7 @@ class Clutter(commands.AutoShardedBot):
     # ---- Library-Used Attributes  ---- #
     # -- No Docstrings Since Lib Used -- #
 
-    async def startup_hook(self) -> None:
+    async def setup_hook(self) -> None:
         bot_cfg = self.config["BOT"]
         self.error_webhook = discord.Webhook.from_url(
             bot_cfg["ERROR_WEBHOOK_URL"], session=self.session, bot_token=self.token
@@ -272,11 +272,8 @@ class Clutter(commands.AutoShardedBot):
                 )
                 await self.start(self.token, reconnect=True)
 
-        try:
-            asyncio.run(runner())
-        except:  #
-            # nothing to do here, the sessions and stuff close itself automatically
-            pass
+        asyncio.run(runner())
+
 
     def add_command(self, command: commands.Command, /) -> None:
         command.cooldown_after_parsing = True
