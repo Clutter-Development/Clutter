@@ -13,7 +13,7 @@ __all__ = ("MongoManager",)
 
 
 class MongoManager:
-    def __init__(self, connect_url: str, port: int | None = None, /, *, database: str) -> None:
+    def __init__(self, connect_url: str, port: int | None = None, /, *, database: str, loop=None) -> None:
         """Initialize the MongoManager class.
 
         Args:
@@ -21,7 +21,8 @@ class MongoManager:
             database (str): The database to use.
             port (int | None, optional): The port of the MongoDB instance, used when the db is hosted locally. Defaults to None.
         """
-        self._client = AsyncIOMotorClient(connect_url, port)
+        print(type(loop))
+        self._client = AsyncIOMotorClient(connect_url, port, io_loop=loop)
         self._db = self._client[database]
 
     def _parse_path(self, path: str, /) -> tuple[list[str], Collection, str | int]:
@@ -154,3 +155,9 @@ class MongoManager:
             await collection.delete_one({"_id": _id})
         else:
             await collection.update_one({"_id": _id}, {"$unset": {".".join(ppath): ""}})
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self):
+        await self._client.close()

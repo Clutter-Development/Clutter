@@ -21,6 +21,7 @@ class Clutter(commands.AutoShardedBot):
     tree: ClutterCommandTree
     user: discord.ClientUser
     session: aiohttp.ClientSession
+    db: CachedMongoManager | None
 
     def __init__(self, config: dict, /):
         """Initialize the bot itself.
@@ -30,7 +31,6 @@ class Clutter(commands.AutoShardedBot):
         """
         self.config = config
         bot_cfg = config["BOT"]
-        db_cfg = config["DATABASE"]
 
         # Properties
         self.token = bot_cfg["TOKEN"]
@@ -49,11 +49,7 @@ class Clutter(commands.AutoShardedBot):
         ]
 
         # Classes
-        self.db = CachedMongoManager(
-            db_cfg["URI"],
-            database=db_cfg["NAME"],
-            cooldown=db_cfg["CACHE_COOLDOWN"],
-        )
+        self.db = None
         self.embed = EmbedBuilder(self)
         self.i18n = I18N(self, os.path.abspath(f"{BASE_PATH}i18n"))
 
@@ -266,9 +262,17 @@ class Clutter(commands.AutoShardedBot):
     # -- No DocStr -- #
 
     def run(self) -> None:
+        db_cfg = self.config["DATABASE"]
+
         async def runner():
-            async with self:
-                self.session = aiohttp.ClientSession()
+            async with self, aiohttp.ClientSession() as session, CachedMongoManager(
+                    db_cfg["URI"],
+                    database=db_cfg["NAME"],
+                    cooldown=db_cfg["CACHE_COOLDOWN"],
+                    loop=self.loop
+            ) as db:
+                self.session = session
+                self.db = db
                 await self.start(self.token, reconnect=True)
         try:
             asyncio.run(runner())
