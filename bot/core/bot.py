@@ -269,18 +269,11 @@ class Clutter(commands.AutoShardedBot):
                     db_cfg["URI"],
                     database=db_cfg["NAME"],
                     cooldown=db_cfg["CACHE_COOLDOWN"],
-                    loop=self.loop
             ) as db:
                 self.session = session
                 self.db = db
                 await self.start(self.token, reconnect=True)
-        try:
-            asyncio.run(runner())
-        finally:
-            async def stop():
-                await self.session.close()
-
-            asyncio.run(stop())
+        asyncio.run(runner())
 
     def add_command(self, command: commands.Command, /) -> None:
         command.cooldown_after_parsing = True

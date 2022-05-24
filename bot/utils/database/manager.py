@@ -13,7 +13,7 @@ __all__ = ("MongoManager",)
 
 
 class MongoManager:
-    def __init__(self, connect_url: str, port: int | None = None, /, *, database: str, loop=None) -> None:
+    def __init__(self, connect_url: str, port: int | None = None, /, *, database: str) -> None:
         """Initialize the MongoManager class.
 
         Args:
@@ -21,8 +21,7 @@ class MongoManager:
             database (str): The database to use.
             port (int | None, optional): The port of the MongoDB instance, used when the db is hosted locally. Defaults to None.
         """
-        print(type(loop))
-        self._client = AsyncIOMotorClient(connect_url, port, io_loop=loop)
+        self._client = AsyncIOMotorClient(connect_url, port)
         self._db = self._client[database]
 
     def _parse_path(self, path: str, /) -> tuple[list[str], Collection, str | int]:
