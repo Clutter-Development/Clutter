@@ -125,7 +125,7 @@ class Clutter(commands.AutoShardedBot):
                     f"{color.bold('ID:')} {self.user.id}",
                     f"{color.bold('Total Guilds:')} {len(self.guilds)}",
                     f"{color.bold('Total Users:')} {len(self.users)}",
-                    f"{color.bold('Total Shards: ')} {self.shard_count}",
+                    f"{color.bold('Total Shards:')} {self.shard_count}",
                 ]
             ),
         )
