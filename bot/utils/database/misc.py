@@ -41,12 +41,13 @@ def find_in_dict(get_from: dict, path: list[str], /, *, default: Any = None) -> 
     Returns:
         Any: The value. Returns the default value if the key is not found.
     """
+    # print(f"Finding in dict:\n{get_from}\nPath: {'.'.join(path)}\nDefault: {default}")
     key = path.pop(-1)
     for _ in path:
         try:
             get_from = get_from[_]
         except (KeyError, TypeError, AttributeError):
-            return None
+            return default
     return get_from.get(key, default)
 
 

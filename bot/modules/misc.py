@@ -80,3 +80,7 @@ class Misc(
             )
         )
         await ctx.reply_embed("info", view=view)
+
+
+async def setup(bot: Clutter):
+    await bot.add_cog(Misc(bot))

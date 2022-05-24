@@ -84,9 +84,12 @@ class CachedMongoManager(MongoManager):
             Any: The value of the variable.
         """
         if path in self._cache:
+            # print(f"Cache used: {path}: {self._cache[path][0]}")  # TEST
             self._use(path)
         else:
+            # print(f"DB used: {path} ", end="")  # TEST
             self._cache[path] = [await super().get(path), self._current_time()]
+            # print(self._cache[path][0])  # TEST
         if not cache_forever:
             asyncio.create_task(self._remove_after_cooldown(path))
         if self._cache.get(path, [None])[0] is None:

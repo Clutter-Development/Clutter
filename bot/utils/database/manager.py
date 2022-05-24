@@ -56,7 +56,7 @@ class MongoManager:
         ppath, collection, _id = self._parse_path(path)
         if ppath:
             return find_in_dict(
-                await collection.find_one({"_id": _id}, {"_id": 0, ".".join(ppath): 1}),
+                await collection.find_one({"_id": _id}, {"_id": 0, ".".join(ppath): 1}) or {},
                 ppath,
                 default=default,
             )
