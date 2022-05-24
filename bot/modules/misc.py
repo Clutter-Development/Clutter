@@ -20,9 +20,9 @@ class ClutterHelpCommand(commands.HelpCommand):
         parent: commands.Group | None = command.parent
         entries = []
         while parent:
-            entries.append(f'{parent.name} {parent.signature}'.strip())
+            entries.append(f"{parent.name} {parent.signature}".strip())
             parent = parent.parent
-        parent_signature = ' '.join(reversed(entries))
+        parent_signature = " ".join(reversed(entries))
         return f"{self.context.prefix}{parent_signature} {command.signature}"
 
     async def send_bot_help(self, mapping: CommandMapping, /):
