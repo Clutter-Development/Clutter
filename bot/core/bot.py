@@ -272,6 +272,7 @@ class Clutter(commands.AutoShardedBot):
                 self.session = session
                 self.db = db
                 await self.start(self.token, reconnect=True)
+
         try:
             asyncio.run(runner())
         finally:
