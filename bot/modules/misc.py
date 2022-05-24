@@ -17,12 +17,12 @@ class ClutterHelpCommand(commands.HelpCommand):
     cog: Misc
 
     def get_command_signature(self, command: commands.Command, /) -> str:
-        parent: commands.Group | None = command.parent
+        parent: commands.Group | None = command.parent  # type: ignore
         entries = []
         while parent:
-            entries.append(f"{parent.name} {parent.signature}".strip())
-            parent = parent.parent
-        parent_signature = " ".join(reversed(entries))
+            entries.append(f'{parent.name} {parent.signature}'.strip())
+            parent = parent.parent  # type: ignore
+        parent_signature = ' '.join(reversed(entries))
         return f"{self.context.prefix}{parent_signature} {command.signature}"
 
     async def send_bot_help(self, mapping: CommandMapping, /):
@@ -52,8 +52,8 @@ class Misc(
         message = await ctx.reply("** **", mention_author=False)
         await message.edit(
             embed=self.bot.embed.info(
-                self.bot.i18n(ctx, "COMMANDS.PING.RESPONSE.TITLE"),
-                self.bot.i18n(ctx, "COMMANDS.PING.RESPONSE.BODY").format(
+                await self.bot.i18n(ctx, "COMMANDS.PING.RESPONSE.TITLE"),
+                (await self.bot.i18n(ctx, "COMMANDS.PING.RESPONSE.BODY")).format(
                     ws_ping=self.bot.latency * 1000,
                     message_ping=int((time.monotonic() - ts) * 1000),
                     db_ping=0,
@@ -69,12 +69,12 @@ class Misc(
         view = discord.ui.View()
         view.add_item(
             discord.ui.Button(
-                label=self.bot.i18n("COMMANDS.INVITE.BUTTONS.BOT_INVITE"), url=self.bot.invite_url
+                label=await self.bot.i18n("COMMANDS.INVITE.BUTTONS.BOT_INVITE"), url=self.bot.invite_url
             )
         )
         view.add_item(
             discord.ui.Button(
-                label=self.bot.i18n("COMMANDS.INVITE.BUTTONS.DISCORD_INVITE"),
+                label=await self.bot.i18n("COMMANDS.INVITE.BUTTONS.DISCORD_INVITE"),
                 url=self.bot.discord_invite,
             )
         )

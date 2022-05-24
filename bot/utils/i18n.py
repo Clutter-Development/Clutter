@@ -72,7 +72,7 @@ class I18N:
                 return self.fallback
             g_locale = ctx.guild_locale if is_interaction else ctx.guild.preferred_locale  # type: ignore
             return await self._db.get(
-                f"guilds.{ctx.guild_id if is_interaction else ctx.guild.id}.language",
+                f"guilds.{ctx.guild_id if is_interaction else ctx.guild.id}.language",  # type: ignore
                 default=g_locale or self.fallback
                 # type: ignore
             )
