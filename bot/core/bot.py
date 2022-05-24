@@ -20,6 +20,7 @@ BASE_PATH = "./" if os.getenv("USING_DOCKER") else "./bot/"
 class Clutter(commands.AutoShardedBot):
     tree: ClutterCommandTree
     user: discord.ClientUser
+    session: aiohttp.ClientSession
 
     def __init__(self, config: dict, /):
         """Initialize the bot itself.
@@ -27,8 +28,6 @@ class Clutter(commands.AutoShardedBot):
         Args:
             config (dict): The bot configuration.
         """
-        self.session = aiohttp.ClientSession()
-
         self.config = config
         bot_cfg = config["BOT"]
         db_cfg = config["DATABASE"]
@@ -54,12 +53,6 @@ class Clutter(commands.AutoShardedBot):
             db_cfg["URI"],
             database=db_cfg["NAME"],
             cooldown=db_cfg["CACHE_COOLDOWN"],
-        )
-        self.error_webhook = discord.Webhook.from_url(
-            bot_cfg["ERROR_WEBHOOK_URL"], session=self.session, bot_token=self.token
-        )
-        self.log_webhook = discord.Webhook.from_url(
-            bot_cfg["LOG_WEBHOOK_URL"], session=self.session, bot_token=self.token
         )
         self.embed = EmbedBuilder(self)
         self.i18n = I18N(self, os.path.abspath(f"{BASE_PATH}i18n"))
@@ -102,6 +95,13 @@ class Clutter(commands.AutoShardedBot):
     # -- No Docstrings Since Lib Used -- #
 
     async def startup_hook(self) -> None:
+        bot_cfg = self.config["BOT"]
+        self.error_webhook = discord.Webhook.from_url(
+            bot_cfg["ERROR_WEBHOOK_URL"], session=self.session, bot_token=self.token
+        )
+        self.log_webhook = discord.Webhook.from_url(
+            bot_cfg["LOG_WEBHOOK_URL"], session=self.session, bot_token=self.token
+        )
         await self.load_extensions()
         print(self.startup_log)
 
@@ -266,10 +266,13 @@ class Clutter(commands.AutoShardedBot):
     # -- No DocStr -- #
 
     def run(self) -> None:
+        async def runner():
+            async with self:
+                self.session = aiohttp.ClientSession()
+                await self.start(self.token, reconnect=True)
         try:
-            super().run(self.token, reconnect=True)
+            asyncio.run(runner())
         finally:
-
             async def stop():
                 await self.session.close()
 
