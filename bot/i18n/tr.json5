@@ -23,7 +23,8 @@
         BUTTONS: {
           BOT_INVITE: "Beni davet et!",
           DISCORD_INVITE: "Destek sunucusuna katıl!"
-        }
+        },
+      }
     }
   }
 }
