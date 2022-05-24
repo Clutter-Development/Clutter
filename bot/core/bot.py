@@ -261,21 +261,20 @@ class Clutter(commands.AutoShardedBot):
     # -- No DocStr -- #
 
     def run(self) -> None:
-        db_cfg = self.config["DATABASE"]
-
         async def runner():
-            async with self, aiohttp.ClientSession() as session, CachedMongoManager(
-                db_cfg["URI"],
-                database=db_cfg["NAME"],
-                cooldown=db_cfg["CACHE_COOLDOWN"],
-            ) as db:
+            async with self, aiohttp.ClientSession() as session:
                 self.session = session
-                self.db = db
+                db_cfg = self.config["DATABASE"]
+                self.db = CachedMongoManager(
+                    db_cfg["URI"],
+                    database=db_cfg["NAME"],
+                    cooldown=db_cfg["CACHE_COOLDOWN"],
+                )
                 await self.start(self.token, reconnect=True)
 
         try:
             asyncio.run(runner())
-        finally:
+        except:  #
             # nothing to do here, the sessions and stuff close itself automatically
             pass
 

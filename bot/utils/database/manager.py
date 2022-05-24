@@ -154,9 +154,3 @@ class MongoManager:
             await collection.delete_one({"_id": _id})
         else:
             await collection.update_one({"_id": _id}, {"$unset": {".".join(ppath): ""}})
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        pass
