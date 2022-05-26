@@ -14,8 +14,6 @@ from core.context import ClutterContext
 from discord.ext import commands, tasks
 from utils import I18N, CachedMongoManager, EmbedBuilder, color, errors, listify
 
-BASE_PATH = "./" if os.getenv("USING_DOCKER") else "./bot/"
-
 
 class Clutter(commands.AutoShardedBot):
     tree: ClutterCommandTree
@@ -50,7 +48,7 @@ class Clutter(commands.AutoShardedBot):
 
         # Classes
         self.embed = EmbedBuilder(self)
-        self.i18n = I18N(self, os.path.abspath(f"{BASE_PATH}i18n"))
+        self.i18n = I18N(self, "./bot/i18n")
 
         # Auto spam control for commands
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist
@@ -118,15 +116,11 @@ class Clutter(commands.AutoShardedBot):
         discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
         bot_info = listify(
             "Bot Info",
-            "\n".join(
-                [
-                    f"{color.bold('User:')} {self.user}",
-                    f"{color.bold('ID:')} {self.user.id}",
-                    f"{color.bold('Total Guilds:')} {len(self.guilds)}",
-                    f"{color.bold('Total Users:')} {len(self.users)}",
-                    f"{color.bold('Total Shards:')} {self.shard_count}",
-                ]
-            ),
+            f"{color.bold('User:')} {self.user}"
+            f"{color.bold('ID:')} {self.user.id}"
+            f"{color.bold('Total Guilds:')} {len(self.guilds)}"
+            f"{color.bold('Total Users:')} {len(self.users)}"
+            f"{color.bold('Total Shards:')} {self.shard_count}"
         )
         print(
             "\n\n".join(
@@ -159,9 +153,10 @@ class Clutter(commands.AutoShardedBot):
         loaded = []
         failed = {}
         for fn in map(
-            lambda file_path: str(file_path).replace(os.pathsep, ".")[:-3],
-            pathlib.Path(f"{BASE_PATH}modules").rglob("*.py"),
+            lambda file_path: str(file_path).replace("/", ".")[:-3],
+            pathlib.Path("./bot/modules").rglob("*.py"),
         ):
+            print(fn)
             try:
                 await self.load_extension(fn)
                 loaded.append(fn)
@@ -295,7 +290,7 @@ class Clutter(commands.AutoShardedBot):
         return await super().get_context(message, cls=ClutterContext)
 
 
-with open(f"{BASE_PATH}config.json5") as f:
+with open("./bot/config.json5") as f:
     bot = Clutter(json5.load(f))
 
 
