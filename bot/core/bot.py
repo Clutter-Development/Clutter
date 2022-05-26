@@ -226,9 +226,7 @@ class Clutter(commands.AutoShardedBot):
             )
             embed.add_field(
                 name="Channel Info",
-                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",
-                # type: ignore
-                # type: ignore
+                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",  # type: ignore
             )
         await self.log_webhook.send(embed=embed)
 
