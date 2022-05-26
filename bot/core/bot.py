@@ -96,7 +96,6 @@ class Clutter(commands.AutoShardedBot):
             bot_cfg["LOG_WEBHOOK_URL"], session=self.session, bot_token=self.token
         )
         await self.load_extensions()
-        print(self.startup_log)
 
     async def determine_prefix(
         self, bot_: commands.AutoShardedBot, message: discord.Message, /
@@ -125,6 +124,7 @@ class Clutter(commands.AutoShardedBot):
         print(
             "\n\n".join(
                 [
+                    self.startup_log,
                     color.cyan(discord_info),
                     color.magenta(bot_info),
                     color.yellow(f"Running on Clutter v{self.version}"),
@@ -156,7 +156,6 @@ class Clutter(commands.AutoShardedBot):
             lambda file_path: str(file_path).replace("/", ".")[:-3],
             pathlib.Path("./bot/modules").rglob("*.py"),
         ):
-            print(fn)
             try:
                 await self.load_extension(fn)
                 loaded.append(fn)
@@ -174,7 +173,7 @@ class Clutter(commands.AutoShardedBot):
             for name, error in failed.items()
         )
 
-        self.startup_log = "\n".join(log)
+        self.startup_log = "\n\n".join(log)
 
     async def blacklist_user(self, user: discord.User | discord.Member | int, /) -> bool:
         """Blacklists a user.
