@@ -1,7 +1,6 @@
 import asyncio
 import collections
 import math
-import os
 import pathlib
 import time
 import traceback
@@ -9,9 +8,10 @@ import traceback
 import aiohttp
 import discord
 import json5
+from discord.ext import commands, tasks
+
 from core.command_tree import ClutterCommandTree
 from core.context import ClutterContext
-from discord.ext import commands, tasks
 from utils import I18N, CachedMongoManager, EmbedBuilder, color, errors, listify
 
 
@@ -98,7 +98,7 @@ class Clutter(commands.AutoShardedBot):
         await self.load_extensions()
 
     async def determine_prefix(
-        self, bot_: commands.AutoShardedBot, message: discord.Message, /
+            self, bot_: commands.AutoShardedBot, message: discord.Message, /
     ) -> list[str]:
         if guild := message.guild:
             prefix = await self.db.get(
@@ -115,11 +115,13 @@ class Clutter(commands.AutoShardedBot):
         discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
         bot_info = listify(
             "Bot Info",
-            f"{color.bold('User:')} {self.user}"
-            f"{color.bold('ID:')} {self.user.id}"
-            f"{color.bold('Total Guilds:')} {len(self.guilds)}"
-            f"{color.bold('Total Users:')} {len(self.users)}"
-            f"{color.bold('Total Shards:')} {self.shard_count}"
+            "\n".join([
+                f"{color.bold('User:')} {self.user}",
+                f"{color.bold('ID:')} {self.user.id}",
+                f"{color.bold('Total Guilds:')} {len(self.guilds)}",
+                f"{color.bold('Total Users:')} {len(self.users)}",
+                f"{color.bold('Total Shards:')} {self.shard_count}",
+            ])
         )
         print(
             "\n\n".join(
@@ -142,7 +144,7 @@ class Clutter(commands.AutoShardedBot):
     async def leave_blacklisted_guilds(self) -> None:
         for guild in self.guilds:
             if await self.db.get(
-                f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True
+                    f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True
             ):
                 await guild.leave()
 
@@ -153,8 +155,8 @@ class Clutter(commands.AutoShardedBot):
         loaded = []
         failed = {}
         for fn in map(
-            lambda file_path: str(file_path).replace("/", ".")[:-3],
-            pathlib.Path("./bot/modules").rglob("*.py"),
+                lambda file_path: str(file_path).replace("/", ".")[:-3],
+                pathlib.Path("./bot/modules").rglob("*.py"),
         ):
             try:
                 await self.load_extension(fn)
@@ -223,7 +225,8 @@ class Clutter(commands.AutoShardedBot):
             )
             embed.add_field(
                 name="Channel Info",
-                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",  # type: ignore
+                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",
+                # type: ignore
                 # type: ignore
             )
         await self.log_webhook.send(embed=embed)
@@ -284,7 +287,7 @@ class Clutter(commands.AutoShardedBot):
         await self.invoke(ctx)
 
     async def get_context(
-        self, message: discord.Message, /, cls: type | None = None
+            self, message: discord.Message, /, cls: type | None = None
     ) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
 
