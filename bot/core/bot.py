@@ -269,7 +269,10 @@ class Clutter(commands.AutoShardedBot):
                 )
                 await self.start(self.token, reconnect=True)
 
-        asyncio.run(runner())
+        try:
+            asyncio.run(runner())
+        except:
+            pass
 
     def add_command(self, command: commands.Command, /) -> None:
         command.cooldown_after_parsing = True
