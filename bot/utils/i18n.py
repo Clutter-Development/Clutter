@@ -5,13 +5,12 @@ from typing import TYPE_CHECKING
 
 import json5
 
+import discord
 from .database import find_in_dict
 from .errors import UnknownTranslationString
-
 if TYPE_CHECKING:
-    import discord
-    from core.bot import Clutter
     from discord.ext import commands
+    from core.bot import Clutter
 
 
 class I18N:
@@ -21,7 +20,7 @@ class I18N:
         self.fallback = bot.default_language
         for lang_file in os.listdir(lang_file_dir):
             if lang_file.endswith(".json5"):
-                with open(os.path.join(lang_file_dir, lang_file)) as f:
+                with open(f"{lang_file_dir}/{lang_file}") as f:
                     self.languages[lang_file[:-6]] = json5.load(f)
 
     def translate_with_locale(self, language: str, text: str, /) -> str:
@@ -67,14 +66,13 @@ class I18N:
         """
         is_interaction = isinstance(ctx, discord.Interaction)
 
-        async def determine_guild_language() -> str:
+        async def determine_guild_language() -> discord.Locale:
             if (is_interaction and not ctx.guild_id) or (not is_interaction and not ctx.guild):  # type: ignore
                 return self.fallback
             g_locale = ctx.guild_locale if is_interaction else ctx.guild.preferred_locale  # type: ignore
             return await self._bot.db.get(
                 f"guilds.{ctx.guild_id if is_interaction else ctx.guild.id}.language",  # type: ignore
                 default=g_locale or self.fallback
-                # type: ignore
             )
 
         guild_exists = bool(ctx.guild_id if is_interaction else ctx.guild)
@@ -87,5 +85,8 @@ class I18N:
                 f"users.{ctx.user.id if is_interaction else ctx.author.id}.language",
                 default=user_locale or await determine_guild_language(),
             )
+        lang = lang.value
+        if lang not in self.languages:
+            lang = self.fallback
 
         return self.translate_with_locale(lang, text)

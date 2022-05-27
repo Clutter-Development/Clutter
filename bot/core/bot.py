@@ -312,7 +312,7 @@ async def maintenance_check(ctx: ClutterContext, /) -> bool:
 
 @bot.check
 async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
-    if bot.db.get(f"users.{ctx.author.id}.blacklisted", default=False, cache_forever=True):
+    if await bot.db.get(f"users.{ctx.author.id}.blacklisted", default=False, cache_forever=True):
         raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
     return True
 
@@ -320,7 +320,7 @@ async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
 @bot.check
 async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
     if guild := ctx.guild:
-        if bot.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
+        if await bot.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
             await ctx.guild.leave()
     return True
 
@@ -359,7 +359,7 @@ async def app_maintenance_check(inter: discord.Interaction, /) -> bool:
 
 @bot.tree.check
 async def app_user_blacklist_check(inter: discord.Interaction, /) -> bool:
-    if bot.db.get(f"users.{inter.user.id}.blacklisted", default=False, cache_forever=True):
+    if await bot.db.get(f"users.{inter.user.id}.blacklisted", default=False, cache_forever=True):
         raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
     return True
 
@@ -367,7 +367,7 @@ async def app_user_blacklist_check(inter: discord.Interaction, /) -> bool:
 @bot.tree.check
 async def app_guild_blacklist_check(inter: discord.Interaction, /) -> bool:
     if guild_id := inter.guild_id:
-        if bot.db.get(f"guilds.{guild_id}.blacklisted", default=False, cache_forever=True):
+        if await bot.db.get(f"guilds.{guild_id}.blacklisted", default=False, cache_forever=True):
             guild = bot.get_guild(guild_id) or await bot.fetch_guild(guild_id)
             await guild.leave()
     return True
