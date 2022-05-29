@@ -8,12 +8,12 @@ import traceback
 import aiohttp
 import discord
 import json5
+import uvloop
 from core.command_tree import ClutterCommandTree
 from core.context import ClutterContext
 from discord.ext import commands, tasks
-from utils import I18N, EmbedBuilder, color, errors, listify
 from mongo_manager import CachedMongoManager
-import uvloop
+from utils import I18N, EmbedBuilder, color, errors, listify
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -146,9 +146,7 @@ class Clutter(commands.AutoShardedBot):
     @tasks.loop(hours=12)
     async def leave_blacklisted_guilds(self) -> None:
         for guild in self.guilds:
-            if await self.db.get(
-                f"guilds.{guild.id}.blacklisted", default=False
-            ):
+            if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
                 await guild.leave()
 
     # -- Custom Attributes -- #
@@ -264,9 +262,7 @@ class Clutter(commands.AutoShardedBot):
                 self.session = session
                 db_cfg = self.config["DATABASE"]
                 self.db = CachedMongoManager(
-                    db_cfg["URI"],
-                    database=db_cfg["NAME"],
-                    max_items=db_cfg["MAX_ITEMS"]
+                    db_cfg["URI"], database=db_cfg["NAME"], max_items=db_cfg["MAX_ITEMS"]
                 )
                 await self.start(self.token, reconnect=True)
 

@@ -3,14 +3,15 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-import json5
-
 import discord
+import json5
 from mongo_manager import find_in_nested_dict
+
 from .errors import UnknownTranslationString
+
 if TYPE_CHECKING:
-    from discord.ext import commands
     from core.bot import Clutter
+    from discord.ext import commands
 
 
 class I18N:
@@ -72,7 +73,7 @@ class I18N:
             g_locale = ctx.guild_locale if is_interaction else ctx.guild.preferred_locale  # type: ignore
             return await self._bot.db.get(
                 f"guilds.{ctx.guild_id if is_interaction else ctx.guild.id}.language",  # type: ignore
-                default=g_locale or self.fallback
+                default=g_locale or self.fallback,
             )
 
         guild_exists = bool(ctx.guild_id if is_interaction else ctx.guild)
