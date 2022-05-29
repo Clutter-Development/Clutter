@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import json5
 
 import discord
-from .database import find_in_dict
+from mongo_manager import find_in_nested_dict
 from .errors import UnknownTranslationString
 if TYPE_CHECKING:
     from discord.ext import commands
@@ -37,10 +37,10 @@ class I18N:
             str: The translated string.
         """
         path = text.split(".")
-        value = find_in_dict(
+        value = find_in_nested_dict(
             self.languages[language],
             path,
-            default=find_in_dict(self.languages[self.fallback], path),
+            default=find_in_nested_dict(self.languages[self.fallback], path),
         )
         if value is None:
             raise UnknownTranslationString(f"Could not find translation for {text.join('.')}")

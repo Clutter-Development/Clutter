@@ -11,7 +11,11 @@ import json5
 from core.command_tree import ClutterCommandTree
 from core.context import ClutterContext
 from discord.ext import commands, tasks
-from utils import I18N, CachedMongoManager, EmbedBuilder, color, errors, listify
+from utils import I18N, EmbedBuilder, color, errors, listify
+from mongo_manager import CachedMongoManager
+import uvloop
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 class Clutter(commands.AutoShardedBot):
@@ -100,9 +104,7 @@ class Clutter(commands.AutoShardedBot):
         self, bot_: commands.AutoShardedBot, message: discord.Message, /
     ) -> list[str]:
         if guild := message.guild:
-            prefix = await self.db.get(
-                f"guilds.{guild.id}.prefix", default=self.default_prefix, cache_forever=True
-            )
+            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
@@ -136,7 +138,7 @@ class Clutter(commands.AutoShardedBot):
         )
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
-        if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
+        if await self.db.get(f"guilds.{guild.id}.blacklisted", default=False):
             await guild.leave()
 
     # -- Tasks -- #
@@ -145,7 +147,7 @@ class Clutter(commands.AutoShardedBot):
     async def leave_blacklisted_guilds(self) -> None:
         for guild in self.guilds:
             if await self.db.get(
-                f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True
+                f"guilds.{guild.id}.blacklisted", default=False
             ):
                 await guild.leave()
 
@@ -188,7 +190,7 @@ class Clutter(commands.AutoShardedBot):
             bool: Wheter or not the user was blacklisted.
         """
         user_id = user if isinstance(user, int) else user.id
-        if await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
+        if await self.db.get(f"users.{user_id}.blacklisted", default=False):
             return False
         await self.db.set(f"users.{user_id}.blacklisted", True)
         return True
@@ -203,7 +205,7 @@ class Clutter(commands.AutoShardedBot):
             bool: Wheter or not the user was unblacklisted.
         """
         user_id = user if isinstance(user, int) else user.id
-        if not await self.db.get(f"users.{user_id}.blacklisted", default=False, cache_forever=True):
+        if not await self.db.get(f"users.{user_id}.blacklisted", default=False):
             return False
         await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
@@ -264,7 +266,7 @@ class Clutter(commands.AutoShardedBot):
                 self.db = CachedMongoManager(
                     db_cfg["URI"],
                     database=db_cfg["NAME"],
-                    cooldown=db_cfg["CACHE_COOLDOWN"],
+                    max_items=db_cfg["MAX_ITEMS"]
                 )
                 await self.start(self.token, reconnect=True)
 
@@ -312,7 +314,7 @@ async def maintenance_check(ctx: ClutterContext, /) -> bool:
 
 @bot.check
 async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
-    if await bot.db.get(f"users.{ctx.author.id}.blacklisted", default=False, cache_forever=True):
+    if await bot.db.get(f"users.{ctx.author.id}.blacklisted", default=False):
         raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
     return True
 
@@ -320,7 +322,7 @@ async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
 @bot.check
 async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
     if guild := ctx.guild:
-        if await bot.db.get(f"guilds.{guild.id}.blacklisted", default=False, cache_forever=True):
+        if await bot.db.get(f"guilds.{guild.id}.blacklisted", default=False):
             await ctx.guild.leave()
     return True
 
@@ -359,7 +361,7 @@ async def app_maintenance_check(inter: discord.Interaction, /) -> bool:
 
 @bot.tree.check
 async def app_user_blacklist_check(inter: discord.Interaction, /) -> bool:
-    if await bot.db.get(f"users.{inter.user.id}.blacklisted", default=False, cache_forever=True):
+    if await bot.db.get(f"users.{inter.user.id}.blacklisted", default=False):
         raise errors.UserIsBlacklisted("You are blacklisted from using this bot.")
     return True
 
@@ -367,7 +369,7 @@ async def app_user_blacklist_check(inter: discord.Interaction, /) -> bool:
 @bot.tree.check
 async def app_guild_blacklist_check(inter: discord.Interaction, /) -> bool:
     if guild_id := inter.guild_id:
-        if await bot.db.get(f"guilds.{guild_id}.blacklisted", default=False, cache_forever=True):
+        if await bot.db.get(f"guilds.{guild_id}.blacklisted", default=False):
             guild = bot.get_guild(guild_id) or await bot.fetch_guild(guild_id)
             await guild.leave()
     return True

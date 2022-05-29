@@ -39,8 +39,8 @@
     URI: '',
     // The MongoDB database name.
     NAME: 'Clutter',
-    // The cooldown for database caching.
-    CACHE_COOLDOWN: 1200,
+    // The max items that can be stored in the cache.
+    MAX_ITEMS: 5000,
   },
   // Basic style config.
   STYLE: {

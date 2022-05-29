@@ -21,10 +21,18 @@ directory [(see below)](#configuration).
 
 Installation commands:
 
+Docker installation:
 ```bash
-git clone https://github.com/Clutter-Development/Clutter # Clone the repo
-cd Clutter # Go to the Clutter directory
-./deploy.sh # Run the deploy script
+git clone https://github.com/Clutter-Development/Clutter  # Clone the repo.
+cd Clutter  # Go to the Clutter directory.
+./deploy.sh  # Run the deploy script.
+```
+
+Traditional installation:
+```bash
+git clone https://github.com/Clutter-Development/Clutter  # Clone the repo.
+cd Clutter  # Go to the Clutter directory.
+python bot  # Run the bot.
 ```
 
 # Configuration
