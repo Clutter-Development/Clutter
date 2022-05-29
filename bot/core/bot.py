@@ -15,7 +15,7 @@ from discord.ext import commands, tasks
 from mongo_manager import CachedMongoManager
 from utils import I18N, EmbedBuilder, color, errors, listify
 
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+uvloop.install()
 
 
 class Clutter(commands.AutoShardedBot):
