@@ -1,0 +1,29 @@
+{
+  BOT_TOKEN: '',
+  ERROR_WEBHOOK_URL: '',
+  LOG_WEBHOOK_URL: '',
+  BOT_ADMIN_IDS: [
+    000000000000000000
+  ],
+  BOT_DEFAULT_PREFIX: '!',
+  BOT_DEFFAULT_LANUAGE: 'en-US',
+  BOT_DEVELOPMENT_SERVER_IDS: [
+    000000000000000000
+  ],
+  DEVELOPMENT_MODE: false,
+  DATABASE_URI: 'mongodb+srv://<-----------sus----------->.mongodb.net/Clutter?retryWrites=true&w=majority',
+  STYLE: {
+    COLORS: {
+      SUCCESS: 0x00FF00,
+      ERROR: 0xFF0000,
+      WARNING: 0xFFA500,
+      INFO: 0x0000FF
+    },
+    EMOJIS: {
+      SUCCESS: '<:success:000000000000000000>',
+      ERROR: '<:error:000000000000000000>',
+      WARNING: '️<:warning:000000000000000000>',
+      INFO: '<:info:000000000000000000>'
+    },
+  }
+}
