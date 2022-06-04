@@ -1,23 +1,25 @@
-from discord.ext import commands, tasks
-from discord_utils import QuickEmbedCreator, format_as_list
-from discord_i18n import DiscordI18N
 import collections
+import pathlib
+import time
+import traceback
+from typing import TYPE_CHECKING, Callable
+
 import aiohttp
 import color
 import discord
-from mongo_manager import CachedMongoManager
-from core.context import ClutterContext
-import traceback
 import json5
-import pathlib
-import time
 from core.command_tree import ClutterCommandTree
-from typing import TYPE_CHECKING, Callable
+from core.context import ClutterContext
+from discord.ext import commands, tasks
+from discord_i18n import DiscordI18N
+from discord_utils import QuickEmbedCreator, format_as_list
+from mongo_manager import CachedMongoManager
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
 CURRENT_DIR = pathlib.Path(__file__).resolve().parent
+
 
 class BotInfo:
     version = "0.0.1"
@@ -60,9 +62,7 @@ class Clutter(commands.AutoShardedBot):
 
         # Auto spam control for commands.
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist.
-        self.spam_mapping = commands.CooldownMapping.from_cooldown(
-            10, 12, commands.BucketType.user
-        )
+        self.spam_mapping = commands.CooldownMapping.from_cooldown(10, 12, commands.BucketType.user)
         self.spam_counter = collections.Counter()
 
         super().__init__(
@@ -84,9 +84,13 @@ class Clutter(commands.AutoShardedBot):
             owner_ids=set(config["BOT_ADMIN_IDS"]),
         )
 
-    async def determine_prefix(self, bot: Self, message: discord.Message, /) -> Callable[[Self, discord.Message], list[str]]:
+    async def determine_prefix(
+        self, bot: Self, message: discord.Message, /
+    ) -> Callable[[Self, discord.Message], list[str]]:
         if guild := message.guild:
-            prefix: str = await bot.db.get(f"guilds.{guild.id}.prefix", default=self.info.default_prefix)
+            prefix: str = await bot.db.get(
+                f"guilds.{guild.id}.prefix", default=self.info.default_prefix
+            )
         else:
             prefix = bot.info.default_prefix
 
@@ -108,9 +112,7 @@ class Clutter(commands.AutoShardedBot):
         if loaded:
             log.append(
                 color.green(
-                    format_as_list(
-                        f"Successfully loaded {len(loaded)} modules", "\n".join(loaded)
-                    )
+                    format_as_list(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))
                 )
             )
         log.extend(
@@ -164,7 +166,7 @@ class Clutter(commands.AutoShardedBot):
                 await guild.leave()
                 await self.db.set(f"guilds.{guild.id}.blacklisted", True)
 
-    async def blacklist_user(self, user: discord.Object, /) -> bool:        
+    async def blacklist_user(self, user: discord.Object, /) -> bool:
         if await self.db.get(f"users.{user.id}.blacklisted"):
             return False
 
@@ -177,11 +179,11 @@ class Clutter(commands.AutoShardedBot):
 
         await self.db.set(f"users.{user.id}.blacklisted", False)
         return True
-    
+
     async def getch_member(self, guild: discord.Guild, user_id: int, /) -> discord.Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
-        
+
         if self.get_shard(guild.shard_id).is_ws_ratelimited():
             try:
                 return await guild.fetch_member(user_id)
@@ -190,37 +192,49 @@ class Clutter(commands.AutoShardedBot):
 
         members = await guild.query_members(limit=1, user_ids=[user_id], cache=True)
         return next(iter(members), None)
-    
+
     def add_command(self, command: commands.Command, /) -> None:
         command.cooldown_after_parsing = True
         super().add_command(command)
-        
+
     async def process_commands(self, message: discord.Message, /) -> None:
         if message.author.bot:
-            return 
-        
+            return
+
         ctx = await self.get_context(message)
-        
+
         if not ctx.valid:
             return
-        
+
         if cog := ctx.command.cog:
             if cog.qualified_name != "Jishaku":
                 await ctx.typing()
-                
+
         await self.invoke(ctx)
-        
-    async def get_context(self, message: discord.Message, /, cls: type | None = None) -> ClutterContext:
+
+    async def get_context(
+        self, message: discord.Message, /, cls: type | None = None
+    ) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
-    
+
     def run(self) -> None:
         async def runner() -> None:
             async with self, aiohttp.ClientSession as session:
                 self.session = session
-                self.db = CachedMongoManager(self._config["DATABASE_URI"], database="Clutter", max_items=5000)
-                self.error_webhook = discord.Webhook.from_url(self._config["ERROR_WEBHOOK_URL"], session=session)
-                self.log_webhook = discord.Webhook.from_url(self._config["LOG_WEBHOOK_URL"], session=session)
-                self.i18n = DiscordI18N(str(CURRENT_DIR / "translations"), db=self.db, fallback=self.info.default_language)
+                self.db = CachedMongoManager(
+                    self._config["DATABASE_URI"], database="Clutter", max_items=5000
+                )
+                self.error_webhook = discord.Webhook.from_url(
+                    self._config["ERROR_WEBHOOK_URL"], session=session
+                )
+                self.log_webhook = discord.Webhook.from_url(
+                    self._config["LOG_WEBHOOK_URL"], session=session
+                )
+                self.i18n = DiscordI18N(
+                    str(CURRENT_DIR / "translations"),
+                    db=self.db,
+                    fallback=self.info.default_language,
+                )
 
 
 config = json5.loads((CURRENT_DIR / "config.json5").read_text())
