@@ -14,7 +14,7 @@ Clutter is a multipurpose, compact, extremely configurable Discord bot.
 
 # Installation
 
-The preffered method for running this bot is Docker.
+The preffered method for running this bot is Docker. <!-- currently broken -->
 
 Before running, don't forget to modify the `config.example.json5` file in the `./bot`
 directory [(see below)](#configuration).
@@ -23,14 +23,14 @@ Installation commands:
 
 Docker installation:
 ```bash
-git clone https://github.com/Clutter-Development/Clutter  # Clone the repo.
+git clone https://github.com/Clutter-Development/Clutter  # Clone the repository.
 cd Clutter  # Go to the Clutter directory.
 ./deploy.sh  # Run the deploy script.
 ```
 
 Traditional installation:
 ```bash
-git clone https://github.com/Clutter-Development/Clutter  # Clone the repo.
+git clone https://github.com/Clutter-Development/Clutter  # Clone the repository.
 cd Clutter  # Go to the Clutter directory.
 python bot  # Run the bot.
 ```
@@ -39,5 +39,4 @@ python bot  # Run the bot.
 
 The bot configuration can be found in the `config.example.json5` file in the `./bot` directory.
 
-There is already an example configuration in the file, so this chapter will not be very long
-> Don't forget to rename `config.example.json5` to `config.json5`
+Don't forget to rename `config.example.json5` to `config.json5`.
