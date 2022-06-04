@@ -1,3 +1,16 @@
+# The directory structure is like so:
+# / (root)
+#   clutter-bot/
+#     bot/
+#       core/
+#         ...
+#       i18n/
+#         ...
+#       modules/
+#         ...
+#       __main__.py
+#     requirements.txt
+
 FROM python:3.10.4-alpine3.16
 
 WORKDIR /clutter-bot
