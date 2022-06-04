@@ -1,7 +1,7 @@
 name: Feature Request
-description: Suggest a feature for this bot
+description: Suggest a feature for this bot.
 labels:
-  - feature request
+  - enhancement
 body:
   - type: input
     attributes:

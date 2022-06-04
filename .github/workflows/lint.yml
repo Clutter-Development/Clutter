@@ -1,4 +1,3 @@
-
 name: Lint
 on: [ pull_request, push ]
 jobs:
@@ -26,8 +25,9 @@ jobs:
         run: |
           git config user.name "Automated Linter"
       - name: Push To Git
+        continue-on-error: true
         run: |
           git pull
-          git add ./ || exit 0
-          git commit --reuse-message=HEAD || exit 0
-          git push || exit 0
+          git add ./
+          git commit --reuse-message=HEAD
+          git push

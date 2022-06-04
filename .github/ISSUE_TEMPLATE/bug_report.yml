@@ -1,7 +1,7 @@
 name: Bug Report
-description: Report broken or incorrect behaviour
+description: Report broken or incorrect behaviour.
 labels:
-  - unconfirmed bug
+  - bug
 body:
   - type: markdown
     attributes:
@@ -13,14 +13,14 @@ body:
   - type: input
     attributes:
       label: Summary
-      description: A simple summary of your bug report
+      description: A simple summary of your bug report.
     validations:
       required: true
   - type: textarea
     attributes:
       label: Reproduction Steps
       description: >
-        What you did to make it happen.
+        What you did to make it happen?
     validations:
       required: true
   - type: textarea
@@ -45,7 +45,7 @@ body:
       options:
         - label: I have searched the open issues for duplicates.
           required: true
-        - label: I have added the bot the requrired permissions.
+        - label: I have added the bot the required permissions.
           required: true
   - type: textarea
     attributes:
