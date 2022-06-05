@@ -7,3 +7,4 @@ json5
 mongo_manager @ git+https://github.com/Clutter-Development/MongoManager
 python-dotenv
 uvloop
+sentry-sdk

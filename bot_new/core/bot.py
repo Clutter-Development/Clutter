@@ -94,11 +94,11 @@ class Clutter(commands.AutoShardedBot):
         self, bot: Self, message: discord.Message, /
     ) -> Callable[[Self, discord.Message], list[str]]:
         if guild := message.guild:
-            prefix: str = await bot.db.get(
+            prefix: str = await self.db.get(
                 f"guilds.{guild.id}.prefix", default=self.info.default_prefix
             )
         else:
-            prefix = bot.info.default_prefix
+            prefix = self.info.default_prefix
 
         return commands.when_mentioned_or(prefix)
 
@@ -163,7 +163,7 @@ class Clutter(commands.AutoShardedBot):
             await guild.leave()
         elif await self.db.get(f"users.{guild.owner_id}.blacklisted"):
             await guild.leave()
-            await self.db.set(f"guilds.{guild.id}.blacklisted", True)  # he he he haw
+            await self.db.set(f"guilds.{guild.id}.blacklisted", True)
 
     @tasks.loop(hours=12)
     async def leave_blacklisted_guilds(self) -> None:
@@ -247,6 +247,7 @@ class Clutter(commands.AutoShardedBot):
                     db=self.db,
                     fallback=self.info.default_language,
                 )
+
         try:
             asyncio.run(runner())
         except KeyboardInterrupt:
