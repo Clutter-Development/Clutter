@@ -9,6 +9,8 @@ if TYPE_CHECKING:
     from core.bot import Clutter
     from discord_utils import QuickEmbedCreator
 
+__all__ = ("ClutterContext",)
+
 
 class ReplyEmbedCoroutine(Protocol):
     async def __call__(

@@ -8,6 +8,8 @@ from discord import app_commands as app
 if TYPE_CHECKING:
     from core.bot import Clutter
 
+__all__ = ("ClutterCommandTree",)
+
 T = TypeVar("T")
 
 

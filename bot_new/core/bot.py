@@ -15,6 +15,7 @@ from discord.ext import commands, tasks
 from discord_i18n import DiscordI18N
 from discord_utils import QuickEmbedCreator, format_as_list
 from mongo_manager import CachedMongoManager
+from core import errors
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -260,8 +261,7 @@ async def maintenance_check(ctx: ClutterContext | discord.Interaction, /) -> boo
     if bot.info.in_development_mode and not bot.is_owner(
         ctx.author if isinstance(ctx, ClutterContext) else ctx.user
     ):
-        # TODO: raise error.
-        pass
+        raise errors.BotInMaintenance("The bot is currently in maintenance. Only bot admins can use commands.")
     return False
 
 
@@ -284,8 +284,7 @@ async def user_blacklist_check(ctx: ClutterContext | discord.Interaction, /) -> 
     if await bot.db.get(
         f"users.{ctx.author.id if isinstance(ctx, ClutterContext) else ctx.user.id}.blacklisted"
     ):
-        # TODO: raise error.
-        pass
+        raise errors.UserIsBlacklisted("You are blacklisted from using this bot. retard.")
     return True
 
 
@@ -302,28 +301,34 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
 
     if retry_after := bucket.update_rate_limit(message.created_at.timestamp()):
         bot.spam_counter[author_id] += 1
-        if bot.spam_counter[author_id] >= 3:
-            await bot.blacklist_user(author_id)
-            del bot.spam_counter[author_id]
 
-            author = ctx.author
+        if not bot.spam_counter[author_id] >= 3:
+            return True
 
-            # Sends info to the log webhook.
-            embed = bot.embed.warning(
-                f"**{author}** has been blacklisted for spamming!",
-                f"Incident time: <t:{int(time.time())}:F>",
+        await bot.blacklist_user(author_id)
+        del bot.spam_counter[author_id]
+
+        author = ctx.author
+
+        # Sends info to the log webhook.
+        embed = bot.embed.warning(
+            f"**{author}** has been blacklisted for spamming!",
+            f"Incident time: <t:{int(time.time())}:F>",
+        ).add_field(
+            title="User Info",
+            description=f"**Mention:** {author.mention}\n**Tag:** {author}\n**ID:** {author.id}",
+        )
+        if guild := ctx.guild:
+            channel: discord.TextChannel = ctx.channel
+            embed.add_field(
+                title="Guild Info",
+                description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
             ).add_field(
-                title="User Info",
-                description=f"**Mention:** {author.mention}\n**Tag:** {author}\n**ID:** {author.id}",
+                title="Channel Info",
+                description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",
             )
-            if guild := ctx.guild:
-                channel: discord.TextChannel = ctx.channel
-                embed.add_field(
-                    title="Guild Info",
-                    description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
-                ).add_field(
-                    title="Channel Info",
-                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",
-                )
 
-            await bot.log_webhook.send(embed=embed)
+        asyncio.create_task(bot.log_webhook.send(embed=embed))
+        raise errors.UserHasBeenBlacklisted("You have been blacklisted for spamming commands.")
+
+
