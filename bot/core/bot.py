@@ -55,9 +55,6 @@ class Clutter(commands.AutoShardedBot):
         self._config = config
 
         self.info = BotInfo(config)
-        self.info.invite_url = discord.utils.oauth_url(
-            self.user.id, permissions=discord.Permissions.administrator
-        )
 
         self.development_servers = [
             discord.Object(g_id)
@@ -137,6 +134,9 @@ class Clutter(commands.AutoShardedBot):
 
     async def on_ready(self) -> None:
         self.uptime = time.time()
+        self.info.invite_url = discord.utils.oauth_url(
+            self.user.id, permissions=discord.Permissions.administrator
+        )
         discord_info = format_as_list(
             "Discord Info", f"{color.bold('Version:')} {discord.__version__}"
         )
