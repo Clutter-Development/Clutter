@@ -60,14 +60,17 @@ class Clutter(commands.AutoShardedBot):
         )
 
         self.development_servers = [
-            discord.Object(g_id) for g_id in config["BOT_DEVELOPMENT_SERVER_IDS"]
+            discord.Object(g_id)
+            for g_id in config["BOT_DEVELOPMENT_SERVER_IDS"]
         ]
 
         self.embed = QuickEmbedCreator(config["STYLE"])
 
         # Auto spam control for commands.
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist.
-        self.spam_mapping = commands.CooldownMapping.from_cooldown(10, 12, commands.BucketType.user)
+        self.spam_mapping = commands.CooldownMapping.from_cooldown(
+            10, 12, commands.BucketType.user
+        )
         self.spam_counter = collections.Counter()
 
         super().__init__(
@@ -117,11 +120,16 @@ class Clutter(commands.AutoShardedBot):
         if loaded:
             log.append(
                 color.green(
-                    format_as_list(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))
+                    format_as_list(
+                        f"Successfully loaded {len(loaded)} modules",
+                        "\n".join(loaded),
+                    )
                 )
             )
         log.extend(
-            color.red(format_as_list(f"Failed to load {color.bold(name)}", error))
+            color.red(
+                format_as_list(f"Failed to load {color.bold(name)}", error)
+            )
             for name, error in failed.items()
         )
 
@@ -187,7 +195,9 @@ class Clutter(commands.AutoShardedBot):
         await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
 
-    async def getch_member(self, guild: discord.Guild, user_id: int, /) -> discord.Member | None:
+    async def getch_member(
+        self, guild: discord.Guild, user_id: int, /
+    ) -> discord.Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
 
@@ -197,7 +207,9 @@ class Clutter(commands.AutoShardedBot):
             except discord.HTTPException:
                 return None
 
-        members = await guild.query_members(limit=1, user_ids=[user_id], cache=True)
+        members = await guild.query_members(
+            limit=1, user_ids=[user_id], cache=True
+        )
         return next(iter(members), None)
 
     def add_command(self, command: commands.Command, /) -> None:
@@ -229,7 +241,9 @@ class Clutter(commands.AutoShardedBot):
             async with self, aiohttp.ClientSession as session:
                 self.session = session
                 self.db = CachedMongoManager(
-                    self._config["DATABASE_URI"], database="Clutter", max_items=5000
+                    self._config["DATABASE_URI"],
+                    database="Clutter",
+                    max_items=5000,
                 )
                 self.error_webhook = discord.Webhook.from_url(
                     self._config["ERROR_WEBHOOK_URL"], session=session
@@ -258,7 +272,9 @@ bot = Clutter(bot_config)
 
 @bot.check
 @bot.tree.check
-async def maintenance_check(ctx: ClutterContext | discord.Interaction, /) -> bool:
+async def maintenance_check(
+    ctx: ClutterContext | discord.Interaction, /
+) -> bool:
     if bot.info.in_development_mode and not bot.is_owner(
         ctx.author if isinstance(ctx, ClutterContext) else ctx.user
     ):
@@ -270,7 +286,9 @@ async def maintenance_check(ctx: ClutterContext | discord.Interaction, /) -> boo
 
 @bot.check
 @bot.tree.check
-async def guild_blacklist_check(ctx: ClutterContext | discord.Interaction, /) -> bool:
+async def guild_blacklist_check(
+    ctx: ClutterContext | discord.Interaction, /
+) -> bool:
     if guild := ctx.guild:
         if await bot.db.get(f"guilds.{guild.id}.blacklisted"):
             await bot.db.set(f"users.{guild.owner_id}.blacklisted", True)
@@ -283,11 +301,15 @@ async def guild_blacklist_check(ctx: ClutterContext | discord.Interaction, /) ->
 
 @bot.check
 @bot.tree.check
-async def user_blacklist_check(ctx: ClutterContext | discord.Interaction, /) -> bool:
+async def user_blacklist_check(
+    ctx: ClutterContext | discord.Interaction, /
+) -> bool:
     if await bot.db.get(
         f"users.{ctx.author.id if isinstance(ctx, ClutterContext) else ctx.user.id}.blacklisted"
     ):
-        raise errors.UserIsBlacklisted("You are blacklisted from using this bot. retard.")
+        raise errors.UserIsBlacklisted(
+            "You are blacklisted from using this bot. retard."
+        )
     return True
 
 
@@ -307,7 +329,9 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
 
         if bot.spam_counter[author_id] < 3:
             raise commands.CommandOnCooldown(
-                bot.spam_mapping._cooldown, retry_after, commands.BucketType.user
+                bot.spam_mapping._cooldown,
+                retry_after,
+                commands.BucketType.user,
             )
 
         await bot.blacklist_user(author_id)
@@ -334,4 +358,6 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
             )
 
         asyncio.create_task(bot.log_webhook.send(embed=embed))
-        raise errors.UserHasBeenBlacklisted("You have been blacklisted for spamming commands.")
+        raise errors.UserHasBeenBlacklisted(
+            "You have been blacklisted for spamming commands."
+        )

@@ -40,14 +40,20 @@ class Misc(
         # help command is basically in this cog
         self._original_help_command = bot.help_command
         bot.help_command = ClutterHelpCommand(
-            verify_checks=False, brief="COMMANDS.HELP.BRIEF", help="COMMANDS.HELP.HELP"
+            verify_checks=False,
+            brief="COMMANDS.HELP.BRIEF",
+            help="COMMANDS.HELP.HELP",
         )
         bot.help_command.cog = self
 
     async def cog_unload(self) -> None:
         self.bot.help_command = self._original_help_command
 
-    @commands.command(aliases=["latency"], brief="COMMANDS.PING.BRIEF", help="COMMANDS.PING.HELP")
+    @commands.command(
+        aliases=["latency"],
+        brief="COMMANDS.PING.BRIEF",
+        help="COMMANDS.PING.HELP",
+    )
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
     async def ping(self, ctx: ClutterContext):
         ts = time.monotonic()
@@ -55,7 +61,9 @@ class Misc(
         await message.edit(
             embed=self.bot.embed.info(
                 await self.bot.i18n(ctx, "COMMANDS.PING.RESPONSE.TITLE"),
-                (await self.bot.i18n(ctx, "COMMANDS.PING.RESPONSE.BODY")).format(
+                (
+                    await self.bot.i18n(ctx, "COMMANDS.PING.RESPONSE.BODY")
+                ).format(
                     ws_ping=self.bot.latency * 1000,
                     message_ping=int((time.monotonic() - ts) * 1000),
                     db_ping=0,
@@ -64,7 +72,9 @@ class Misc(
         )  # TODO: database ping
 
     @commands.command(
-        aliases=["support"], brief="COMMANDS.INVITE.BRIEF", help="COMMANDS.INVITE.HELP"
+        aliases=["support"],
+        brief="COMMANDS.INVITE.BRIEF",
+        help="COMMANDS.INVITE.HELP",
     )
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
     async def invite(self, ctx: ClutterContext):
@@ -77,7 +87,9 @@ class Misc(
         )
         view.add_item(
             discord.ui.Button(
-                label=await self.bot.i18n("COMMANDS.INVITE.BUTTONS.DISCORD_INVITE"),
+                label=await self.bot.i18n(
+                    "COMMANDS.INVITE.BUTTONS.DISCORD_INVITE"
+                ),
                 url=self.bot.discord_invite,
             )
         )

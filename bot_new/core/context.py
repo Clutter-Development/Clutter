@@ -26,7 +26,9 @@ class ReplyEmbedCoroutine(Protocol):
 
 
 class ReplyEmbedGetter:
-    def __init__(self, context: commands.Context, embed_creator: QuickEmbedCreator, /) -> None:
+    def __init__(
+        self, context: commands.Context, embed_creator: QuickEmbedCreator, /
+    ) -> None:
         self._context = context
         self._embed_creator = embed_creator
 

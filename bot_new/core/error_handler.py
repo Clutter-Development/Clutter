@@ -23,7 +23,9 @@ class ErrorHandler(commands.Cog):
         self.capture_exception = run_in_executor(sentry_sdk.capture_exception)
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: ClutterContext, error: commands.CommandError, /) -> None:
+    async def on_command_error(
+        self, ctx: ClutterContext, error: commands.CommandError, /
+    ) -> None:
         if hasattr(ctx.command, "on_error"):
             return
 
@@ -36,7 +38,9 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, self.ignored_errors):
             return
 
-        trace = traceback.format_exception(type(error), error, error.__traceback__)
+        trace = traceback.format_exception(
+            type(error), error, error.__traceback__
+        )
         print(
             color.red(
                 format_as_list(
@@ -50,7 +54,8 @@ class ErrorHandler(commands.Cog):
             self.capture_exception(error),
             self.bot.log_webhook.send(f"<@512640455834337290>```{trace}```"),
             ctx.reply_embed.error(
-                i18n(ctx, "ERROR.RESPONSE.TITLE"), i18n(ctx, "ERROR.RESPONSE.BODY")
+                i18n(ctx, "ERROR.RESPONSE.TITLE"),
+                i18n(ctx, "ERROR.RESPONSE.BODY"),
             ),
         )
 

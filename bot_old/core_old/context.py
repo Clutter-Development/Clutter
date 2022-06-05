@@ -61,7 +61,9 @@ class ClutterContext(commands.Context):
         try:
             return (
                 await self.author.send(
-                    embed=self.bot.embed(asset_type, title, description=description)
+                    embed=self.bot.embed(
+                        asset_type, title, description=description
+                    )
                 ),
                 True,
             )
