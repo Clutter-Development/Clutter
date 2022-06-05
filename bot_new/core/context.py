@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
     import discord
     from core.bot import Clutter
-    from discord_utils.quick_embed import QuickEmbedCreator
+    from discord_utils import QuickEmbedCreator
 
 
 class ReplyEmbedCoroutine(Protocol):
