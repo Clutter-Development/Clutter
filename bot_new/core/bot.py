@@ -1,19 +1,18 @@
+from discord.ext import commands, tasks
+from discord_utils import QuickEmbedCreator, format_as_list
+from discord_i18n import DiscordI18N
 import collections
-import pathlib
-import time
-import traceback
-from typing import TYPE_CHECKING, Callable
-
 import aiohttp
 import color
 import discord
-import json5
-from core.command_tree import ClutterCommandTree
-from core.context import ClutterContext
-from discord.ext import commands, tasks
-from discord_i18n import DiscordI18N
-from discord_utils import QuickEmbedCreator, format_as_list
 from mongo_manager import CachedMongoManager
+from core.context import ClutterContext
+import traceback
+import json5
+import pathlib
+import time
+from core.command_tree import ClutterCommandTree
+from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -38,6 +37,7 @@ class Clutter(commands.AutoShardedBot):
     session: aiohttp.ClientSession
     db: CachedMongoManager
     i18n: DiscordI18N
+    tree: ClutterCommandTree
     error_webhook: discord.Webhook
     log_webhook: discord.Webhook
     uptime: float
@@ -62,7 +62,9 @@ class Clutter(commands.AutoShardedBot):
 
         # Auto spam control for commands.
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist.
-        self.spam_mapping = commands.CooldownMapping.from_cooldown(10, 12, commands.BucketType.user)
+        self.spam_mapping = commands.CooldownMapping.from_cooldown(
+            10, 12, commands.BucketType.user
+        )
         self.spam_counter = collections.Counter()
 
         super().__init__(
@@ -112,7 +114,9 @@ class Clutter(commands.AutoShardedBot):
         if loaded:
             log.append(
                 color.green(
-                    format_as_list(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))
+                    format_as_list(
+                        f"Successfully loaded {len(loaded)} modules", "\n".join(loaded)
+                    )
                 )
             )
         log.extend(
@@ -166,21 +170,25 @@ class Clutter(commands.AutoShardedBot):
                 await guild.leave()
                 await self.db.set(f"guilds.{guild.id}.blacklisted", True)
 
-    async def blacklist_user(self, user: discord.Object, /) -> bool:
-        if await self.db.get(f"users.{user.id}.blacklisted"):
+    async def blacklist_user(self, user: int | discord.Object, /) -> bool:
+        user_id = user if isinstance(user, int) else user.id
+        if await self.db.get(f"users.{user_id}.blacklisted"):
             return False
 
-        await self.db.set(f"users.{user.id}.blacklisted", True)
+        await self.db.set(f"users.{user_id}.blacklisted", True)
         return True
 
-    async def unblacklist_user(self, user: discord.Object, /) -> bool:
-        if not await self.db.get(f"users.{user.id}.blacklisted"):
+    async def unblacklist_user(self, user: int | discord.Object, /) -> bool:
+        user_id = user if isinstance(user, int) else user.id
+        if not await self.db.get(f"users.{user_id}.blacklisted"):
             return False
 
-        await self.db.set(f"users.{user.id}.blacklisted", False)
+        await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
 
-    async def getch_member(self, guild: discord.Guild, user_id: int, /) -> discord.Member | None:
+    async def getch_member(
+        self, guild: discord.Guild, user_id: int, /
+    ) -> discord.Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
 
@@ -240,17 +248,23 @@ class Clutter(commands.AutoShardedBot):
 config = json5.loads((CURRENT_DIR / "config.json5").read_text())
 bot = Clutter(config)
 
+# Base checks.
+
 
 @bot.check
-async def maintenance_check(ctx: ClutterContext, /) -> bool:
-    if bot.info.in_development_mode and not bot.is_owner(ctx.author):
+@bot.tree.check
+async def maintenance_check(ctx: ClutterContext | discord.Interaction, /) -> bool:
+    if bot.info.in_development_mode and not bot.is_owner(
+        ctx.author if isinstance(ctx, ClutterContext) else ctx.user
+    ):
         # TODO: raise error.
         pass
     return False
 
 
 @bot.check
-async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
+@bot.tree.check
+async def guild_blacklist_check(ctx: ClutterContext | discord.Interaction, /) -> bool:
     if guild := ctx.guild:
         if await bot.db.get(f"guilds.{guild.id}.blacklisted"):
             await bot.db.set(f"users.{guild.owner_id}.blacklisted", True)
@@ -262,16 +276,51 @@ async def guild_blacklist_check(ctx: ClutterContext, /) -> bool:
 
 
 @bot.check
-async def user_blacklist_check(ctx: ClutterContext, /) -> bool:
-    if await bot.db.get(f"users.{ctx.author.id}.blacklisted"):
+@bot.tree.check
+async def user_blacklist_check(ctx: ClutterContext | discord.Interaction, /) -> bool:
+    if await bot.db.get(
+        f"users.{ctx.author.id if isinstance(ctx, ClutterContext) else ctx.user.id}.blacklisted"
+    ):
         # TODO: raise error.
         pass
     return True
 
 
 @bot.check
+# TODO: @bot.tree.check
 async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
+    if bot.is_owner(ctx.author):
+        return True
+
     message = ctx.message
+    author_id = ctx.author.id
 
     bucket = bot.spam_mapping.get_bucket(message)
-    retry_after = bucket.update_rate_limit(message.created_at.timestamp())
+
+    if retry_after := bucket.update_rate_limit(message.created_at.timestamp()):
+        bot.spam_counter[author_id] += 1
+        if bot.spam_counter[author_id] >= 3:
+            await bot.blacklist_user(author_id)
+            del bot.spam_counter[author_id]
+
+            author = ctx.author
+
+            # Sends info to the log webhook.
+            embed = bot.embed.warning(
+                f"**{author}** has been blacklisted for spamming!",
+                f"Incident time: <t:{int(time.time())}:F>",
+            ).add_field(
+                title="User Info",
+                description=f"**Mention:** {author.mention}\n**Tag:** {author}\n**ID:** {author.id}",
+            )
+            if guild := ctx.guild:
+                channel: discord.TextChannel = ctx.channel
+                embed.add_field(
+                    title="Guild Info",
+                    description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
+                ).add_field(
+                    title="Channel Info",
+                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",
+                )
+
+            await bot.log_webhook.send(embed=embed)
