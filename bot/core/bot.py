@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import collections
 import pathlib
@@ -20,7 +22,7 @@ from mongo_manager import CachedMongoManager
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-CURRENT_DIR = pathlib.Path(__file__).resolve().parent
+CURRENT_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 
 class BotInfo:
@@ -38,7 +40,7 @@ class BotInfo:
     def __init__(self, config: dict, /) -> None:
         self.token = config["BOT_TOKEN"]
         self.default_language = config["BOT_DEFAULT_LANGUAGE"]
-        self.default_prefix = config["BOT_DEFFAULT_PREFIX"]
+        self.default_prefix = config["BOT_DEFAULT_PREFIX"]
         self.in_development_mode = config["DEVELOPMENT_MODE"]
 
 
@@ -259,6 +261,8 @@ class Clutter(commands.AutoShardedBot):
                     db=self.db,
                     fallback=self.info.default_language,
                 )
+                await self.load_extensions()
+                await self.start(self.info.token, reconnect=True)
 
         try:
             asyncio.run(runner())
