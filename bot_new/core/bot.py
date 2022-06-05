@@ -1,3 +1,5 @@
+import asyncio
+
 from discord.ext import commands, tasks
 from discord_utils import QuickEmbedCreator, format_as_list
 from discord_i18n import DiscordI18N
@@ -25,12 +27,18 @@ class BotInfo:
     github = "https://github.com/Clutter-Development/Clutter"
     discord_url = "https://discord.com/invite/mVKkMZRPQE"
     docs_url = "https://clutter-development.github.io/"
-    invite_url: str
     token: str
     default_language: str
     default_prefix: str
     in_development_mode: bool
     start_log: str
+    invite_url: str
+
+    def __init__(self, config_: dict, /) -> None:
+        self.token = config_["BOT_TOKEN"]
+        self.default_language = config_["BOT_DEFAULT_LANGUAGE"]
+        self.default_prefix = config_["BOT_DEFFAULT_PREFIX"]
+        self.in_development_mode = config_["DEVELOPMENT_MODE"]
 
 
 class Clutter(commands.AutoShardedBot):
@@ -45,14 +53,10 @@ class Clutter(commands.AutoShardedBot):
     def __init__(self, config: dict, /) -> None:
         self._config = config
 
-        self.info = BotInfo
+        self.info = BotInfo(config)
         self.info.invite_url = discord.utils.oauth_url(
             self.user.id, permissions=discord.Permissions.administrator
         )
-        self.info.token = config["BOT_TOKEN"]
-        self.info.default_language = config["BOT_DEFAULT_LANGUAGE"]
-        self.info.default_prefix = config["BOT_DEFFAULT_PREFIX"]
-        self.info.in_development_mode = config["DEVELOPMENT_MODE"]
 
         self.development_servers = [
             discord.Object(g_id) for g_id in config["BOT_DEVELOPMENT_SERVER_IDS"]
@@ -243,10 +247,14 @@ class Clutter(commands.AutoShardedBot):
                     db=self.db,
                     fallback=self.info.default_language,
                 )
+        try:
+            asyncio.run(runner())
+        except KeyboardInterrupt:
+            pass
 
 
-config = json5.loads((CURRENT_DIR / "config.json5").read_text())
-bot = Clutter(config)
+bot_config = json5.loads((CURRENT_DIR / "config.json5").read_text())
+bot = Clutter(bot_config)
 
 # Base checks.
 
