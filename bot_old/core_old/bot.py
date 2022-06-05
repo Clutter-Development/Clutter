@@ -55,7 +55,9 @@ class Clutter(commands.AutoShardedBot):
 
         # Auto spam control for commands
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist
-        self.spam_control = commands.CooldownMapping.from_cooldown(10, 12, commands.BucketType.user)
+        self.spam_control = commands.CooldownMapping.from_cooldown(
+            10, 12, commands.BucketType.user
+        )
         self.spam_counter = collections.Counter()
 
         self.uptime = 0
@@ -104,7 +106,9 @@ class Clutter(commands.AutoShardedBot):
         self, bot_: commands.AutoShardedBot, message: discord.Message, /
     ) -> list[str]:
         if guild := message.guild:
-            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
+            prefix = await self.db.get(
+                f"guilds.{guild.id}.prefix", default=self.default_prefix
+            )
             return commands.when_mentioned_or(prefix)(bot_, message)
         return commands.when_mentioned_or(self.default_prefix)(bot_, message)
 
@@ -113,7 +117,9 @@ class Clutter(commands.AutoShardedBot):
 
     async def on_ready(self) -> None:
         self.uptime = math.floor(time.time())
-        discord_info = listify("Discord Info", f"{color.bold('Version:')} {discord.__version__}")
+        discord_info = listify(
+            "Discord Info", f"{color.bold('Version:')} {discord.__version__}"
+        )
         bot_info = listify(
             "Bot Info",
             "\n".join(
@@ -168,7 +174,9 @@ class Clutter(commands.AutoShardedBot):
         if loaded:
             log.append(
                 color.green(
-                    listify(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))
+                    listify(
+                        f"Successfully loaded {len(loaded)} modules", "\n".join(loaded)
+                    )
                 )
             )
         log.extend(
@@ -178,7 +186,9 @@ class Clutter(commands.AutoShardedBot):
 
         self.startup_log = "\n\n".join(log)
 
-    async def blacklist_user(self, user: discord.User | discord.Member | int, /) -> bool:
+    async def blacklist_user(
+        self, user: discord.User | discord.Member | int, /
+    ) -> bool:
         """Blacklists a user.
 
         Args:
@@ -193,7 +203,9 @@ class Clutter(commands.AutoShardedBot):
         await self.db.set(f"users.{user_id}.blacklisted", True)
         return True
 
-    async def unblacklist_user(self, user: discord.User | discord.Member | int, /) -> bool:
+    async def unblacklist_user(
+        self, user: discord.User | discord.Member | int, /
+    ) -> bool:
         """Unblacklists a user.
 
         Args:
@@ -230,7 +242,9 @@ class Clutter(commands.AutoShardedBot):
             )
         await self.log_webhook.send(embed=embed)
 
-    async def getch_member(self, guild: discord.Guild, user_id: int, /) -> discord.Member | None:
+    async def getch_member(
+        self, guild: discord.Guild, user_id: int, /
+    ) -> discord.Member | None:
         """Gets a member from the cache, if it doesn't exist, it fetches it via the gateway or http.
 
         Args:
@@ -262,7 +276,9 @@ class Clutter(commands.AutoShardedBot):
                 self.session = session
                 db_cfg = self.config["DATABASE"]
                 self.db = CachedMongoManager(
-                    db_cfg["URI"], database=db_cfg["NAME"], max_items=db_cfg["MAX_ITEMS"]
+                    db_cfg["URI"],
+                    database=db_cfg["NAME"],
+                    max_items=db_cfg["MAX_ITEMS"],
                 )
                 await self.start(self.token, reconnect=True)
 
@@ -338,7 +354,9 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
             raise errors.UserHasBeenBlacklisted(
                 "You have been blacklisted from using this bot for exessive command spam."
             )
-        raise errors.GlobalCooldownReached(retry_after, "Global command cooldown has been reached")
+        raise errors.GlobalCooldownReached(
+            retry_after, "Global command cooldown has been reached"
+        )
     bot.spam_counter.pop(author_id, None)
     return True
 

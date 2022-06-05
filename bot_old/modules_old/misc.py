@@ -30,7 +30,9 @@ class ClutterHelpCommand(commands.HelpCommand):
 
 
 class Misc(
-    commands.Cog, name="MODULES.MISCELLANIOUS.NAME", description="MODULES.MISCELLANIOUS.DESCRIPTION"
+    commands.Cog,
+    name="MODULES.MISCELLANIOUS.NAME",
+    description="MODULES.MISCELLANIOUS.DESCRIPTION",
 ):
     def __init__(self, bot: Clutter):
         self.bot = bot
@@ -45,7 +47,9 @@ class Misc(
     async def cog_unload(self) -> None:
         self.bot.help_command = self._original_help_command
 
-    @commands.command(aliases=["latency"], brief="COMMANDS.PING.BRIEF", help="COMMANDS.PING.HELP")
+    @commands.command(
+        aliases=["latency"], brief="COMMANDS.PING.BRIEF", help="COMMANDS.PING.HELP"
+    )
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
     async def ping(self, ctx: ClutterContext):
         ts = time.monotonic()
