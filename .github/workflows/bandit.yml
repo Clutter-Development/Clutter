@@ -16,4 +16,4 @@ jobs:
       - name: Install Bandit
         run: pip install -U pip bandit
       - name: Run Bandit
-        run: bandit --recursive ./
+        run: bandit --recursive --line-length=80 ./
