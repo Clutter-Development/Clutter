@@ -3,7 +3,7 @@ import collections
 import pathlib
 import time
 import traceback
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import aiohttp
 import color
@@ -93,8 +93,8 @@ class Clutter(commands.AutoShardedBot):
         )
 
     async def determine_prefix(
-        self, bot: Self, message: discord.Message, /
-    ) -> Callable[[Self, discord.Message], list[str]]:
+        self, _: Self, message: discord.Message, /
+    ) -> list[str]:
         if guild := message.guild:
             prefix: str = await self.db.get(
                 f"guilds.{guild.id}.prefix", default=self.info.default_prefix
@@ -102,7 +102,7 @@ class Clutter(commands.AutoShardedBot):
         else:
             prefix = self.info.default_prefix
 
-        return commands.when_mentioned_or(prefix)
+        return commands.when_mentioned_or(prefix)(self, message)
 
     async def load_extensions(self) -> None:
         loaded = []
@@ -165,19 +165,13 @@ class Clutter(commands.AutoShardedBot):
 
     async def on_guild_join(self, guild: discord.Guild, /) -> None:
         if await self.db.get(f"guilds.{guild.id}.blacklisted"):
-            await guild.leave()
+            await asyncio.gather(guild.leave(), self.db.set(f"users.{guild.owner_id}.blacklisted", True))
         elif await self.db.get(f"users.{guild.owner_id}.blacklisted"):
-            await guild.leave()
-            await self.db.set(f"guilds.{guild.id}.blacklisted", True)
+            await asyncio.gather(guild.leave(), self.db.set(f"guilds.{guild.id}.blacklisted", True))
 
     @tasks.loop(hours=12)
     async def leave_blacklisted_guilds(self) -> None:
-        for guild in self.guilds:
-            if await self.db.get(f"guilds.{guild.id}.blacklisted"):
-                await guild.leave()
-            elif await self.db.get(f"users.{guild.owner_id}.blacklisted"):
-                await guild.leave()
-                await self.db.set(f"guilds.{guild.id}.blacklisted", True)
+        await asyncio.gather(*(self.on_guild_join(guild) for guild in self.guilds))
 
     async def blacklist_user(self, user: int | discord.Object, /) -> bool:
         user_id = user if isinstance(user, int) else user.id
@@ -290,12 +284,8 @@ async def guild_blacklist_check(
     ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
     if guild := ctx.guild:
-        if await bot.db.get(f"guilds.{guild.id}.blacklisted"):
-            await bot.db.set(f"users.{guild.owner_id}.blacklisted", True)
-            await guild.leave()
-        elif await bot.db.get(f"users.{guild.owner_id}.blacklisted"):
-            await bot.db.set(f"guilds.{guild.id}.blacklisted", True)
-            await guild.leave()
+        await bot.on_guild_join(guild)
+        return False
     return True
 
 
