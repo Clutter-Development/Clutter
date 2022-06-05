@@ -11,6 +11,7 @@
     000000000000000000
   ],
   DEVELOPMENT_MODE: false,
+  SENTRY_KEY : 'https://<-------------------------------@------->.ingest.sentry.io/<----->',
   DATABASE_URI: 'mongodb+srv://<-----------sus----------->.mongodb.net/Clutter?retryWrites=true&w=majority',
   STYLE: {
     COLORS: {
