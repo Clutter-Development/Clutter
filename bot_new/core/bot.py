@@ -165,13 +165,21 @@ class Clutter(commands.AutoShardedBot):
 
     async def on_guild_join(self, guild: discord.Guild, /) -> None:
         if await self.db.get(f"guilds.{guild.id}.blacklisted"):
-            await asyncio.gather(guild.leave(), self.db.set(f"users.{guild.owner_id}.blacklisted", True))
+            await asyncio.gather(
+                guild.leave(),
+                self.db.set(f"users.{guild.owner_id}.blacklisted", True),
+            )
         elif await self.db.get(f"users.{guild.owner_id}.blacklisted"):
-            await asyncio.gather(guild.leave(), self.db.set(f"guilds.{guild.id}.blacklisted", True))
+            await asyncio.gather(
+                guild.leave(),
+                self.db.set(f"guilds.{guild.id}.blacklisted", True),
+            )
 
     @tasks.loop(hours=12)
     async def leave_blacklisted_guilds(self) -> None:
-        await asyncio.gather(*(self.on_guild_join(guild) for guild in self.guilds))
+        await asyncio.gather(
+            *(self.on_guild_join(guild) for guild in self.guilds)
+        )
 
     async def blacklist_user(self, user: int | discord.Object, /) -> bool:
         user_id = user if isinstance(user, int) else user.id
