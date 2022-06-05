@@ -1,20 +1,20 @@
 import asyncio
-
-from discord.ext import commands, tasks
-from discord_utils import QuickEmbedCreator, format_as_list
-from discord_i18n import DiscordI18N
 import collections
+import pathlib
+import time
+import traceback
+from typing import TYPE_CHECKING, Callable
+
 import aiohttp
 import color
 import discord
-from mongo_manager import CachedMongoManager
-from core.context import ClutterContext
-import traceback
 import json5
-import pathlib
-import time
 from core.command_tree import ClutterCommandTree
-from typing import TYPE_CHECKING, Callable
+from core.context import ClutterContext
+from discord.ext import commands, tasks
+from discord_i18n import DiscordI18N
+from discord_utils import QuickEmbedCreator, format_as_list
+from mongo_manager import CachedMongoManager
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -66,9 +66,7 @@ class Clutter(commands.AutoShardedBot):
 
         # Auto spam control for commands.
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist.
-        self.spam_mapping = commands.CooldownMapping.from_cooldown(
-            10, 12, commands.BucketType.user
-        )
+        self.spam_mapping = commands.CooldownMapping.from_cooldown(10, 12, commands.BucketType.user)
         self.spam_counter = collections.Counter()
 
         super().__init__(
@@ -118,9 +116,7 @@ class Clutter(commands.AutoShardedBot):
         if loaded:
             log.append(
                 color.green(
-                    format_as_list(
-                        f"Successfully loaded {len(loaded)} modules", "\n".join(loaded)
-                    )
+                    format_as_list(f"Successfully loaded {len(loaded)} modules", "\n".join(loaded))
                 )
             )
         log.extend(
@@ -190,9 +186,7 @@ class Clutter(commands.AutoShardedBot):
         await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
 
-    async def getch_member(
-        self, guild: discord.Guild, user_id: int, /
-    ) -> discord.Member | None:
+    async def getch_member(self, guild: discord.Guild, user_id: int, /) -> discord.Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
 

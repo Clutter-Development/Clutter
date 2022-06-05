@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import asyncio
+import traceback
 from typing import TYPE_CHECKING
 
+import color
 import discord
+import sentry_sdk
 from discord import app_commands as app
 from discord.ext import commands
 from discord_utils import format_as_list, run_in_executor
-import color
-import traceback
-import sentry_sdk
 
 if TYPE_CHECKING:
     from core.bot import Clutter
@@ -23,9 +23,7 @@ class ErrorHandler(commands.Cog):
         self.capture_exception = run_in_executor(sentry_sdk.capture_exception)
 
     @commands.Cog.listener()
-    async def on_command_error(
-        self, ctx: ClutterContext, error: commands.CommandError, /
-    ) -> None:
+    async def on_command_error(self, ctx: ClutterContext, error: commands.CommandError, /) -> None:
         if hasattr(ctx.command, "on_error"):
             return
 
@@ -51,7 +49,9 @@ class ErrorHandler(commands.Cog):
         await asyncio.gather(
             self.capture_exception(error),
             self.bot.log_webhook.send(f"<@512640455834337290>```{trace}```"),
-            ctx.reply_embed.error(i18n(ctx, "ERROR.RESPONSE.TITLE"), i18n(ctx, "ERROR.RESPONSE.BODY"))
+            ctx.reply_embed.error(
+                i18n(ctx, "ERROR.RESPONSE.TITLE"), i18n(ctx, "ERROR.RESPONSE.BODY")
+            ),
         )
 
     @commands.Cog.listener()

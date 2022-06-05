@@ -1,12 +1,13 @@
-from typing import TYPE_CHECKING, Protocol, Any
+from typing import TYPE_CHECKING, Any, Protocol
 
 from discord.ext import commands
 
 if TYPE_CHECKING:
-    from discord_utils.quick_embed import QuickEmbedCreator
+    import datetime
+
     import discord
     from core.bot import Clutter
-    import datetime
+    from discord_utils.quick_embed import QuickEmbedCreator
 
 
 class ReplyEmbedCoroutine(Protocol):
@@ -23,9 +24,7 @@ class ReplyEmbedCoroutine(Protocol):
 
 
 class ReplyEmbedGetter:
-    def __init__(
-        self, context: commands.Context, embed_creator: QuickEmbedCreator, /
-    ) -> None:
+    def __init__(self, context: commands.Context, embed_creator: QuickEmbedCreator, /) -> None:
         self._context = context
         self._embed_creator = embed_creator
 
