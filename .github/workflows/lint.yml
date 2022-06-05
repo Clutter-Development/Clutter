@@ -18,7 +18,7 @@ jobs:
       - name: Run Isort
         run: isort ./ --profile black
       - name: Run Black
-        run: black ./ --line-length=100
+        run: black ./ --line-length=80
       - name: Run Flynt
         run: flynt ./ -tc
       - name: Setup Git
