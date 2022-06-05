@@ -9,11 +9,12 @@ import aiohttp
 import discord
 import json5
 import uvloop
-from core.command_tree import ClutterCommandTree
-from core.context import ClutterContext
 from discord.ext import commands, tasks
 from mongo_manager import CachedMongoManager
 from utils import I18N, EmbedBuilder, color, errors, listify
+
+from core.command_tree import ClutterCommandTree
+from core.context import ClutterContext
 
 uvloop.install()
 
@@ -101,7 +102,7 @@ class Clutter(commands.AutoShardedBot):
         await self.load_extensions()
 
     async def determine_prefix(
-        self, bot_: commands.AutoShardedBot, message: discord.Message, /
+            self, bot_: commands.AutoShardedBot, message: discord.Message, /
     ) -> list[str]:
         if guild := message.guild:
             prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
@@ -156,8 +157,8 @@ class Clutter(commands.AutoShardedBot):
         loaded = []
         failed = {}
         for fn in map(
-            lambda file_path: str(file_path).replace("/", ".")[:-3],
-            pathlib.Path("./bot/modules").rglob("*.py"),
+                lambda file_path: str(file_path).replace("/", ".")[:-3],
+                pathlib.Path("./bot/modules").rglob("*.py"),
         ):
             try:
                 await self.load_extension(fn)
@@ -226,7 +227,8 @@ class Clutter(commands.AutoShardedBot):
             )
             embed.add_field(
                 name="Channel Info",
-                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",  # type: ignore
+                value=f"**Mention:** {ctx.channel.mention}\n**Name:** {ctx.channel.name}\n**ID:** {ctx.channel.id}\n[Jump to channel]({ctx.channel.jump_url})",
+                # type: ignore
             )
         await self.log_webhook.send(embed=embed)
 
@@ -289,7 +291,7 @@ class Clutter(commands.AutoShardedBot):
         await self.invoke(ctx)
 
     async def get_context(
-        self, message: discord.Message, /, cls: type | None = None
+            self, message: discord.Message, /, cls: type | None = None
     ) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
 

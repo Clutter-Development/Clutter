@@ -21,7 +21,8 @@
     // The bot's documentation url.
     DOCUMENTATION_URL: 'https://clutter-development.github.io/',
     // The bot's invite link.
-    INVITE_URL: 'https://discord.com/oauth2/authorize?client_id=902405088138653726&permissions=8&scope=bot',  // TODO: make this auto
+    INVITE_URL: 'https://discord.com/oauth2/authorize?client_id=902405088138653726&permissions=8&scope=bot',
+    // TODO: make this auto
     // The bot's default prefix (for traditional commands).
     DEFAULT_PREFIX: '>',
     // The bot's default language. Available languages: en-US, tr.

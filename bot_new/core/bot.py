@@ -9,13 +9,14 @@ import aiohttp
 import color
 import discord
 import json5
-from core.command_tree import ClutterCommandTree
-from core.context import ClutterContext
 from discord.ext import commands, tasks
 from discord_i18n import DiscordI18N
 from discord_utils import QuickEmbedCreator, format_as_list
 from mongo_manager import CachedMongoManager
+
 from core import errors
+from core.command_tree import ClutterCommandTree
+from core.context import ClutterContext
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -90,7 +91,7 @@ class Clutter(commands.AutoShardedBot):
         )
 
     async def determine_prefix(
-        self, bot: Self, message: discord.Message, /
+            self, bot: Self, message: discord.Message, /
     ) -> Callable[[Self, discord.Message], list[str]]:
         if guild := message.guild:
             prefix: str = await self.db.get(
@@ -105,8 +106,8 @@ class Clutter(commands.AutoShardedBot):
         loaded = []
         failed = {}
         for fn in map(
-            lambda file_path: str(file_path).replace("/", ".")[:-3],
-            (CURRENT_DIR / "modules").rglob("*.py"),
+                lambda file_path: str(file_path).replace("/", ".")[:-3],
+                (CURRENT_DIR / "modules").rglob("*.py"),
         ):
             try:
                 await self.load_extension(fn)
@@ -220,7 +221,7 @@ class Clutter(commands.AutoShardedBot):
         await self.invoke(ctx)
 
     async def get_context(
-        self, message: discord.Message, /, cls: type | None = None
+            self, message: discord.Message, /, cls: type | None = None
     ) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
 
@@ -252,6 +253,7 @@ class Clutter(commands.AutoShardedBot):
 bot_config = json5.loads((CURRENT_DIR / "config.json5").read_text())
 bot = Clutter(bot_config)
 
+
 # Base checks.
 
 
@@ -259,7 +261,7 @@ bot = Clutter(bot_config)
 @bot.tree.check
 async def maintenance_check(ctx: ClutterContext | discord.Interaction, /) -> bool:
     if bot.info.in_development_mode and not bot.is_owner(
-        ctx.author if isinstance(ctx, ClutterContext) else ctx.user
+            ctx.author if isinstance(ctx, ClutterContext) else ctx.user
     ):
         raise errors.BotInMaintenance("The bot is currently in maintenance. Only bot admins can use commands.")
     return False
@@ -282,7 +284,7 @@ async def guild_blacklist_check(ctx: ClutterContext | discord.Interaction, /) ->
 @bot.tree.check
 async def user_blacklist_check(ctx: ClutterContext | discord.Interaction, /) -> bool:
     if await bot.db.get(
-        f"users.{ctx.author.id if isinstance(ctx, ClutterContext) else ctx.user.id}.blacklisted"
+            f"users.{ctx.author.id if isinstance(ctx, ClutterContext) else ctx.user.id}.blacklisted"
     ):
         raise errors.UserIsBlacklisted("You are blacklisted from using this bot. retard.")
     return True
@@ -330,5 +332,3 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
 
         asyncio.create_task(bot.log_webhook.send(embed=embed))
         raise errors.UserHasBeenBlacklisted("You have been blacklisted for spamming commands.")
-
-

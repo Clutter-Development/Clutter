@@ -4,14 +4,14 @@ from discord.ext import commands
 
 class ClutterContext(commands.Context):
     async def reply_embed(
-        self,
-        asset_type: str,
-        title: str | None = None,
-        /,
-        description: str | None = None,
-        *,
-        mention: bool = False,
-        view: discord.ui.View | None = None,
+            self,
+            asset_type: str,
+            title: str | None = None,
+            /,
+            description: str | None = None,
+            *,
+            mention: bool = False,
+            view: discord.ui.View | None = None,
     ) -> discord.Message:
 
         """Replies an embed to the context.
@@ -42,11 +42,11 @@ class ClutterContext(commands.Context):
         await self.message.add_reaction(emojis["SUCCESS" if value else "ERROR"])
 
     async def maybe_dm_embed(
-        self,
-        asset_type: str,
-        title: str | None = None,
-        /,
-        description: str | None = None,
+            self,
+            asset_type: str,
+            title: str | None = None,
+            /,
+            description: str | None = None,
     ) -> tuple[discord.Message | None, bool]:
         """DMs the author of the context an embed.
 

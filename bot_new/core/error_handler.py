@@ -56,7 +56,7 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_error(
-        self, inter: discord.Interaction, error: app.AppCommandError, /
+            self, inter: discord.Interaction, error: app.AppCommandError, /
     ) -> None:
         pass
 

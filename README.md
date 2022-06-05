@@ -22,6 +22,7 @@ directory [(see below)](#configuration).
 Installation commands:
 
 Docker installation:
+
 ```bash
 git clone https://github.com/Clutter-Development/Clutter  # Clone the repository.
 cd Clutter  # Go to the Clutter directory.
@@ -29,6 +30,7 @@ cd Clutter  # Go to the Clutter directory.
 ```
 
 Traditional installation:
+
 ```bash
 git clone https://github.com/Clutter-Development/Clutter  # Clone the repository.
 cd Clutter  # Go to the Clutter directory.
