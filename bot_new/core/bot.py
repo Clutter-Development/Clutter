@@ -34,11 +34,11 @@ class BotInfo:
     start_log: str
     invite_url: str
 
-    def __init__(self, config_: dict, /) -> None:
-        self.token = config_["BOT_TOKEN"]
-        self.default_language = config_["BOT_DEFAULT_LANGUAGE"]
-        self.default_prefix = config_["BOT_DEFFAULT_PREFIX"]
-        self.in_development_mode = config_["DEVELOPMENT_MODE"]
+    def __init__(self, config: dict, /) -> None:
+        self.token = config["BOT_TOKEN"]
+        self.default_language = config["BOT_DEFAULT_LANGUAGE"]
+        self.default_prefix = config["BOT_DEFFAULT_PREFIX"]
+        self.in_development_mode = config["DEVELOPMENT_MODE"]
 
 
 class Clutter(commands.AutoShardedBot):
