@@ -302,8 +302,8 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
     if retry_after := bucket.update_rate_limit(message.created_at.timestamp()):
         bot.spam_counter[author_id] += 1
 
-        if not bot.spam_counter[author_id] >= 3:
-            return True
+        if bot.spam_counter[author_id] < 3:
+            raise commands.CommandOnCooldown(bot.spam_mapping._cooldown, retry_after, commands.BucketType.user)
 
         await bot.blacklist_user(author_id)
         del bot.spam_counter[author_id]
