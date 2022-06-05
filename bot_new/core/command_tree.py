@@ -19,8 +19,7 @@ class ClutterCommandTree(app.CommandTree):
     async def interaction_check(self, inter: discord.Interaction, /) -> bool:
         for check in self.checks:
             try:
-                await check(inter)
-                return True
+                return bool(await check(inter))
             except app.AppCommandError as e:
                 await self.on_error(inter, e)
                 return False
