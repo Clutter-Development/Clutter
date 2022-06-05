@@ -47,9 +47,7 @@ class Misc(
     async def cog_unload(self) -> None:
         self.bot.help_command = self._original_help_command
 
-    @commands.command(
-        aliases=["latency"], brief="COMMANDS.PING.BRIEF", help="COMMANDS.PING.HELP"
-    )
+    @commands.command(aliases=["latency"], brief="COMMANDS.PING.BRIEF", help="COMMANDS.PING.HELP")
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
     async def ping(self, ctx: ClutterContext):
         ts = time.monotonic()
