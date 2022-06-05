@@ -14,13 +14,13 @@ __all__ = ("ClutterContext",)
 
 class ReplyEmbedCoroutine(Protocol):
     async def __call__(
-            self,
-            title: str | None = None,
-            description: str | None = None,
-            *,
-            url: str | None = None,
-            timestamp: datetime.datetime | None = None,
-            **kwargs: Any,
+        self,
+        title: str | None = None,
+        description: str | None = None,
+        *,
+        url: str | None = None,
+        timestamp: datetime.datetime | None = None,
+        **kwargs: Any,
     ) -> discord.Message:
         ...
 
@@ -32,12 +32,12 @@ class ReplyEmbedGetter:
 
     def __getattr__(self, item: str) -> ReplyEmbedCoroutine:
         async def runner(
-                title: str | None = None,
-                description: str | None = None,
-                *,
-                url: str | None = None,
-                timestamp: datetime.datetime | None = None,
-                **kwargs: Any,
+            title: str | None = None,
+            description: str | None = None,
+            *,
+            url: str | None = None,
+            timestamp: datetime.datetime | None = None,
+            **kwargs: Any,
         ):
             return await self._context.reply(
                 embed=self._embed_creator.__call__(
