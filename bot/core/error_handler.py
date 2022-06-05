@@ -44,7 +44,7 @@ class ErrorHandler(commands.Cog):
         print(
             color.red(
                 format_as_list(
-                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",
+                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",  # type: ignore
                     "\n".join(trace),
                 )
             )

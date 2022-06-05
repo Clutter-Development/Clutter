@@ -47,6 +47,7 @@ class Clutter(commands.AutoShardedBot):
     db: CachedMongoManager
     i18n: DiscordI18N
     tree: ClutterCommandTree
+    user: discord.ClientUser
     error_webhook: discord.Webhook
     log_webhook: discord.Webhook
     uptime: float
@@ -135,7 +136,7 @@ class Clutter(commands.AutoShardedBot):
     async def on_ready(self) -> None:
         self.uptime = time.time()
         self.info.invite_url = discord.utils.oauth_url(
-            self.user.id, permissions=discord.Permissions.administrator
+            self.user.id, permissions=discord.Permissions(administrator=True)
         )
         discord_info = format_as_list(
             "Discord Info", f"{color.bold('Version:')} {discord.__version__}"
@@ -203,7 +204,7 @@ class Clutter(commands.AutoShardedBot):
         if (member := guild.get_member(user_id)) is not None:
             return member
 
-        if self.get_shard(guild.shard_id).is_ws_ratelimited():
+        if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
             try:
                 return await guild.fetch_member(user_id)
             except discord.HTTPException:
@@ -224,7 +225,7 @@ class Clutter(commands.AutoShardedBot):
 
         ctx = await self.get_context(message)
 
-        if not ctx.valid:
+        if not ctx.command:
             return
 
         if cog := ctx.command.cog:
@@ -240,7 +241,7 @@ class Clutter(commands.AutoShardedBot):
 
     def run(self) -> None:
         async def runner() -> None:
-            async with self, aiohttp.ClientSession as session:
+            async with self, aiohttp.ClientSession() as session:
                 self.session = session
                 self.db = CachedMongoManager(
                     self._config["DATABASE_URI"],
@@ -322,40 +323,42 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
 
     bucket = bot.spam_mapping.get_bucket(message)
 
-    if retry_after := bucket.update_rate_limit(message.created_at.timestamp()):
-        bot.spam_counter[author_id] += 1
+    if not (retry_after := bucket.update_rate_limit(message.created_at.timestamp())):  # type: ignore
+        return True
 
-        if bot.spam_counter[author_id] < 3:
-            raise commands.CommandOnCooldown(
-                bot.spam_mapping._cooldown,
-                retry_after,
-                commands.BucketType.user,
-            )
+    bot.spam_counter[author_id] += 1
 
-        await bot.blacklist_user(author_id)
-        del bot.spam_counter[author_id]
+    if bot.spam_counter[author_id] < 3:
+        raise commands.CommandOnCooldown(
+            bot.spam_mapping._cooldown,  # type: ignore
+            retry_after,
+            commands.BucketType.user,
+        )
 
-        author = ctx.author
+    await bot.blacklist_user(author_id)
+    del bot.spam_counter[author_id]
 
-        # Sends info to the log webhook.
-        embed = bot.embed.warning(
-            f"**{author}** has been blacklisted for spamming!",
-            f"Incident time: <t:{int(time.time())}:F>",
+    author = ctx.author
+
+    # Sends info to the log webhook.
+    embed = bot.embed.warning(
+        f"**{author}** has been blacklisted for spamming!",
+        f"Incident time: <t:{int(time.time())}:F>",
+    ).add_field(
+        title="User Info",
+        description=f"**Mention:** {author.mention}\n**Tag:** {author}\n**ID:** {author.id}",
+    )
+    if guild := ctx.guild:
+        channel = ctx.channel
+        embed.add_field(
+            title="Guild Info",
+            description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
         ).add_field(
-            title="User Info",
-            description=f"**Mention:** {author.mention}\n**Tag:** {author}\n**ID:** {author.id}",
+            title="Channel Info",
+            description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore
         )
-        if guild := ctx.guild:
-            channel: discord.TextChannel = ctx.channel
-            embed.add_field(
-                title="Guild Info",
-                description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
-            ).add_field(
-                title="Channel Info",
-                description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",
-            )
 
-        asyncio.create_task(bot.log_webhook.send(embed=embed))
-        raise errors.UserHasBeenBlacklisted(
-            "You have been blacklisted for spamming commands."
-        )
+    asyncio.create_task(bot.log_webhook.send(embed=embed))
+    raise errors.UserHasBeenBlacklisted(
+        "You have been blacklisted for spamming commands."
+    )
