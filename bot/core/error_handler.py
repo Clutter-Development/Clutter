@@ -49,13 +49,12 @@ class ErrorHandler(commands.Cog):
                 )
             )
         )
-        i18n = self.bot.i18n
         await asyncio.gather(
             self.capture_exception(error),
             self.bot.log_webhook.send(f"<@512640455834337290>```{trace}```"),
             ctx.reply_embed.error(
-                i18n(ctx, "ERROR.RESPONSE.TITLE"),
-                i18n(ctx, "ERROR.RESPONSE.BODY"),
+                ctx.i18n("ERROR.RESPONSE.TITLE"),
+                ctx.i18n("ERROR.RESPONSE.BODY"),
             ),
         )
 

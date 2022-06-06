@@ -33,7 +33,7 @@ class Miscellaneous(
         await message.edit(
             embed=self.bot.embed.info(
                 await ctx.i18n("COMMANDS.PING.RESPONSE.TITLE"),
-                (await ctx.i18n("COMMANDS.PING.RESPONSE.DESCRIPTION")).format(
+                (await ctx.i18n("COMMANDS.PING.RESPONSE.BODY")).format(
                     ws=int(self.bot.latency * 1000),
                     msg=int(ts * 1000),
                     db=int(await self.bot.db.ping() * 1000),
@@ -50,7 +50,7 @@ class Miscellaneous(
             embed=self.bot.embed.info(
                 await self.bot.i18n(inter, "COMMANDS.PING.RESPONSE.TITLE"),
                 (
-                    await self.bot.i18n(inter, "COMMANDS.PING.RESPONSE.VALUE")
+                    await self.bot.i18n(inter, "COMMANDS.PING.RESPONSE.BODY")
                 ).format(
                     ws=int(self.bot.latency * 1000),
                     msg=int(ts * 1000),

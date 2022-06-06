@@ -1,4 +1,10 @@
 {
+  ERROR: {
+    RESPONSE: {
+      TITLE: 'An unexpected error has occured',
+      BODY: 'The bot developers have been notified. The bug will get fixed soon.'
+    }
+  },
   MODULES: {
     MISCELLANEUS: {
       NAME: '🔧 Miscellaneus',
@@ -11,7 +17,7 @@
         HELP: 'Sends the bots websocket, message and database latency.',
         RESPONSE: {
           TITLE: 'Bot Latency',
-          DESCRIPTION: 'Websocket latency: `{ws}ms`\nMessage latency: `{msg}ms`\nDatabase latency: `{db}ms`'
+          BODY: 'Websocket latency: `{ws}ms`\nMessage latency: `{msg}ms`\nDatabase latency: `{db}ms`'
         }
       }
   }
