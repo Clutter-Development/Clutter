@@ -293,9 +293,12 @@ bot = Clutter(bot_config)
 async def maintenance_check(
     ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
-    if not await bot.is_owner(
-        ctx.author if isinstance(ctx, ClutterContext) else ctx.user
-    ) and bot.info.in_development_mode:
+    if (
+        not await bot.is_owner(
+            ctx.author if isinstance(ctx, ClutterContext) else ctx.user
+        )
+        and bot.info.in_development_mode
+    ):
         raise errors.BotInMaintenance(
             "The bot is currently in maintenance. Only bot admins can use commands."
         )
