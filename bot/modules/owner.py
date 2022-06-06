@@ -41,7 +41,7 @@ class Owner(
                 await ctx.i18n("COMMANDS.SYNC.RESPONSE.TITLE"),
                 (await ctx.i18n("COMMANDS.SYNC.RESPONSE.BODY_1")).format(
                     count=len(cmds),
-                    place="to the current guild" if spec else "globally",
+                    place=await ctx.i18n("COMMANDS.SYNC.WORDS.CURRENT_GUILD" if spec else "COMMANDS.SYNC.WORDS.GLOBALLY"),
                 ),
             )
         else:

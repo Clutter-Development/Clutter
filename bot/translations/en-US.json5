@@ -23,6 +23,10 @@
         TITLE: 'Successfully synced app commands',
         BODY_1: 'Synced {count} app commands to {place}.',
         BODY_2: 'Synced app commands to {count} out of {total} guilds.'
+      },
+      WORDS: {
+        CURRENT_GUILD: 'to the current guild',
+        GLOBALLY: 'globally'
       }
     },
     PING: {
