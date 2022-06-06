@@ -2,6 +2,7 @@ import os
 
 import sentry_sdk
 import uvloop
+
 from core.bot import bot
 
 uvloop.install()

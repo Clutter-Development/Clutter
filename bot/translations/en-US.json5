@@ -35,7 +35,7 @@
       RESPONSE: {
         TITLE: 'Bot Latency',
         BODY: 'Websocket latency: `{ws}ms`\nMessage latency: `{msg}ms`\nDatabase latency: `{db}ms`'
-        }
       }
+    }
   }
 }
