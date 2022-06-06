@@ -3,6 +3,7 @@ color @ git+https://github.com/Clutter-Development/Color
 discord.py[speed] @ git+https://github.com/Rapptz/discord.py
 discord_i18n @ git+https://github.com/Clutter-Development/DiscordI18N
 discord_utils @ git+https://github.com/Clutter-Development/DiscordUtils
+jishaku
 json5
 mongo_manager @ git+https://github.com/Clutter-Development/MongoManager
 python-dotenv

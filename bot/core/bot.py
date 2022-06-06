@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import collections
+import itertools
 import pathlib
 import time
 import traceback
@@ -23,6 +24,13 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 CURRENT_DIR = pathlib.Path(__file__).resolve().parent.parent
+
+
+class SpamControl:
+    mapping = commands.CooldownMapping.from_cooldown(
+        10, 12, commands.BucketType.user
+    )
+    counter = collections.Counter()
 
 
 class BotInfo:
@@ -68,10 +76,7 @@ class Clutter(commands.AutoShardedBot):
 
         # Auto spam control for commands.
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist.
-        self.spam_mapping = commands.CooldownMapping.from_cooldown(
-            10, 12, commands.BucketType.user
-        )
-        self.spam_counter = collections.Counter()
+        self.spam_control = SpamControl()
 
         super().__init__(
             intents=discord.Intents(
@@ -107,9 +112,12 @@ class Clutter(commands.AutoShardedBot):
     async def load_extensions(self) -> None:
         loaded = []
         failed = {}
-        for fn in map(
-            lambda file_path: str(file_path).replace("/", ".")[:-3],
-            (CURRENT_DIR / "modules").rglob("*.py"),
+        for fn in itertools.chain(
+            map(
+                lambda file_path: str(file_path).replace("/", ".")[:-3],
+                (CURRENT_DIR / "modules").rglob("*.py"),
+            ),
+            ["jishaku"],
         ):
             try:
                 await self.load_extension(fn)
@@ -166,17 +174,19 @@ class Clutter(commands.AutoShardedBot):
             )
         )
 
-    async def on_guild_join(self, guild: discord.Guild, /) -> None:
+    async def on_guild_join(self, guild: discord.Guild, /) -> bool:
         if await self.db.get(f"guilds.{guild.id}.blacklisted"):
             await asyncio.gather(
                 guild.leave(),
                 self.db.set(f"users.{guild.owner_id}.blacklisted", True),
             )
+            return False
         elif await self.db.get(f"users.{guild.owner_id}.blacklisted"):
             await asyncio.gather(
                 guild.leave(),
                 self.db.set(f"guilds.{guild.id}.blacklisted", True),
             )
+            return False
 
     @tasks.loop(hours=12)
     async def leave_blacklisted_guilds(self) -> None:
@@ -288,7 +298,7 @@ async def maintenance_check(
         raise errors.BotInMaintenance(
             "The bot is currently in maintenance. Only bot admins can use commands."
         )
-    return False
+    return True
 
 
 @bot.check
@@ -296,10 +306,7 @@ async def maintenance_check(
 async def guild_blacklist_check(
     ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
-    if guild := ctx.guild:
-        await bot.on_guild_join(guild)
-        return False
-    return True
+    return await bot.on_guild_join(guild) if (guild := ctx.guild) else True
 
 
 @bot.check
@@ -324,23 +331,25 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
 
     message = ctx.message
     author_id = ctx.author.id
+    spam = bot.spam_control
+    counter = spam.counter
 
-    bucket = bot.spam_mapping.get_bucket(message)
+    bucket = spam.mapping.get_bucket(message)
 
     if not (retry_after := bucket.update_rate_limit(message.created_at.timestamp())):  # type: ignore
         return True
 
-    bot.spam_counter[author_id] += 1
+    counter[author_id] += 1
 
-    if bot.spam_counter[author_id] < 3:
+    if counter[author_id] < 3:
         raise commands.CommandOnCooldown(
-            bot.spam_mapping._cooldown,  # type: ignore
+            spam.mapping._cooldown,  # type: ignore
             retry_after,
             commands.BucketType.user,
         )
 
     await bot.blacklist_user(author_id)
-    del bot.spam_counter[author_id]
+    del counter[author_id]
 
     author = ctx.author
 
