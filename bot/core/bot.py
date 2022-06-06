@@ -187,6 +187,7 @@ class Clutter(commands.AutoShardedBot):
                 self.db.set(f"guilds.{guild.id}.blacklisted", True),
             )
             return False
+        return True
 
     @tasks.loop(hours=12)
     async def leave_blacklisted_guilds(self) -> None:
@@ -292,9 +293,9 @@ bot = Clutter(bot_config)
 async def maintenance_check(
     ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
-    if bot.info.in_development_mode and not bot.is_owner(
+    if not await bot.is_owner(
         ctx.author if isinstance(ctx, ClutterContext) else ctx.user
-    ):
+    ) and bot.info.in_development_mode:
         raise errors.BotInMaintenance(
             "The bot is currently in maintenance. Only bot admins can use commands."
         )
@@ -314,8 +315,9 @@ async def guild_blacklist_check(
 async def user_blacklist_check(
     ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
-    if await bot.db.get(
-        f"users.{ctx.author.id if isinstance(ctx, ClutterContext) else ctx.user.id}.blacklisted"
+    author = ctx.author if isinstance(ctx, ClutterContext) else ctx.user
+    if not await bot.is_owner(author) and await bot.db.get(
+        f"users.{author.id}.blacklisted"
     ):
         raise errors.UserIsBlacklisted(
             "You are blacklisted from using this bot. retard."
@@ -326,11 +328,12 @@ async def user_blacklist_check(
 @bot.check
 # TODO: @bot.tree.check
 async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
-    if bot.is_owner(ctx.author):
+    if await bot.is_owner(ctx.author):
         return True
 
     message = ctx.message
     author_id = ctx.author.id
+
     spam = bot.spam_control
     counter = spam.counter
 
