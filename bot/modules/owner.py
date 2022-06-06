@@ -20,9 +20,7 @@ class Owner(
         self.bot = bot
 
     @commands.command(
-        brief="COMMANDS.SYNC.BRIEF",
-        help="COMMANDS.SYNC.HELP",
-        hidden=True
+        brief="COMMANDS.SYNC.BRIEF", help="COMMANDS.SYNC.HELP", hidden=True
     )
     @commands.is_owner()
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
