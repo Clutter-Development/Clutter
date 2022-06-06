@@ -1,13 +1,12 @@
 name: Feature Request
-description: Suggest a feature for this bot.
+description: Suggest a feature for this library.
 labels:
   - enhancement
 body:
   - type: input
     attributes:
       label: Summary
-      description: >
-        A short summary of what your feature request is.
+      description: A short summary of what your feature request is.
     validations:
       required: true
   - type: textarea

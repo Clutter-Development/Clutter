@@ -2,11 +2,11 @@ name: Bandit
 on: [ pull_request, push ]
 jobs:
   build:
-    if: github.event.pull_request.user.type != 'Bot' && !contains(github.event.pull_request.labels.*.name, 'skip-ci')
+    if: github.event.pull_request.user.type != 'Bot'
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.10" ]
+        python-version: [ '3.10' ]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
