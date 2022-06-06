@@ -1,0 +1,67 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional, Literal
+
+import discord
+from discord import app_commands as app
+from discord.ext import commands
+
+if TYPE_CHECKING:
+    from core.bot import Clutter
+    from core.context import ClutterContext
+
+
+class Owner(
+    commands.Cog,
+    name="MODULES.OWNER.NAME",
+    description="MODULES.OWNER.DESCRIPTION",
+):
+    def __init__(self, bot: Clutter, /) -> None:
+        self.bot = bot
+
+    @commands.command(
+        brief="COMMANDS.SYNC.BRIEF",
+        help="COMMANDS.SYNC.HELP",
+    )
+    @commands.bot_has_permissions(send_messages=True, read_message_history=True)
+    async def sync(
+        self,
+        ctx: ClutterContext,
+        guilds: commands.Greedy[discord.Object],
+        spec: Optional[Literal[".", "*"]] = None,
+    ) -> None:
+        if not guilds:
+            if spec == ".":
+                cmds = await ctx.bot.tree.sync(guild=ctx.guild)
+            elif spec == "*":
+                ctx.bot.tree.copy_global_to(guild=ctx.guild)  # type: ignore
+                cmds = await ctx.bot.tree.sync(guild=ctx.guild)
+            else:
+                cmds = await ctx.bot.tree.sync()
+            await ctx.reply_embed.success(
+                await ctx.i18n("COMMANDS.SYNC.RESPONSE.TITLE"),
+                (await ctx.i18n("COMMANDS.SYNC.RESPONSE.BODY_1")).format(
+                    count=len(cmds),
+                    place="to the current guild" if spec else "globally",
+                ),
+            )
+        else:
+            synced = 0
+            for guild in guilds:
+                try:
+                    await ctx.bot.tree.sync(guild=guild)
+                except discord.HTTPException:
+                    pass
+                else:
+                    synced += 1
+
+            await ctx.reply_embed.success(
+                await ctx.i18n("COMMANDS.SYNC.RESPONSE.TITLE"),
+                (await ctx.i18n("COMMANDS.SYNC.RESPONSE.BODY_2")).format(
+                    count=synced, total=len(guilds)
+                ),
+            )
+
+
+async def setup(bot: Clutter, /) -> None:
+    await bot.add_cog(Owner(bot))

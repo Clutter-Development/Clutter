@@ -41,8 +41,8 @@ class Miscellaneous(
             )
         )
 
-    @app.command(description="COMMANDS.PING.BRIEF")
-    async def ping(self, inter: discord.Interaction, /) -> None:
+    @app.command(name="ping", description="COMMANDS.PING.BRIEF")
+    async def app_ping(self, inter: discord.Interaction, /) -> None:
         ts = time.time()
         await inter.response.send_message("** **")
         ts = time.time() - ts

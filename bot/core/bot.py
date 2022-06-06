@@ -69,8 +69,7 @@ class Clutter(commands.AutoShardedBot):
         self.info = BotInfo(config)
 
         self.development_servers = [
-            discord.Object(g_id)
-            for g_id in config["BOT_DEVELOPMENT_SERVER_IDS"]
+            discord.Object(g_id) for g_id in config["BOT_DEVELOPMENT_GUILD_IDS"]
         ]
 
         self.embed = QuickEmbedCreator(config["STYLE"])

@@ -12,12 +12,21 @@
     },
   },
   COMMANDS: {
-      PING: {
-        BRIEF: 'Sends the bots latency.',
-        HELP: 'Sends the bots websocket, message and database latency.',
-        RESPONSE: {
-          TITLE: 'Bot Latency',
-          BODY: 'Websocket latency: `{ws}ms`\nMessage latency: `{msg}ms`\nDatabase latency: `{db}ms`'
+    SYNC: {
+      BRIEF: 'Syncs app commands to the desired guild(s).',
+      HELP: 'Syncs app commands to the specified guilds, the current guild or globally.',
+      RESPONSE: {
+        TITLE: 'Successfully synced commands',
+        BODY_1: 'Synced {count} commands to {place}.',
+        BODY_2: 'Synced commands to {count} guilds out of {total}.'
+      }
+    },
+    PING: {
+      BRIEF: 'Sends the bots latency.',
+      HELP: 'Sends the bots websocket, message and database latency.',
+      RESPONSE: {
+        TITLE: 'Bot Latency',
+        BODY: 'Websocket latency: `{ws}ms`\nMessage latency: `{msg}ms`\nDatabase latency: `{db}ms`'
         }
       }
   }

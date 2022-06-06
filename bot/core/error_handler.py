@@ -53,8 +53,8 @@ class ErrorHandler(commands.Cog):
             self.capture_exception(error),
             self.bot.log_webhook.send(f"<@512640455834337290>```{trace}```"),
             ctx.reply_embed.error(
-                ctx.i18n("ERROR.RESPONSE.TITLE"),
-                ctx.i18n("ERROR.RESPONSE.BODY"),
+                await ctx.i18n("ERROR.RESPONSE.TITLE"),
+                await ctx.i18n("ERROR.RESPONSE.BODY"),
             ),
         )
 
