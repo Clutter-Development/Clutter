@@ -14,6 +14,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
-        run: pip install -U pip pyright pytest pytest-asyncio
+        run: >
+          pip install -U pip pyright pytest pytest-asyncio
+          pip install -Ur requirements.txt
       - name: Run PyRight
         run: pyright ./
