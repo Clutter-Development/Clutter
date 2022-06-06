@@ -24,10 +24,10 @@ class Owner(
     @commands.is_owner()
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
     async def sync(
-            self,
-            ctx: ClutterContext,
-            guilds: commands.Greedy[discord.Object],
-            spec: Optional[Literal[".", "*"]] = None,
+        self,
+        ctx: ClutterContext,
+        guilds: commands.Greedy[discord.Object],
+        spec: Optional[Literal[".", "*"]] = None,
     ) -> None:
         if not guilds:
             if spec == ".":

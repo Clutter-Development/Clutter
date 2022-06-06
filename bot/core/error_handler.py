@@ -24,7 +24,7 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(
-            self, ctx: ClutterContext, error: commands.CommandError, /
+        self, ctx: ClutterContext, error: commands.CommandError, /
     ) -> None:
         if hasattr(ctx.command, "on_error"):
             return
@@ -60,7 +60,7 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_error(
-            self, inter: discord.Interaction, error: app.AppCommandError, /
+        self, inter: discord.Interaction, error: app.AppCommandError, /
     ) -> None:
         error = getattr(error, "original", error)
 

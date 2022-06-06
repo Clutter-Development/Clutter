@@ -13,14 +13,13 @@ import aiohttp
 import color
 import discord
 import json5
+from core import errors
+from core.command_tree import ClutterCommandTree
+from core.context import ClutterContext
 from discord.ext import commands, tasks
 from discord_i18n import DiscordI18N
 from discord_utils import QuickEmbedCreator, format_as_list
 from mongo_manager import CachedMongoManager
-
-from core import errors
-from core.command_tree import ClutterCommandTree
-from core.context import ClutterContext
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -99,7 +98,7 @@ class Clutter(commands.AutoShardedBot):
         )
 
     async def determine_prefix(
-            self, _: Self, message: discord.Message, /
+        self, _: Self, message: discord.Message, /
     ) -> list[str]:
         if guild := message.guild:
             prefix: str = await self.db.get(
@@ -114,21 +113,21 @@ class Clutter(commands.AutoShardedBot):
         loaded = []
         failed = {}
         for fn in itertools.chain(
-                map(
-                    lambda file_path: str(file_path).replace("/", ".")[:-3],
-                    (CURRENT_DIR / "modules")
-                            .relative_to(os.getcwd())
-                            .rglob("*.py"),
-                ),
-                ["jishaku"],
+            map(
+                lambda file_path: str(file_path).replace("/", ".")[:-3],
+                (CURRENT_DIR / "modules")
+                .relative_to(os.getcwd())
+                .rglob("*.py"),
+            ),
+            ["jishaku"],
         ):
             try:
                 await self.load_extension(fn)
                 loaded.append(fn.rsplit(".", 1)[-1])
             except (
-                    commands.ExtensionFailed,
-                    commands.NoEntryPointError,
-                    commands.ExtensionNotFound,
+                commands.ExtensionFailed,
+                commands.NoEntryPointError,
+                commands.ExtensionNotFound,
             ):
                 failed[fn.rsplit(".", 1)[-1]] = traceback.format_exc()
         log = []
@@ -238,7 +237,7 @@ class Clutter(commands.AutoShardedBot):
         await self.invoke(ctx)
 
     async def getch_member(
-            self, guild: discord.Guild, user_id: int, /
+        self, guild: discord.Guild, user_id: int, /
     ) -> discord.Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
@@ -255,7 +254,7 @@ class Clutter(commands.AutoShardedBot):
         return next(iter(members), None)
 
     async def get_context(
-            self, message: discord.Message, /, cls: type | None = None
+        self, message: discord.Message, /, cls: type | None = None
     ) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
 
@@ -298,13 +297,13 @@ bot = Clutter(bot_config)
 @bot.check
 @bot.tree.check
 async def maintenance_check(
-        ctx: ClutterContext | discord.Interaction, /
+    ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
     if (
-            not await bot.is_owner(
-                ctx.author if isinstance(ctx, ClutterContext) else ctx.user
-            )
-            and bot.info.in_development_mode
+        not await bot.is_owner(
+            ctx.author if isinstance(ctx, ClutterContext) else ctx.user
+        )
+        and bot.info.in_development_mode
     ):
         raise errors.BotInMaintenance(
             "The bot is currently in maintenance. Only bot admins can use commands."
@@ -315,7 +314,7 @@ async def maintenance_check(
 @bot.check
 @bot.tree.check
 async def guild_blacklist_check(
-        ctx: ClutterContext | discord.Interaction, /
+    ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
     return await bot.on_guild_join(guild) if (guild := ctx.guild) else True
 
@@ -323,11 +322,11 @@ async def guild_blacklist_check(
 @bot.check
 @bot.tree.check
 async def user_blacklist_check(
-        ctx: ClutterContext | discord.Interaction, /
+    ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
     author = ctx.author if isinstance(ctx, ClutterContext) else ctx.user
     if not await bot.is_owner(author) and await bot.db.get(
-            f"users.{author.id}.blacklisted"
+        f"users.{author.id}.blacklisted"
     ):
         raise errors.UserIsBlacklisted(
             "You are blacklisted from using this bot. retard."
