@@ -6,6 +6,10 @@
     }
   },
   MODULES: {
+    OWNER: {
+      NAME: '🛠️ Owner',
+      DESCRIPTION: 'Owner only commands.'
+    },
     MISCELLANEOUS: {
       NAME: '🔧 Miscellaneus',
       DESCRIPTION: 'Various utility commands.'
