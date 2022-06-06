@@ -217,23 +217,6 @@ class Clutter(commands.AutoShardedBot):
         await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
 
-    async def getch_member(
-        self, guild: discord.Guild, user_id: int, /
-    ) -> discord.Member | None:
-        if (member := guild.get_member(user_id)) is not None:
-            return member
-
-        if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
-            try:
-                return await guild.fetch_member(user_id)
-            except discord.HTTPException:
-                return None
-
-        members = await guild.query_members(
-            limit=1, user_ids=[user_id], cache=True
-        )
-        return next(iter(members), None)
-
     def add_command(self, command: commands.Command, /) -> None:
         command.cooldown_after_parsing = True
         super().add_command(command)
@@ -252,6 +235,23 @@ class Clutter(commands.AutoShardedBot):
                 await ctx.typing()
 
         await self.invoke(ctx)
+
+    async def getch_member(
+        self, guild: discord.Guild, user_id: int, /
+    ) -> discord.Member | None:
+        if (member := guild.get_member(user_id)) is not None:
+            return member
+
+        if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
+            try:
+                return await guild.fetch_member(user_id)
+            except discord.HTTPException:
+                return None
+
+        members = await guild.query_members(
+            limit=1, user_ids=[user_id], cache=True
+        )
+        return next(iter(members), None)
 
     async def get_context(
         self, message: discord.Message, /, cls: type | None = None
