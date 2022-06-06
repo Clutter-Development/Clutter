@@ -16,9 +16,9 @@
       BRIEF: 'Syncs app commands to the desired guild(s).',
       HELP: 'Syncs app commands to the specified guilds, the current guild or globally.',
       RESPONSE: {
-        TITLE: 'Successfully synced commands',
-        BODY_1: 'Synced {count} commands to {place}.',
-        BODY_2: 'Synced commands to {count} guilds out of {total}.'
+        TITLE: 'Successfully synced app commands',
+        BODY_1: 'Synced {count} app commands to {place}.',
+        BODY_2: 'Synced app commands to {count} out of {total} guilds.'
       }
     },
     PING: {
