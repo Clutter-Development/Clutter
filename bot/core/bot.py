@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import collections
 import itertools
+import os
 import pathlib
 import time
 import traceback
@@ -115,14 +116,20 @@ class Clutter(commands.AutoShardedBot):
         for fn in itertools.chain(
             map(
                 lambda file_path: str(file_path).replace("/", ".")[:-3],
-                (CURRENT_DIR / "modules").rglob("*.py"),
+                (CURRENT_DIR / "modules")
+                .relative_to(os.getcwd())
+                .rglob("*.py"),
             ),
             ["jishaku"],
         ):
             try:
                 await self.load_extension(fn)
-                loaded.append(fn)
-            except (commands.ExtensionFailed, commands.NoEntryPointError, commands.ExtensionNotFound):
+                loaded.append(fn.rsplit(".", 1)[-1])
+            except (
+                commands.ExtensionFailed,
+                commands.NoEntryPointError,
+                commands.ExtensionNotFound,
+            ):
                 failed[fn.rsplit(".", 1)[-1]] = traceback.format_exc()
         log = []
         if loaded:

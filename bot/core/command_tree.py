@@ -14,6 +14,8 @@ T = TypeVar("T")
 
 
 class ClutterCommandTree(app.CommandTree):
+    client: Clutter
+
     def __init__(self, bot: Clutter, /) -> None:
         super().__init__(bot)
         self.checks = []
@@ -32,3 +34,10 @@ class ClutterCommandTree(app.CommandTree):
     def check(self, func: T) -> T:
         self.checks.append(func)
         return func
+
+    def add_command(
+        self, command: app.Command | app.Group | app.ContextMenu, /, **kwargs
+    ) -> None:
+        # if not isinstance(command, app.ContextMenu):
+        #     command.description = self.client.i18n.collect_translations(command.description)
+        super().add_command(command, **kwargs)

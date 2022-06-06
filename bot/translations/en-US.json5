@@ -1,1 +1,18 @@
-{}
+{
+  MODULES: {
+    MISCELLANEUS: {
+      NAME: '🔧 Miscellaneus',
+      DESCRIPTION: 'Various utility commands.'
+    },
+  },
+  COMMANDS: {
+      PING: {
+        BRIEF: 'Sends the bots latency.',
+        HELP: 'Sends the bots websocket, message and database latency.',
+        RESPONSE: {
+          TITLE: 'Bot Latency',
+          DESCRIPTION: 'Websocket latency: `{ws}ms`\nMessage latency: `{msg}ms`\nDatabase latency: `{db}ms`'
+        }
+      }
+  }
+}

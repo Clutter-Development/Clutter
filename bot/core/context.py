@@ -61,6 +61,9 @@ class ClutterContext(commands.Context):
         super().__init__(**kwargs)
         self.reply_embed = ReplyEmbedGetter(self, self.bot.embed)
 
+    async def i18n(self, text: str, /, *, use_guild: bool = False) -> str:
+        return await self.bot.i18n(self, text, use_guild=use_guild)
+
     async def ok(self, value: bool, /) -> None:
         emojis = self.bot._config["STYLE"]["EMOJIS"]
         await self.message.add_reaction(emojis["SUCCESS" if value else "ERROR"])
