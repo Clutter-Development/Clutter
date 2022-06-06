@@ -35,7 +35,7 @@ class SpamControl:
 
 
 class BotInfo:
-    version = "0.0.1"
+    version = "0.1.0"
     github = "https://github.com/Clutter-Development/Clutter"
     discord_url = "https://discord.com/invite/mVKkMZRPQE"
     docs_url = "https://clutter-development.github.io/"
