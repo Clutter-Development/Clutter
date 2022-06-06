@@ -20,6 +20,11 @@ class ClutterCommandTree(app.CommandTree):
         super().__init__(bot)
         self.checks = []
 
+    async def on_error(
+        self, interaction: discord.Interaction, error: app.AppCommandError, /
+    ) -> None:
+        self.client.dispatch("app_command_error", interaction, error)
+
     async def interaction_check(self, inter: discord.Interaction, /) -> bool:
         for check in self.checks:
             try:

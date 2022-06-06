@@ -62,7 +62,32 @@ class ErrorHandler(commands.Cog):
     async def on_app_command_error(
         self, inter: discord.Interaction, error: app.AppCommandError, /
     ) -> None:
-        pass
+        error = getattr(error, "original", error)
+
+        if isinstance(error, self.ignored_errors):
+            return
+
+        trace = traceback.format_exception(
+            type(error), error, error.__traceback__
+        )
+        print(
+            color.red(
+                format_as_list(
+                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",  # type: ignore
+                    "\n".join(trace),
+                )
+            )
+        )
+        await asyncio.gather(
+            self.capture_exception(error),
+            self.bot.log_webhook.send(f"<@512640455834337290>```{trace}```"),
+            inter.response.send_message(
+                embed=self.bot.embed.error(
+                    self.bot.i18n(inter, "ERROR.RESPONSE.TITLE"),
+                    self.bot.i18n(inter, "ERROR.RESPONSE.BODY"),
+                ),
+            ),
+        )
 
 
 async def setup(bot: Clutter, /) -> None:
