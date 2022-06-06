@@ -6,7 +6,7 @@
     }
   },
   MODULES: {
-    MISCELLANEUS: {
+    MISCELLANEOUS: {
       NAME: '🔧 Miscellaneus',
       DESCRIPTION: 'Various utility commands.'
     },

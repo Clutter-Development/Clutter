@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 class Miscellaneous(
     commands.Cog,
-    name="MODULES.MISCELLANEUS.NAME",
-    description="MODULES.MISCELLANEUS.DESCRIPTION",
+    name="MODULES.MISCELLANEOUS.NAME",
+    description="MODULES.MISCELLANEOUS.DESCRIPTION",
 ):
     def __init__(self, bot: Clutter, /) -> None:
         self.bot = bot
