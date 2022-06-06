@@ -122,8 +122,8 @@ class Clutter(commands.AutoShardedBot):
             try:
                 await self.load_extension(fn)
                 loaded.append(fn)
-            except (commands.ExtensionFailed, commands.NoEntryPointError):
-                failed[fn] = traceback.format_exc()
+            except (commands.ExtensionFailed, commands.NoEntryPointError, commands.ExtensionNotFound):
+                failed[fn.rsplit(".", 1)[-1]] = traceback.format_exc()
         log = []
         if loaded:
             log.append(
