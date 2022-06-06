@@ -41,7 +41,11 @@ class Owner(
                 await ctx.i18n("COMMANDS.SYNC.RESPONSE.TITLE"),
                 (await ctx.i18n("COMMANDS.SYNC.RESPONSE.BODY_1")).format(
                     count=len(cmds),
-                    place=await ctx.i18n("COMMANDS.SYNC.WORDS.CURRENT_GUILD" if spec else "COMMANDS.SYNC.WORDS.GLOBALLY"),
+                    place=await ctx.i18n(
+                        "COMMANDS.SYNC.WORDS.CURRENT_GUILD"
+                        if spec
+                        else "COMMANDS.SYNC.WORDS.GLOBALLY"
+                    ),
                 ),
             )
         else:
