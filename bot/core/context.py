@@ -11,18 +11,18 @@ if TYPE_CHECKING:
     from core.bot import Clutter
     from discord_utils import QuickEmbedCreator
 
-
     class ReplyEmbedCoroutine(Protocol):
         async def __call__(
-                self,
-                title: str | None = None,
-                description: str | None = None,
-                *,
-                url: str | None = None,
-                timestamp: datetime.datetime | None = None,
-                **kwargs: Any,
+            self,
+            title: str | None = None,
+            description: str | None = None,
+            *,
+            url: str | None = None,
+            timestamp: datetime.datetime | None = None,
+            **kwargs: Any,
         ) -> discord.Message:
             ...
+
 
 __all__ = ("ClutterContext",)
 

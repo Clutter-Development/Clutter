@@ -13,9 +13,13 @@ import aiohttp
 import color
 import discord
 import json5
-from core.errors import UserHasBeenBlacklisted, UserIsBlacklisted, BotInMaintenance
 from core.command_tree import ClutterCommandTree
 from core.context import ClutterContext
+from core.errors import (
+    BotInMaintenance,
+    UserHasBeenBlacklisted,
+    UserIsBlacklisted,
+)
 from discord.ext import commands, tasks
 from discord_i18n import DiscordI18N
 from discord_utils import QuickEmbedCreator, format_as_list
@@ -351,7 +355,9 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
     counter = spam.counter
 
     if not (
-        retry_after := spam.mapping.get_bucket(message).update_rate_limit(message.created_at.timestamp())
+        retry_after := spam.mapping.get_bucket(message).update_rate_limit(
+            message.created_at.timestamp()
+        )
     ):
         return True
 

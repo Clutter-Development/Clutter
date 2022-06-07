@@ -9,7 +9,7 @@ import discord
 import sentry_sdk
 from discord import app_commands as app
 from discord.ext import commands
-from discord_utils import format_as_list, run_in_executor, TextFile
+from discord_utils import TextFile, format_as_list, run_in_executor
 
 if TYPE_CHECKING:
     from core.bot import Clutter

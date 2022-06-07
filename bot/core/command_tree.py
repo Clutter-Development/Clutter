@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, Awaitable, Callable
+from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 
 import discord
 from discord import app_commands as app
@@ -46,4 +46,6 @@ class ClutterCommandTree(app.CommandTree):
     async def on_error(
         self, inter: discord.Interaction, error: app.AppCommandError, /
     ) -> None:
-        self.client.dispatch("app_command_error", inter, error)  # Rerouting to the error handler.
+        self.client.dispatch(
+            "app_command_error", inter, error
+        )  # Rerouting to the error handler.
