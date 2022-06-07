@@ -4,11 +4,12 @@
 #     bot/
 #       core/
 #         ...
-#       i18n/
+#       translations/
 #         ...
 #       modules/
 #         ...
 #       __main__.py
+#       config.json5
 #     requirements.txt
 
 FROM python:3.10.4-alpine3.16

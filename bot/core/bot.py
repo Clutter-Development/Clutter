@@ -13,7 +13,7 @@ import aiohttp
 import color
 import discord
 import json5
-from core import errors
+from core.errors import UserHasBeenBlacklisted, UserIsBlacklisted, BotInMaintenance
 from core.command_tree import ClutterCommandTree
 from core.context import ClutterContext
 from discord.ext import commands, tasks
@@ -24,7 +24,7 @@ from mongo_manager import CachedMongoManager
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-CURRENT_DIR = pathlib.Path(__file__).resolve().parent.parent
+BOT_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 
 class SpamControl:
@@ -37,20 +37,21 @@ class SpamControl:
 class BotInfo:
     default_language: str
     default_prefix: str
-    discord_url = "https://discord.com/invite/mVKkMZRPQE"
-    docs_url = "https://clutter-development.github.io/"
-    github = "https://github.com/Clutter-Development/Clutter"
-    in_development_mode: bool
+    discord_invite_url = "https://discord.com/invite/mVKkMZRPQE"
+    documentation_url = "https://clutter-development.github.io/"
+    github_repository_url = "https://github.com/Clutter-Development/Clutter"
     invite_url: str
+    is_in_development_mode: bool
     start_log: str
     token: str
+    uptime: float
     version = "0.1.0"
 
     def __init__(self, config: dict, /) -> None:
-        self.token = config["BOT_TOKEN"]
+        self.bot_token = config["BOT_TOKEN"]
         self.default_language = config["BOT_DEFAULT_LANGUAGE"]
         self.default_prefix = config["BOT_DEFAULT_PREFIX"]
-        self.in_development_mode = config["DEVELOPMENT_MODE"]
+        self.is_in_development_mode = config["DEVELOPMENT_MODE"]
 
 
 class Clutter(commands.AutoShardedBot):
@@ -60,12 +61,10 @@ class Clutter(commands.AutoShardedBot):
     log_webhook: discord.Webhook
     session: aiohttp.ClientSession
     tree: ClutterCommandTree
-    uptime: float
     user: discord.ClientUser
 
     def __init__(self, config: dict, /) -> None:
-        self._config = config
-
+        self.config = config
         self.info = BotInfo(config)
 
         self.development_servers = [
@@ -85,7 +84,7 @@ class Clutter(commands.AutoShardedBot):
                 bans=True,
                 emojis_and_stickers=True,
                 messages=True,
-                reactions=True,
+                guild_reactions=True,
                 message_content=True,
             ),
             command_prefix=self.determine_prefix,
@@ -97,88 +96,61 @@ class Clutter(commands.AutoShardedBot):
             owner_ids=set(config["BOT_ADMIN_IDS"]),
         )
 
-    async def determine_prefix(
-        self, _: Self, message: discord.Message, /
-    ) -> list[str]:
-        if guild := message.guild:
-            prefix: str = await self.db.get(
-                f"guilds.{guild.id}.prefix", default=self.info.default_prefix
-            )
-        else:
-            prefix = self.info.default_prefix
+    # Overrides.
 
-        return commands.when_mentioned_or(prefix)(self, message)
+    def add_command(self, command: commands.Command, /) -> None:
+        command.cooldown_after_parsing = True
+        super().add_command(command)
 
-    async def load_extensions(self) -> None:
-        loaded = []
-        failed = {}
-        for fn in itertools.chain(
-            map(
-                lambda file_path: str(file_path).replace("/", ".")[:-3],
-                (CURRENT_DIR / "modules")
-                .relative_to(os.getcwd())
-                .rglob("*.py"),
-            ),
-            ["jishaku"],
-        ):
-            try:
-                await self.load_extension(fn)
-                loaded.append(fn.rsplit(".", 1)[-1])
-            except (
-                commands.ExtensionFailed,
-                commands.NoEntryPointError,
-                commands.ExtensionNotFound,
-            ):
-                failed[fn.rsplit(".", 1)[-1]] = traceback.format_exc()
-        log = []
-        if loaded:
-            log.append(
-                color.green(
-                    format_as_list(
-                        f"Successfully loaded {len(loaded)} modules",
-                        "\n".join(loaded),
-                    )
+    async def process_commands(self, message: discord.Message, /) -> None:
+        if message.author.bot:
+            return
+
+        ctx = await self.get_context(message)
+
+        if not ctx.command:
+            return
+
+        if (cog := ctx.command.cog) and cog.qualified_name != "Jishaku":
+            await ctx.typing()
+
+        await self.invoke(ctx)
+
+    async def get_context(
+        self, message: discord.Message, /, cls: type | None = None
+    ) -> ClutterContext:
+        return await super().get_context(message, cls=ClutterContext)
+
+    def run(self) -> None:
+        async def runner() -> None:
+            async with self, aiohttp.ClientSession() as session:
+                self.session = session
+                self.db = CachedMongoManager(
+                    self.config["DATABASE_URI"],
+                    database="Clutter",
+                    max_items=5000,
                 )
-            )
-        log.extend(
-            color.red(
-                format_as_list(f"Failed to load {color.bold(name)}", error)
-            )
-            for name, error in failed.items()
-        )
+                self.error_webhook = discord.Webhook.from_url(
+                    self.config["ERROR_WEBHOOK_URL"], session=session
+                )
+                self.log_webhook = discord.Webhook.from_url(
+                    self.config["LOG_WEBHOOK_URL"], session=session
+                )
+                self.i18n = DiscordI18N(
+                    str(BOT_DIR / "translations"),
+                    db=self.db,
+                    fallback=self.info.default_language,
+                )
+                self.leave_blacklisted_guilds.start()
+                await self.load_extensions()
+                await self.start(self.info.bot_token, reconnect=True)
 
-        self.info.start_log = "\n\n".join(log)
+        try:
+            asyncio.run(runner())
+        except KeyboardInterrupt:
+            self.leave_blacklisted_guilds.cancel()
 
-    async def on_ready(self) -> None:
-        self.uptime = time.time()
-        self.info.invite_url = discord.utils.oauth_url(
-            self.user.id, permissions=discord.Permissions(administrator=True)
-        )
-        discord_info = format_as_list(
-            "Discord Info", f"{color.bold('Version:')} {discord.__version__}"
-        )
-        bot_info = format_as_list(
-            "Bot Info",
-            "\n".join(
-                [
-                    f"{color.bold('User:')} {self.user}",
-                    f"{color.bold('ID:')} {self.user.id}",
-                    f"{color.bold('Total Guilds:')} {len(self.guilds)}",
-                    f"{color.bold('Total Users:')} {len(self.users)}",
-                    f"{color.bold('Total Shards:')} {self.shard_count}",
-                ]
-            ),
-        )
-        print(
-            "\n\n".join(
-                [
-                    self.info.start_log,
-                    color.cyan(discord_info),
-                    color.magenta(bot_info),
-                    color.yellow(f"Running on Clutter v{self.info.version}"),
-                ]
-            )
-        )
+    # Blacklist-checking stuff.
 
     async def on_guild_join(self, guild: discord.Guild, /) -> bool:
         if await self.db.get(f"guilds.{guild.id}.blacklisted"):
@@ -193,9 +165,9 @@ class Clutter(commands.AutoShardedBot):
                 self.db.set(f"guilds.{guild.id}.blacklisted", True),
             )
             return False
-        return True
+        return True  # True means the guild is safe.
 
-    @tasks.loop(hours=12)
+    @tasks.loop(hours=12)  # Might remove this.
     async def leave_blacklisted_guilds(self) -> None:
         await asyncio.gather(
             *(self.on_guild_join(guild) for guild in self.guilds)
@@ -217,24 +189,20 @@ class Clutter(commands.AutoShardedBot):
         await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
 
-    def add_command(self, command: commands.Command, /) -> None:
-        command.cooldown_after_parsing = True
-        super().add_command(command)
+    # Others.
 
-    async def process_commands(self, message: discord.Message, /) -> None:
-        if message.author.bot:
-            return
-
-        ctx = await self.get_context(message)
-
-        if not ctx.command:
-            return
-
-        if cog := ctx.command.cog:
-            if cog.qualified_name != "Jishaku":
-                await ctx.typing()
-
-        await self.invoke(ctx)
+    async def determine_prefix(
+        self, _: Self, message: discord.Message, /
+    ) -> list[str]:
+        return [
+            await self.db.get(
+                f"guilds.{guild.id}.prefix", default=self.info.default_prefix
+            )
+            if (guild := message.guild)
+            else self.info.default_prefix,
+            f"<@{self.user.id}>",
+            f"<@!{self.user.id}>",
+        ]
 
     async def getch_member(
         self, guild: discord.Guild, user_id: int, /
@@ -242,53 +210,92 @@ class Clutter(commands.AutoShardedBot):
         if (member := guild.get_member(user_id)) is not None:
             return member
 
-        if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
+        if self.get_shard(guild.shard_id).is_ws_ratelimited():
             try:
                 return await guild.fetch_member(user_id)
             except discord.HTTPException:
                 return None
 
-        members = await guild.query_members(
+        if members := await guild.query_members(
             limit=1, user_ids=[user_id], cache=True
+        ):
+            return members[0]
+
+    async def load_extensions(self) -> None:
+        loaded = []
+        failed = {}
+        for fn in itertools.chain(
+            map(
+                lambda fp: ".".join(fp.parts)[:-3],
+                (BOT_DIR / "modules").relative_to(os.getcwd()).rglob("*.py"),
+            ),
+            ["jishaku"],
+        ):
+            try:
+                await self.load_extension(fn)
+                loaded.append(fn.rsplit(".", 1)[-1])
+            except (
+                commands.ExtensionFailed,
+                commands.NoEntryPointError,
+                commands.ExtensionNotFound,
+            ):
+                failed[fn.rsplit(".", 1)[-1]] = traceback.format_exc()
+
+        log = []
+        if loaded:
+            log.append(
+                color.green(
+                    format_as_list(
+                        f"Successfully loaded {len(loaded)} modules",
+                        "\n".join(loaded),
+                    )
+                )
+            )
+        log.extend(
+            color.red(
+                format_as_list(f"Failed to load {color.bold(name)}", error)
+            )
+            for name, error in failed.items()
         )
-        return next(iter(members), None)
 
-    async def get_context(
-        self, message: discord.Message, /, cls: type | None = None
-    ) -> ClutterContext:
-        return await super().get_context(message, cls=ClutterContext)
+        self.info.start_log = "\n\n".join(log)
 
-    def run(self) -> None:
-        async def runner() -> None:
-            async with self, aiohttp.ClientSession() as session:
-                self.session = session
-                self.db = CachedMongoManager(
-                    self._config["DATABASE_URI"],
-                    database="Clutter",
-                    max_items=5000,
-                )
-                self.error_webhook = discord.Webhook.from_url(
-                    self._config["ERROR_WEBHOOK_URL"], session=session
-                )
-                self.log_webhook = discord.Webhook.from_url(
-                    self._config["LOG_WEBHOOK_URL"], session=session
-                )
-                self.i18n = DiscordI18N(
-                    str(CURRENT_DIR / "translations"),
-                    db=self.db,
-                    fallback=self.info.default_language,
-                )
-                await self.load_extensions()
-                await self.start(self.info.token, reconnect=True)
+    async def on_ready(self) -> None:
+        self.info.uptime = time.time()
+        self.info.bot_invite_url = discord.utils.oauth_url(
+            self.user.id, permissions=discord.Permissions(administrator=True)
+        )
+        print(
+            "\n\n".join(
+                [
+                    self.info.start_log,
+                    color.cyan(
+                        format_as_list(
+                            "Discord Info",
+                            f"{color.bold('Version:')} {discord.__version__}",
+                        )
+                    ),
+                    color.magenta(
+                        format_as_list(
+                            "Bot Info",
+                            "\n".join(
+                                [
+                                    f"{color.bold('User:')} {self.user}",
+                                    f"{color.bold('ID:')} {self.user.id}",
+                                    f"{color.bold('Total Guilds:')} {len(self.guilds)}",
+                                    f"{color.bold('Total Users:')} {len(self.users)}",
+                                    f"{color.bold('Total Shards:')} {self.shard_count}",
+                                ]
+                            ),
+                        )
+                    ),
+                    color.yellow(f"Running on Clutter v{self.info.version}"),
+                ]
+            )
+        )
 
-        try:
-            asyncio.run(runner())
-        except KeyboardInterrupt:
-            pass
 
-
-bot_config = json5.loads((CURRENT_DIR / "config.json5").read_text())
-bot = Clutter(bot_config)
+bot = Clutter(json5.loads((BOT_DIR / "config.json5").read_text()))
 
 
 # Base checks.
@@ -299,13 +306,10 @@ bot = Clutter(bot_config)
 async def maintenance_check(
     ctx: ClutterContext | discord.Interaction, /
 ) -> bool:
-    if (
-        not await bot.is_owner(
-            ctx.author if isinstance(ctx, ClutterContext) else ctx.user
-        )
-        and bot.info.in_development_mode
+    if bot.info.is_in_development_mode and not await bot.is_owner(
+        ctx.author if isinstance(ctx, ClutterContext) else ctx.user
     ):
-        raise errors.BotInMaintenance(
+        raise BotInMaintenance(
             "The bot is currently in maintenance. Only bot admins can use commands."
         )
     return True
@@ -328,7 +332,7 @@ async def user_blacklist_check(
     if not await bot.is_owner(author) and await bot.db.get(
         f"users.{author.id}.blacklisted"
     ):
-        raise errors.UserIsBlacklisted(
+        raise UserIsBlacklisted(
             "You are blacklisted from using this bot. retard."
         )
     return True
@@ -346,16 +350,16 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
     spam = bot.spam_control
     counter = spam.counter
 
-    bucket = spam.mapping.get_bucket(message)
-
-    if not (retry_after := bucket.update_rate_limit(message.created_at.timestamp())):  # type: ignore
+    if not (
+        retry_after := spam.mapping.get_bucket(message).update_rate_limit(message.created_at.timestamp())
+    ):
         return True
 
     counter[author_id] += 1
 
     if counter[author_id] < 3:
         raise commands.CommandOnCooldown(
-            spam.mapping._cooldown,  # type: ignore
+            spam.mapping._cooldown,
             retry_after,
             commands.BucketType.user,
         )
@@ -381,10 +385,9 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
         ).add_field(
             title="Channel Info",
             description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",
-            # type: ignore
         )
 
     asyncio.create_task(bot.log_webhook.send(embed=embed))
-    raise errors.UserHasBeenBlacklisted(
+    raise UserHasBeenBlacklisted(
         "You have been blacklisted for spamming commands."
     )

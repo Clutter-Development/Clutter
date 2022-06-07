@@ -11,28 +11,28 @@ if TYPE_CHECKING:
     from core.bot import Clutter
     from discord_utils import QuickEmbedCreator
 
+
+    class ReplyEmbedCoroutine(Protocol):
+        async def __call__(
+                self,
+                title: str | None = None,
+                description: str | None = None,
+                *,
+                url: str | None = None,
+                timestamp: datetime.datetime | None = None,
+                **kwargs: Any,
+        ) -> discord.Message:
+            ...
+
 __all__ = ("ClutterContext",)
-
-
-class ReplyEmbedCoroutine(Protocol):
-    async def __call__(
-        self,
-        title: str | None = None,
-        description: str | None = None,
-        *,
-        url: str | None = None,
-        timestamp: datetime.datetime | None = None,
-        **kwargs: Any,
-    ) -> discord.Message:
-        ...
 
 
 class ReplyEmbedGetter:
     def __init__(
-        self, context: commands.Context, embed_creator: QuickEmbedCreator, /
+        self, ctx: ClutterContext, embed_creator: QuickEmbedCreator, /
     ) -> None:
-        self._context = context
-        self._embed_creator = embed_creator
+        self.__ctx = ctx
+        self.__embed_creator = embed_creator
 
     def __getattr__(self, item: str) -> ReplyEmbedCoroutine:
         async def runner(
@@ -43,8 +43,8 @@ class ReplyEmbedGetter:
             timestamp: datetime.datetime | None = None,
             **kwargs: Any,
         ):
-            return await self._context.reply(
-                embed=self._embed_creator.__call__(
+            return await self.__ctx.reply(
+                embed=self.__embed_creator.__call__(
                     item, title, description, url=url, timestamp=timestamp
                 ),
                 **kwargs,
@@ -55,15 +55,14 @@ class ReplyEmbedGetter:
 
 class ClutterContext(commands.Context):
     bot: Clutter
-    reply_embed: ReplyEmbedGetter
 
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.reply_embed = ReplyEmbedGetter(self, self.bot.embed)
+    @property
+    def reply_embed(self) -> ReplyEmbedGetter:
+        return ReplyEmbedGetter(self, self.bot.embed)
 
     async def i18n(self, text: str, /, *, use_guild: bool = False) -> str:
         return await self.bot.i18n(self, text, use_guild=use_guild)
 
     async def ok(self, value: bool, /) -> None:
-        emojis = self.bot._config["STYLE"]["EMOJIS"]
+        emojis = self.bot.config["STYLE"]["EMOJIS"]
         await self.message.add_reaction(emojis["SUCCESS" if value else "ERROR"])

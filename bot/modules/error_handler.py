@@ -30,7 +30,7 @@ class ErrorHandler(commands.Cog):
         print(
             color.red(
                 format_as_list(
-                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",  # type: ignore
+                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",
                     "\n".join(trace),
                 )
             )
@@ -43,9 +43,9 @@ class ErrorHandler(commands.Cog):
 
         if isinstance(ctx, ClutterContext):
             send_message = ctx.reply_embed.error(
-                    await ctx.i18n("ERROR.RESPONSE.TITLE"),
-                    await ctx.i18n("ERROR.RESPONSE.BODY"),
-                )
+                await ctx.i18n("ERROR.RESPONSE.TITLE"),
+                await ctx.i18n("ERROR.RESPONSE.BODY"),
+            )
         else:
             send_message = ctx.response.send_message(
                 embed=self.bot.embed.error(
@@ -61,7 +61,7 @@ class ErrorHandler(commands.Cog):
                     f"{head}\nCommand: {ctx.command.qualified_name}\nTraceback:\n{trace}"
                 )
             ),
-            send_message
+            send_message,
         )
 
     @commands.Cog.listener()

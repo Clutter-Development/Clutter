@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, TypeVar, Awaitable, Callable
 
 import discord
 from discord import app_commands as app
@@ -18,12 +18,19 @@ class ClutterCommandTree(app.CommandTree):
 
     def __init__(self, bot: Clutter, /) -> None:
         super().__init__(bot)
-        self.checks = []
+        self.checks: list[Callable[[discord.Interaction], Awaitable[bool]]] = []
 
-    async def on_error(
-        self, interaction: discord.Interaction, error: app.AppCommandError, /
+    def add_command(
+        self, command: app.Command | app.Group | app.ContextMenu, /, **kwargs
     ) -> None:
-        self.client.dispatch("app_command_error", interaction, error)
+        # if not isinstance(command, app.ContextMenu):
+        #     command.description = self.client.i18n.collect_translations(command.description)
+        # TODO: For when app command locales get implemented to discord.py.
+        super().add_command(command, **kwargs)
+
+    def check(self, func: T) -> T:
+        self.checks.append(func)
+        return func
 
     async def interaction_check(self, inter: discord.Interaction, /) -> bool:
         for check in self.checks:
@@ -36,13 +43,7 @@ class ClutterCommandTree(app.CommandTree):
 
         return True
 
-    def check(self, func: T) -> T:
-        self.checks.append(func)
-        return func
-
-    def add_command(
-        self, command: app.Command | app.Group | app.ContextMenu, /, **kwargs
+    async def on_error(
+        self, inter: discord.Interaction, error: app.AppCommandError, /
     ) -> None:
-        # if not isinstance(command, app.ContextMenu):
-        #     command.description = self.client.i18n.collect_translations(command.description)
-        super().add_command(command, **kwargs)
+        self.client.dispatch("app_command_error", inter, error)  # Rerouting to the error handler.

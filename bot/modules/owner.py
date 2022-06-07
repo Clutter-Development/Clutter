@@ -33,7 +33,7 @@ class Owner(
             if spec == ".":
                 cmds = await ctx.bot.tree.sync(guild=ctx.guild)
             elif spec == "*":
-                ctx.bot.tree.copy_global_to(guild=ctx.guild)  # type: ignore
+                ctx.bot.tree.copy_global_to(guild=ctx.guild)
                 cmds = await ctx.bot.tree.sync(guild=ctx.guild)
             else:
                 cmds = await ctx.bot.tree.sync()
