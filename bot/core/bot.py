@@ -35,16 +35,16 @@ class SpamControl:
 
 
 class BotInfo:
-    version = "0.1.0"
-    github = "https://github.com/Clutter-Development/Clutter"
-    discord_url = "https://discord.com/invite/mVKkMZRPQE"
-    docs_url = "https://clutter-development.github.io/"
-    token: str
     default_language: str
     default_prefix: str
+    discord_url = "https://discord.com/invite/mVKkMZRPQE"
+    docs_url = "https://clutter-development.github.io/"
+    github = "https://github.com/Clutter-Development/Clutter"
     in_development_mode: bool
-    start_log: str
     invite_url: str
+    start_log: str
+    token: str
+    version = "0.1.0"
 
     def __init__(self, config: dict, /) -> None:
         self.token = config["BOT_TOKEN"]
@@ -54,14 +54,14 @@ class BotInfo:
 
 
 class Clutter(commands.AutoShardedBot):
-    session: aiohttp.ClientSession
     db: CachedMongoManager
-    i18n: DiscordI18N
-    tree: ClutterCommandTree
-    user: discord.ClientUser
     error_webhook: discord.Webhook
+    i18n: DiscordI18N
     log_webhook: discord.Webhook
+    session: aiohttp.ClientSession
+    tree: ClutterCommandTree
     uptime: float
+    user: discord.ClientUser
 
     def __init__(self, config: dict, /) -> None:
         self._config = config
