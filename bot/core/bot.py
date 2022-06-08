@@ -13,13 +13,13 @@ import aiohttp
 import color
 import discord
 import json5
-from core.command_tree import ClutterCommandTree
-from core.context import ClutterContext
 from core.errors import (
-    BotInMaintenance,
     UserHasBeenBlacklisted,
     UserIsBlacklisted,
+    BotInMaintenance,
 )
+from core.command_tree import ClutterCommandTree
+from core.context import ClutterContext
 from discord.ext import commands, tasks
 from discord_i18n import DiscordI18N
 from discord_utils import QuickEmbedCreator, format_as_list

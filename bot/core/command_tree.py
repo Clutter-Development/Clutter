@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 import discord
 from discord import app_commands as app
 
+from core.interaction import ClutterInteraction
+
 if TYPE_CHECKING:
     from core.bot import Clutter
-
-__all__ = ("ClutterCommandTree",)
 
 T = TypeVar("T")
 
@@ -27,6 +27,9 @@ class ClutterCommandTree(app.CommandTree):
         #     command.description = self.client.i18n.collect_translations(command.description)
         # TODO: For when app command locales get implemented to discord.py.
         super().add_command(command, **kwargs)
+
+    def call(self, inter: discord.Interaction, /) -> None:
+        super().call(ClutterInteraction(inter))  # type: ignore
 
     def check(self, func: T) -> T:
         self.checks.append(func)
