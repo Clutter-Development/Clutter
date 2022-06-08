@@ -5,7 +5,6 @@ import traceback
 from typing import TYPE_CHECKING
 
 import color
-import discord
 import sentry_sdk
 from discord import app_commands as app
 from discord.ext import commands

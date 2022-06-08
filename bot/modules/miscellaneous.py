@@ -3,7 +3,6 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING
 
-import discord
 from discord import app_commands as app
 from discord.ext import commands
 
