@@ -24,9 +24,9 @@ if TYPE_CHECKING:
 
 class ReplyEmbedGetter:
     def __init__(
-        self, inter: ClutterInteraction, embed_creator: QuickEmbedCreator, /
+        self, ctx: ClutterInteraction, embed_creator: QuickEmbedCreator, /
     ) -> None:
-        self.__inter = inter
+        self.__ctx = ctx
         self.__embed_creator = embed_creator
 
     def __getattr__(self, item: str) -> ReplyEmbedCoroutine:
@@ -38,7 +38,7 @@ class ReplyEmbedGetter:
             timestamp: datetime.datetime | None = None,
             **kwargs: Any,
         ) -> None:
-            await self.__inter.respond(
+            await self.__ctx.respond(
                 embed=self.__embed_creator(
                     item, title, description, url=url, timestamp=timestamp
                 ),
@@ -51,13 +51,13 @@ class ReplyEmbedGetter:
 class ClutterInteraction:
     client: Clutter
 
-    def __init__(self, inter: discord.Interaction, /) -> None:
-        self.__inter = inter
+    def __init__(self, ctx: discord.Interaction, /) -> None:
+        self.__ctx = ctx
         self.bot = self.client
         self.author = self.user
 
     def __getattr__(self, item: str, /) -> Any:
-        return getattr(self.__inter, item)
+        return getattr(self.__ctx, item)
 
     @property
     def reply_embed(self):

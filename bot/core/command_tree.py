@@ -29,27 +29,27 @@ class ClutterCommandTree(app.CommandTree):
         # TODO: For when app command locales get implemented to discord.py.
         super().add_command(command, **kwargs)
 
-    async def call(self, inter: discord.Interaction, /) -> None:
-        await super().call(ClutterInteraction(inter))  # type: ignore
+    async def call(self, ctx: discord.Interaction, /) -> None:
+        await super().call(ClutterInteraction(ctx))  # type: ignore
 
     def check(self, func: T) -> T:
         self.checks.append(func)
         return func
 
-    async def interaction_check(self, inter: ClutterInteraction, /) -> bool:
+    async def interaction_check(self, ctx: ClutterInteraction, /) -> bool:
         for check in self.checks:
             try:
-                if not await check(inter):
+                if not await check(ctx):
                     return False
             except app.AppCommandError as e:
-                await self.on_error(inter, e)
+                await self.on_error(ctx, e)
                 return False
 
         return True
 
     async def on_error(
-        self, inter: ClutterInteraction, error: app.AppCommandError, /
+        self, ctx: ClutterInteraction, error: app.AppCommandError, /
     ) -> None:
         self.bot.dispatch(
-            "app_command_error", inter, error
+            "app_command_error", ctx, error
         )  # Rerouting to the error handler.

@@ -311,9 +311,7 @@ bot = Clutter(json5.loads((BOT_DIR / "config.json5").read_text()))
 async def maintenance_check(
     ctx: ClutterContext | ClutterInteraction, /
 ) -> bool:
-    if bot.info.is_in_development_mode and not await bot.is_owner(
-        ctx.author if isinstance(ctx, ClutterContext) else ctx.user
-    ):
+    if bot.info.is_in_development_mode and not await bot.is_owner(ctx.author):
         raise BotInMaintenance(
             "The bot is currently in maintenance. Only bot admins can use commands."
         )
@@ -333,9 +331,8 @@ async def guild_blacklist_check(
 async def user_blacklist_check(
     ctx: ClutterContext | ClutterInteraction, /
 ) -> bool:
-    author = ctx.author if isinstance(ctx, ClutterContext) else ctx.user
-    if not await bot.is_owner(author) and await bot.db.get(
-        f"users.{author.id}.blacklisted"
+    if not await bot.is_owner(ctx.author) and await bot.db.get(
+        f"users.{ctx.author.id}.blacklisted"
     ):
         raise UserIsBlacklisted(
             "You are blacklisted from using this bot. retard."

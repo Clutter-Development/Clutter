@@ -69,13 +69,13 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_error(
-        self, inter: ClutterInteraction, error: app.AppCommandError, /
+        self, ctx: ClutterInteraction, error: app.AppCommandError, /
     ) -> None:
         error = getattr(error, "original", error)
 
         match error:
             case _:
-                await self.handle_error(inter, error)
+                await self.handle_error(ctx, error)
 
 
 async def setup(bot: Clutter, /) -> None:
