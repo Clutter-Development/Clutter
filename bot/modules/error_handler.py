@@ -14,6 +14,7 @@ from discord_utils import TextFile, format_as_list, run_in_executor
 if TYPE_CHECKING:
     from core.bot import Clutter
     from core.context import ClutterContext
+    from core.interaction import ClutterInteraction
 
 
 class ErrorHandler(commands.Cog):
@@ -22,7 +23,7 @@ class ErrorHandler(commands.Cog):
         self.capture_exception = run_in_executor(sentry_sdk.capture_exception)
 
     async def handle_error(
-        self, ctx: ClutterContext | discord.Interaction, error: Exception, /
+        self, ctx: ClutterContext | ClutterInteraction, error: Exception, /
     ) -> None:
         trace = traceback.format_exception(
             type(error), error, error.__traceback__
@@ -86,7 +87,7 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_error(
-        self, inter: discord.Interaction, error: app.AppCommandError, /
+        self, inter: ClutterInteraction, error: app.AppCommandError, /
     ) -> None:
         error = getattr(error, "original", error)
 

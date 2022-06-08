@@ -9,6 +9,7 @@ from discord.ext import commands
 
 if TYPE_CHECKING:
     from core.bot import Clutter
+    from core.interaction import ClutterInteraction
     from core.context import ClutterContext
 
 
@@ -42,7 +43,7 @@ class Miscellaneous(
         )
 
     @app.command(name="ping", description="COMMANDS.PING.BRIEF")
-    async def app_ping(self, inter: discord.Interaction, /) -> None:
+    async def app_ping(self, inter: ClutterInteraction, /) -> None:
         ts = time.time()
         await inter.response.send_message("** **")
         ts = time.time() - ts
