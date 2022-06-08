@@ -54,6 +54,7 @@ class ClutterInteraction:
     def __init__(self, inter: discord.Interaction, /) -> None:
         self.__inter = inter
         self.bot = self.client
+        self.author = self.user
 
     def __getattr__(self, item: str, /) -> Any:
         return getattr(self.__inter, item)

@@ -29,8 +29,8 @@ class ClutterCommandTree(app.CommandTree):
         # TODO: For when app command locales get implemented to discord.py.
         super().add_command(command, **kwargs)
 
-    def call(self, inter: discord.Interaction, /) -> None:
-        super().call(ClutterInteraction(inter))  # type: ignore
+    async def call(self, inter: discord.Interaction, /) -> None:
+        await super().call(ClutterInteraction(inter))  # type: ignore
 
     def check(self, func: T) -> T:
         self.checks.append(func)
