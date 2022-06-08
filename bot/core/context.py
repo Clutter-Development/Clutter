@@ -39,7 +39,7 @@ class ReplyEmbedGetter:
             url: str | None = None,
             timestamp: datetime.datetime | None = None,
             **kwargs: Any,
-        ):
+        ) -> discord.Message:
             return await self.__ctx.reply(
                 embed=self.__embed_creator.__call__(
                     item, title, description, url=url, timestamp=timestamp

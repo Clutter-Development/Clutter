@@ -18,7 +18,7 @@ if TYPE_CHECKING:
             url: str | None = None,
             timestamp: datetime.datetime | None = None,
             **kwargs: Any,
-        ) -> discord.Message:
+        ) -> None:
             ...
 
 
@@ -37,8 +37,8 @@ class ReplyEmbedGetter:
             url: str | None = None,
             timestamp: datetime.datetime | None = None,
             **kwargs: Any,
-        ):
-            return await self.__inter.responses.send_message(
+        ) -> None:
+            await self.__inter.respond(
                 embed=self.__embed_creator(
                     item, title, description, url=url, timestamp=timestamp
                 ),
@@ -64,3 +64,6 @@ class ClutterInteraction:
 
     async def i18n(self, text: str, /, *, use_guild: bool = False) -> str:
         return await self.bot.i18n(self, text, use_guild=use_guild)  # type: ignore
+
+    async def respond(self, *args, **kwargs) -> None:
+        await self.response.send_message(*args, **kwargs)
