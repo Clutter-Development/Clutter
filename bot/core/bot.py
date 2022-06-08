@@ -26,7 +26,7 @@ from discord_utils import QuickEmbedCreator, format_as_list
 from mongo_manager import CachedMongoManager
 
 if TYPE_CHECKING:
-    from core.interaction import ClutterInteraction
+    from core.interaction import ClutterInteractionContext
     from typing_extensions import Self
 
 BOT_DIR = pathlib.Path(__file__).resolve().parent.parent
@@ -309,7 +309,7 @@ bot = Clutter(json5.loads((BOT_DIR / "config.json5").read_text()))
 @bot.check
 @bot.tree.check
 async def maintenance_check(
-    ctx: ClutterContext | ClutterInteraction, /
+    ctx: ClutterContext | ClutterInteractionContext, /
 ) -> bool:
     if bot.info.is_in_development_mode and not await bot.is_owner(ctx.author):
         raise BotInMaintenance(
@@ -321,7 +321,7 @@ async def maintenance_check(
 @bot.check
 @bot.tree.check
 async def guild_blacklist_check(
-    ctx: ClutterContext | ClutterInteraction, /
+    ctx: ClutterContext | ClutterInteractionContext, /
 ) -> bool:
     return await bot.on_guild_join(guild) if (guild := ctx.guild) else True
 
@@ -329,7 +329,7 @@ async def guild_blacklist_check(
 @bot.check
 @bot.tree.check
 async def user_blacklist_check(
-    ctx: ClutterContext | ClutterInteraction, /
+    ctx: ClutterContext | ClutterInteractionContext, /
 ) -> bool:
     if not await bot.is_owner(ctx.author) and await bot.db.get(
         f"users.{ctx.author.id}.blacklisted"

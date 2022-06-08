@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 
 import discord
-from core.interaction import ClutterInteraction
+from core.interaction import ClutterInteractionContext
 from discord import app_commands as app
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ class ClutterCommandTree(app.CommandTree):
     def __init__(self, bot: Clutter, /) -> None:
         super().__init__(bot)
         self.bot = self.client
-        self.checks: list[Callable[[ClutterInteraction], Awaitable[bool]]] = []
+        self.checks: list[Callable[[ClutterInteractionContext], Awaitable[bool]]] = []
 
     def add_command(
         self, command: app.Command | app.Group | app.ContextMenu, /, **kwargs
@@ -30,13 +30,13 @@ class ClutterCommandTree(app.CommandTree):
         super().add_command(command, **kwargs)
 
     async def call(self, ctx: discord.Interaction, /) -> None:
-        await super().call(ClutterInteraction(ctx))  # type: ignore
+        await super().call(ClutterInteractionContext(ctx))  # type: ignore
 
     def check(self, func: T) -> T:
         self.checks.append(func)
         return func
 
-    async def interaction_check(self, ctx: ClutterInteraction, /) -> bool:
+    async def interaction_check(self, ctx: ClutterInteractionContext, /) -> bool:
         for check in self.checks:
             try:
                 if not await check(ctx):
@@ -48,7 +48,7 @@ class ClutterCommandTree(app.CommandTree):
         return True
 
     async def on_error(
-        self, ctx: ClutterInteraction, error: app.AppCommandError, /
+        self, ctx: ClutterInteractionContext, error: app.AppCommandError, /
     ) -> None:
         self.bot.dispatch(
             "app_command_error", ctx, error
