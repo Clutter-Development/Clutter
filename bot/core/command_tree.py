@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from core.bot import Clutter
 
 T = TypeVar("T")
+CheckType = Callable[[ClutterInteractionContext], Awaitable[bool]]
 
 
 class ClutterCommandTree(app.CommandTree):
@@ -18,9 +19,7 @@ class ClutterCommandTree(app.CommandTree):
     def __init__(self, bot: Clutter, /) -> None:
         super().__init__(bot)
         self.bot = self.client
-        self.checks: list[
-            Callable[[ClutterInteractionContext], Awaitable[bool]]
-        ] = []
+        self.checks: list[CheckType] = []
 
     def add_command(
         self, command: app.Command | app.Group | app.ContextMenu, /, **kwargs
@@ -34,7 +33,7 @@ class ClutterCommandTree(app.CommandTree):
     async def call(self, ctx: discord.Interaction, /) -> None:
         await super().call(ClutterInteractionContext(ctx))  # type: ignore
 
-    def check(self, func: T) -> T:
+    def check(self, func: CheckType) -> CheckType:
         self.checks.append(func)
         return func
 

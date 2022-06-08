@@ -44,7 +44,7 @@ class Miscellaneous(
             )
         )
 
-    @app.command(name="ping", description="COMMANDS.PING.BRIEF")
+    @app.command(name="ping", description="COMMANDS.PING.BRIEF")  # type: ignore
     async def app_ping(self, ctx: ClutterInteractionContext, /) -> None:
         ping = time.time()
 

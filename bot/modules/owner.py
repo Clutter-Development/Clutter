@@ -30,22 +30,25 @@ class Owner(
         spec: Optional[Literal[".", "*"]] = None,
     ) -> None:
         if not guilds:
+            if not (guild := ctx.guild):
+                raise commands.NoPrivateMessage()
+
             if spec == ".":
-                cmds = await ctx.bot.tree.sync(guild=ctx.guild)
+                cmds = await ctx.bot.tree.sync(guild=guild)
             elif spec == "*":
-                ctx.bot.tree.copy_global_to(guild=ctx.guild)
-                cmds = await ctx.bot.tree.sync(guild=ctx.guild)
+                ctx.bot.tree.copy_global_to(guild=guild)
+                cmds = await ctx.bot.tree.sync(guild=guild)
             else:
                 cmds = await ctx.bot.tree.sync()
+
             await ctx.reply_embed.success(
                 await ctx.i18n("COMMANDS.SYNC.RESPONSE.TITLE"),
-                (await ctx.i18n("COMMANDS.SYNC.RESPONSE.BODY_1")).format(
+                (
+                    await ctx.i18n(
+                        f"COMMANDS.SYNC.RESPONSE.BODY_{'1' if spec else '2'}"
+                    )
+                ).format(
                     count=len(cmds),
-                    place=await ctx.i18n(
-                        "COMMANDS.SYNC.WORDS.CURRENT_GUILD"
-                        if spec
-                        else "COMMANDS.SYNC.WORDS.GLOBALLY"
-                    ),
                 ),
             )
         else:
@@ -60,7 +63,7 @@ class Owner(
 
             await ctx.reply_embed.success(
                 await ctx.i18n("COMMANDS.SYNC.RESPONSE.TITLE"),
-                (await ctx.i18n("COMMANDS.SYNC.RESPONSE.BODY_2")).format(
+                (await ctx.i18n("COMMANDS.SYNC.RESPONSE.BODY_3")).format(
                     count=synced, total=len(guilds)
                 ),
             )

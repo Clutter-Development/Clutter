@@ -215,7 +215,7 @@ class Clutter(commands.AutoShardedBot):
         if (member := guild.get_member(user_id)) is not None:
             return member
 
-        if self.get_shard(guild.shard_id).is_ws_ratelimited():
+        if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
             try:
                 return await guild.fetch_member(user_id)
             except discord.HTTPException:
@@ -267,7 +267,7 @@ class Clutter(commands.AutoShardedBot):
 
     async def on_ready(self) -> None:
         self.info.uptime = time.time()
-        self.info.bot_invite_url = discord.utils.oauth_url(
+        self.info.invite_url = discord.utils.oauth_url(
             self.user.id, permissions=discord.Permissions(administrator=True)
         )
         print(
@@ -353,7 +353,7 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
     counter = spam.counter
 
     if not (
-        retry_after := spam.mapping.get_bucket(message).update_rate_limit(
+        retry_after := spam.mapping.get_bucket(message).update_rate_limit(  # type: ignore
             message.created_at.timestamp()
         )
     ):
@@ -363,7 +363,7 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
 
     if counter[author_id] < 3:
         raise commands.CommandOnCooldown(
-            spam.mapping._cooldown,
+            spam.mapping._cooldown,  # type: ignore
             retry_after,
             commands.BucketType.user,
         )
@@ -388,7 +388,7 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
             description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
         ).add_field(
             title="Channel Info",
-            description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",
+            description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore
         )
 
     asyncio.create_task(bot.log_webhook.send(embed=embed))

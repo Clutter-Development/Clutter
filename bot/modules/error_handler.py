@@ -33,7 +33,7 @@ class ErrorHandler(commands.Cog):
         print(
             color.red(
                 format_as_list(
-                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",
+                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",  # type: ignore
                     "\n".join(trace),
                 )
             )
@@ -48,7 +48,7 @@ class ErrorHandler(commands.Cog):
             self.capture_exception(error),
             self.bot.log_webhook.send(
                 file=TextFile(
-                    f"{head}\nCommand: {ctx.command.qualified_name}\nTraceback:\n{trace}"
+                    f"{head}\nCommand: {ctx.command.qualified_name}\nTraceback:\n{trace}"  # type: ignore
                 )
             ),
             ctx.reply_embed.error(
