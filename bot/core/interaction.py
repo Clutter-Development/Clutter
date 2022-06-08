@@ -24,7 +24,10 @@ if TYPE_CHECKING:
 
 class ReplyEmbedGetter:
     def __init__(
-        self, ctx: ClutterInteractionContext, embed_creator: QuickEmbedCreator, /
+        self,
+        ctx: ClutterInteractionContext,
+        embed_creator: QuickEmbedCreator,
+        /,
     ) -> None:
         self.__ctx = ctx
         self.__embed_creator = embed_creator

@@ -18,7 +18,9 @@ class ClutterCommandTree(app.CommandTree):
     def __init__(self, bot: Clutter, /) -> None:
         super().__init__(bot)
         self.bot = self.client
-        self.checks: list[Callable[[ClutterInteractionContext], Awaitable[bool]]] = []
+        self.checks: list[
+            Callable[[ClutterInteractionContext], Awaitable[bool]]
+        ] = []
 
     def add_command(
         self, command: app.Command | app.Group | app.ContextMenu, /, **kwargs
@@ -36,7 +38,9 @@ class ClutterCommandTree(app.CommandTree):
         self.checks.append(func)
         return func
 
-    async def interaction_check(self, ctx: ClutterInteractionContext, /) -> bool:
+    async def interaction_check(
+        self, ctx: ClutterInteractionContext, /
+    ) -> bool:
         for check in self.checks:
             try:
                 if not await check(ctx):

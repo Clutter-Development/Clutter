@@ -22,7 +22,10 @@ class ErrorHandler(commands.Cog):
         self.capture_exception = run_in_executor(sentry_sdk.capture_exception)
 
     async def handle_error(
-        self, ctx: ClutterContext | ClutterInteractionContext, error: Exception, /
+        self,
+        ctx: ClutterContext | ClutterInteractionContext,
+        error: Exception,
+        /,
     ) -> None:
         trace = traceback.format_exception(
             type(error), error, error.__traceback__
