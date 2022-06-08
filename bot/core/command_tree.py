@@ -3,9 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 
 import discord
-from discord import app_commands as app
-
 from core.interaction import ClutterInteraction
+from discord import app_commands as app
 
 if TYPE_CHECKING:
     from core.bot import Clutter

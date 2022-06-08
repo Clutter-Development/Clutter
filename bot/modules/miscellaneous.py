@@ -9,8 +9,8 @@ from discord.ext import commands
 
 if TYPE_CHECKING:
     from core.bot import Clutter
-    from core.interaction import ClutterInteraction
     from core.context import ClutterContext
+    from core.interaction import ClutterInteraction
 
 
 class Miscellaneous(

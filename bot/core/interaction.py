@@ -5,11 +5,9 @@ from typing import TYPE_CHECKING, Any, Protocol
 if TYPE_CHECKING:
     import datetime
 
-    from core.bot import Clutter
-
-    from discord_utils import QuickEmbedCreator
-
     import discord
+    from core.bot import Clutter
+    from discord_utils import QuickEmbedCreator
 
     class ReplyEmbedCoroutine(Protocol):
         async def __call__(

@@ -13,18 +13,17 @@ import aiohttp
 import color
 import discord
 import json5
-from core.errors import (
-    UserHasBeenBlacklisted,
-    UserIsBlacklisted,
-    BotInMaintenance,
-)
 from core.command_tree import ClutterCommandTree
 from core.context import ClutterContext
+from core.errors import (
+    BotInMaintenance,
+    UserHasBeenBlacklisted,
+    UserIsBlacklisted,
+)
 from discord.ext import commands, tasks
 from discord_i18n import DiscordI18N
 from discord_utils import QuickEmbedCreator, format_as_list
 from mongo_manager import CachedMongoManager
-
 
 if TYPE_CHECKING:
     from core.interaction import ClutterInteraction
