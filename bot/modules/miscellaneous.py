@@ -27,15 +27,18 @@ class Miscellaneous(
     )
     @commands.bot_has_permissions(send_messages=True, read_message_history=True)
     async def ping(self, ctx: ClutterContext, /) -> None:
-        ts = time.time()
+        ping = time.time()
+
         message = await ctx.reply("** **")
-        ts = time.time() - ts
+
+        ping = time.time() - ping
+
         await message.edit(
             embed=self.bot.embed.info(
                 await ctx.i18n("COMMANDS.PING.RESPONSE.TITLE"),
                 (await ctx.i18n("COMMANDS.PING.RESPONSE.BODY")).format(
                     ws=int(self.bot.latency * 1000),
-                    msg=int(ts * 1000),
+                    msg=int(ping * 1000),
                     db=int(await self.bot.db.ping() * 1000),
                 ),
             )
@@ -43,15 +46,17 @@ class Miscellaneous(
 
     @app.command(name="ping", description="COMMANDS.PING.BRIEF")
     async def app_ping(self, ctx: ClutterInteractionContext, /) -> None:
-        ts = time.time()
+        ping = time.time()
+
         await ctx.response.send_message("** **")
-        ts = time.time() - ts
+
+        ping = time.time() - ping
         await ctx.edit_original_message(
             embed=self.bot.embed.info(
                 await ctx.i18n("COMMANDS.PING.RESPONSE.TITLE"),
                 (await ctx.i18n("COMMANDS.PING.RESPONSE.BODY")).format(
                     ws=int(self.bot.latency * 1000),
-                    msg=int(ts * 1000),
+                    msg=int(ping * 1000),
                     db=int(await self.bot.db.ping() * 1000),
                 ),
             )

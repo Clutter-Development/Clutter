@@ -38,11 +38,11 @@ class ErrorHandler(commands.Cog):
                 )
             )
         )
+
         if guild := ctx.guild:
             head = f"Error from the server {guild.name} with the ID {guild.id}."
         else:
-            author = ctx.author
-            head = f"Error from the DMs with the user {author} with the ID {author.id}."
+            head = f"Error from the DMs with the user {ctx.author} with the ID {ctx.author.id}."
 
         await asyncio.gather(
             self.capture_exception(error),
