@@ -17,13 +17,15 @@ class ClutterCommandTree(app.CommandTree):
 
     def __init__(self, bot: Clutter, /) -> None:
         super().__init__(bot)
+        self.bot = self.client
         self.checks: list[Callable[[ClutterInteraction], Awaitable[bool]]] = []
 
     def add_command(
         self, command: app.Command | app.Group | app.ContextMenu, /, **kwargs
     ) -> None:
+        # command.name = self.bot.i18n.collect_translations(command.description)
         # if not isinstance(command, app.ContextMenu):
-        #     command.description = self.client.i18n.collect_translations(command.description)
+        #     command.description = self.bot.i18n.collect_translations(command.description)
         # TODO: For when app command locales get implemented to discord.py.
         super().add_command(command, **kwargs)
 
@@ -48,6 +50,6 @@ class ClutterCommandTree(app.CommandTree):
     async def on_error(
         self, inter: ClutterInteraction, error: app.AppCommandError, /
     ) -> None:
-        self.client.dispatch(
+        self.bot.dispatch(
             "app_command_error", inter, error
         )  # Rerouting to the error handler.

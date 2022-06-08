@@ -60,7 +60,7 @@ class ClutterInteraction:
 
     @property
     def reply_embed(self):
-        return ReplyEmbedGetter(self, self.client.embed)
+        return ReplyEmbedGetter(self, self.bot.embed)
 
     async def i18n(self, text: str, /, *, use_guild: bool = False) -> str:
-        return await self.client.i18n(self, text, use_guild=use_guild)  # type: ignore
+        return await self.bot.i18n(self, text, use_guild=use_guild)  # type: ignore
