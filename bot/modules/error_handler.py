@@ -41,19 +41,6 @@ class ErrorHandler(commands.Cog):
             author = ctx.author
             head = f"Error from the DMs with the user {author} with the ID {author.id}."
 
-        if isinstance(ctx, ClutterContext):
-            send_message = ctx.reply_embed.error(
-                await ctx.i18n("ERROR.RESPONSE.TITLE"),
-                await ctx.i18n("ERROR.RESPONSE.BODY"),
-            )
-        else:
-            send_message = ctx.response.send_message(
-                embed=self.bot.embed.error(
-                    await self.bot.i18n(ctx, "ERROR.RESPONSE.TITLE"),
-                    await self.bot.i18n(ctx, "ERROR.RESPONSE.BODY"),
-                )
-            )
-
         await asyncio.gather(
             self.capture_exception(error),
             self.bot.log_webhook.send(
@@ -61,20 +48,16 @@ class ErrorHandler(commands.Cog):
                     f"{head}\nCommand: {ctx.command.qualified_name}\nTraceback:\n{trace}"
                 )
             ),
-            send_message,
+            ctx.reply_embed.error(
+                await ctx.i18n("ERROR.RESPONSE.TITLE"),
+                await ctx.i18n("ERROR.RESPONSE.BODY"),
+            ),
         )
 
     @commands.Cog.listener()
     async def on_command_error(
         self, ctx: ClutterContext, error: commands.CommandError, /
     ) -> None:
-        if hasattr(ctx.command, "on_error"):
-            return
-
-        if cog := ctx.cog:
-            if cog._get_overridden_method(cog.cog_command_error) is not None:
-                return
-
         error = getattr(error, "original", error)
 
         match error:
@@ -82,7 +65,7 @@ class ErrorHandler(commands.Cog):
                 return
 
             case _:
-                await self.capture_exception(ctx, error)
+                await self.handle_error(ctx, error)
 
     @commands.Cog.listener()
     async def on_app_command_error(
@@ -92,7 +75,7 @@ class ErrorHandler(commands.Cog):
 
         match error:
             case _:
-                await self.capture_exception(inter, error)
+                await self.handle_error(inter, error)
 
 
 async def setup(bot: Clutter, /) -> None:

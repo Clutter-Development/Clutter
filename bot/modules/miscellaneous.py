@@ -48,9 +48,9 @@ class Miscellaneous(
         ts = time.time() - ts
         await inter.edit_original_message(
             embed=self.bot.embed.info(
-                await self.bot.i18n(inter, "COMMANDS.PING.RESPONSE.TITLE"),
+                await inter.i18n("COMMANDS.PING.RESPONSE.TITLE"),
                 (
-                    await self.bot.i18n(inter, "COMMANDS.PING.RESPONSE.BODY")
+                    await inter.i18n("COMMANDS.PING.RESPONSE.BODY")
                 ).format(
                     ws=int(self.bot.latency * 1000),
                     msg=int(ts * 1000),

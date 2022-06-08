@@ -32,14 +32,14 @@ if TYPE_CHECKING:
 BOT_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 
-class SpamControl:
+class ClutterSpamControl:
     mapping = commands.CooldownMapping.from_cooldown(
         10, 12, commands.BucketType.user
     )
     counter = collections.Counter()
 
 
-class BotInfo:
+class ClutterInfo:
     default_language: str
     default_prefix: str
     discord_invite_url = "https://discord.com/invite/mVKkMZRPQE"
@@ -70,7 +70,7 @@ class Clutter(commands.AutoShardedBot):
 
     def __init__(self, config: dict, /) -> None:
         self.config = config
-        self.info = BotInfo(config)
+        self.info = ClutterInfo(config)
 
         self.development_servers = [
             discord.Object(g_id) for g_id in config["BOT_DEVELOPMENT_GUILD_IDS"]
@@ -80,7 +80,7 @@ class Clutter(commands.AutoShardedBot):
 
         # Auto spam control for commands.
         # Frequent triggering of this filter (3 or more times in a row) will result in a blacklist.
-        self.spam_control = SpamControl()
+        self.spam_control = ClutterSpamControl()
 
         super().__init__(
             intents=discord.Intents(

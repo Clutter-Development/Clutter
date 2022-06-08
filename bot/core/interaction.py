@@ -53,6 +53,7 @@ class ClutterInteraction:
 
     def __init__(self, inter: discord.Interaction, /) -> None:
         self.__inter = inter
+        self.bot = self.client
 
     def __getattr__(self, item: str, /) -> Any:
         return getattr(self.__inter, item)
@@ -60,3 +61,6 @@ class ClutterInteraction:
     @property
     def reply_embed(self):
         return ReplyEmbedGetter(self, self.client.embed)
+
+    async def i18n(self, text: str, /, *, use_guild: bool = False) -> str:
+        return await self.client.i18n(self, text, use_guild=use_guild)  # type: ignore
