@@ -1,13 +1,15 @@
 import asyncio
 import itertools
-import aiohttp
-import traceback
 import os
-import discord
-import time
 import pathlib
+import time
+import traceback
+
+import aiohttp
+import discord
 from discord.ext import commands
-from ..utils import color, db, embed, i18n, format_as_list
+
+from ..utils import color, db, embed, format_as_list, i18n
 
 ROOT_DIR = pathlib.Path(__file__).resolve().parent.parent
 
@@ -34,22 +36,24 @@ class ClutterBot(commands.AutoShardedBot):
 
         # Auto spam control for commands.
         # Frequent triggering of this filter (3 times in a row) will result in a blacklist.
-        self.spam_control = type("SpamControl", )
-        mapping = commands.CooldownMapping.from_cooldown(10, 12, commands.BucketType.user)
+        self.spam_control = type(
+            "SpamControl",
+        )
+        mapping = commands.CooldownMapping.from_cooldown(
+            10, 12, commands.BucketType.user
+        )
         self.spam_control.get_bucket = mapping.get_bucket
         self.spam_control.cooldown = mapping._cooldown
 
         self.embed = embed.EmbedCreator(config["STYLE"])
 
         self.db = db.CachedMongoManager(
-            config["MONGO_URI"],
-            database="clutter",
-            max_items=5000
+            config["MONGO_URI"], database="clutter", max_items=5000
         )
         self.i18n = i18n.DiscordI18N(
             str(ROOT_DIR / "i18n"),
             db=self.db,
-            fallback_language=self.default_language
+            fallback_language=self.default_language,
         )
 
         self.error_webhook = discord.Webhook.from_url(
@@ -72,7 +76,7 @@ class ClutterBot(commands.AutoShardedBot):
             max_messages=1000,
             owner_ids=set(config["BOT_ADMIN_IDS"]),
             strip_after_prefix=True,
-            tree_cls=ClutterCommandTree
+            tree_cls=ClutterCommandTree,
         )
 
     # Sets the attributes that either need a user instance or needs to be set when the bot starts.
@@ -135,7 +139,9 @@ class ClutterBot(commands.AutoShardedBot):
         return True  # True means the guild is safe.
 
     async def check_all_guilds(self) -> None:
-        await asyncio.gather(*(self.guild_check(guild) for guild in self.guilds))
+        await asyncio.gather(
+            *(self.guild_check(guild) for guild in self.guilds)
+        )
 
     async def on_guild_join(self, guild: discord.Guild) -> None:
         await self.guild_check(guild)
@@ -254,6 +260,3 @@ class ClutterBot(commands.AutoShardedBot):
         async with self:
             await self.load_extensions()
             await self.start(self.token)
-
-
-

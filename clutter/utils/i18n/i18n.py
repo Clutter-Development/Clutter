@@ -11,7 +11,7 @@ from .errors import NoFallback, UnknownTranslationCode
 from .misc import find_in_nested_dict
 
 if TYPE_CHECKING:
-    from mongo_manager import MongoManager, CachedMongoManager
+    from mongo_manager import CachedMongoManager, MongoManager
 
 __all__ = ("DiscordI18N",)
 
