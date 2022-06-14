@@ -27,7 +27,6 @@ from mongo_manager import CachedMongoManager
 
 if TYPE_CHECKING:
     from core.interaction import ClutterInteractionContext
-    from typing_extensions import Self
 
 BOT_DIR = pathlib.Path(__file__).resolve().parent.parent
 
@@ -92,7 +91,6 @@ class Clutter(commands.AutoShardedBot):
                 guild_reactions=True,
                 message_content=True,
             ),
-            command_prefix=self.determine_prefix,
             case_insensitive=True,
             allowed_mentions=discord.AllowedMentions.none(),
             max_messages=1000,
@@ -196,8 +194,8 @@ class Clutter(commands.AutoShardedBot):
 
     # Others.
 
-    async def determine_prefix(
-        self, _: Self, message: discord.Message, /
+    async def get_prefix(
+        self, message: discord.Message, /
     ) -> list[str]:
         return [
             await self.db.get(
