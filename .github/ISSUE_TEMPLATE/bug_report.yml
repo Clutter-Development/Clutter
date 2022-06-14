@@ -5,7 +5,7 @@ labels:
 body:
   - type: markdown
     attributes:
-      value: >
+      value: |
         Thanks for taking the time to fill out a bug.
         If you want real-time support, consider joining our [Discord server](https://discord.gg/mVKkMZRPQE) instead.
 

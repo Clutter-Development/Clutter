@@ -9,6 +9,6 @@
 - [ ] If code changes were made then they have been tested.
     - [ ] I have updated the bot documentation to reflect the changes.
 - [ ] This PR fixes an issue.
-- [ ] This PR adds something new (e.g. new command or parameters).
-- [ ] This PR is a breaking change (e.g. commands or parameters removed/renamed)
+- [ ] This PR adds something new (e.g. new command or functonality).
+- [ ] This PR tweaks some functionality.
 - [ ] This PR is **not** a code change (e.g. documentation, README, ...)

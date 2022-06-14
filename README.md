@@ -6,7 +6,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/clutter-development/clutter/badge)](https://www.codefactor.io/repository/github/clutter-development/clutter)
 ![Total Lines](https://img.shields.io/tokei/lines/github/Clutter-Development/Clutter)
-[![License](https://img.shields.io/badge/license-GPL_3.0-success)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL_3.0-success)](clutter/LICENSE)
 [![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
 </div>
 
@@ -42,3 +42,7 @@ python bot  # Run the bot.
 The bot configuration can be found in the `config.example.json5` file in the `./bot` directory.
 
 Don't forget to rename `config.example.json5` to `config.json5`.
+
+# License           
+
+All code in this repository is licensed with the GNU General Public License v3, excluding the `./bot/utils` directory which is licensed with the MIT license.
