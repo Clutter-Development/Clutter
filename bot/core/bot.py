@@ -194,9 +194,7 @@ class Clutter(commands.AutoShardedBot):
 
     # Others.
 
-    async def get_prefix(
-        self, message: discord.Message, /
-    ) -> list[str]:
+    async def get_prefix(self, message: discord.Message, /) -> list[str]:
         return [
             await self.db.get(
                 f"guilds.{guild.id}.prefix", default=self.info.default_prefix
