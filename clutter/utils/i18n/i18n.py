@@ -3,16 +3,17 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, Literal
 
-import discord
 import json5
-from discord.ext import commands
 
 from .errors import NoFallback, UnknownTranslationCode
-from ...core.interaction import ClutterInteraction
 from .misc import find_in_nested_dict
 
 if TYPE_CHECKING:
+    from discord import Message
+    from discord.ext.commands import Context
     from mongo_manager import CachedMongoManager, MongoManager
+
+    from ...core.interaction import ClutterInteraction
 
 __all__ = ("I18N",)
 
@@ -110,7 +111,7 @@ class I18N:
 
     async def __call__(
         self,
-        ctx: discord.Message | discord.Interaction | commands.Context | ClutterInteraction,
+        ctx: Message | Context | ClutterInteraction,
         code: str,
         /,
         *,
@@ -119,7 +120,7 @@ class I18N:
         """Gets the corresponding translation for the translation code.
 
         Args:
-            ctx (discord.Message | discord.Interaction | commands.Context): The object whose preffered language to get the translation of the translation code.
+            ctx (discord.Message | commands.Context | ClutterIntreraction): The object whose preffered language to get the translation of the translation code.
             code (str): The translation code to get translation of.
             prefer_guild (bool, optional): Whether to use the guild's language or the user's language. Defaults to False.
 
@@ -129,13 +130,14 @@ class I18N:
         Returns:
             str: The translation corresponding to the translation code.
         """
-        is_interaction = isinstance(ctx, (ClutterInteraction, discord.Interaction))
-        translated = await self.translate_with_id(
-            (ctx.guild_id if is_interaction else ctx.guild.id)  # type: ignore
+        return (
+            await self.translate_with_id(
+                ctx.guild.id,
+                code,
+                object_type="guild",
+            )
             if prefer_guild
-            else (ctx.user.id if is_interaction else ctx.author.id),
-            code,
-            object_type="guild" if prefer_guild else "user",
+            else await self.translate_with_id(
+                ctx.author.id, code, object_type="user"
+            )
         )
-
-        return translated

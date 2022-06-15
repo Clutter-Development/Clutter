@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any
 
-import discord
+from discord import Color, Embed
 
 if TYPE_CHECKING:
     import datetime
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 __all__ = ("Embed",)
 
 
-class Embed(discord.Embed):
+class Embed(Embed):
     def __init__(
         self,
         title: str | None = None,
@@ -18,7 +18,7 @@ class Embed(discord.Embed):
         *,
         url: str | None = None,
         timestamp: datetime.datetime | None = None,
-        color: int | discord.Color | None = None,
+        color: int | Color | None = None,
     ):
         super().__init__(
             title=title,

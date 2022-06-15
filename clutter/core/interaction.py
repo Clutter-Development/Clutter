@@ -6,10 +6,11 @@ if TYPE_CHECKING:
     import datetime
 
     import discord
-    from .bot import ClutterBot
-    from ..utils import embed
 
-    class ReplyEmbedCoroutine(Protocol):
+    from ..utils import embed
+    from .bot import ClutterBot
+
+    class RespondEmbedCoroutine(Protocol):
         async def __call__(
             self,
             title: str | None = None,
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
             ...
 
 
-class ReplyEmbedGetter:
+class RespondEmbedGetter:
     def __init__(
         self,
         ctx: ClutterInteraction,
@@ -32,7 +33,7 @@ class ReplyEmbedGetter:
         self.__ctx = ctx
         self.__embed_creator = embed_creator
 
-    def __getattr__(self, item: str) -> ReplyEmbedCoroutine:
+    def __getattr__(self, item: str) -> RespondEmbedCoroutine:
         async def runner(
             title: str | None = None,
             description: str | None = None,
@@ -63,8 +64,8 @@ class ClutterInteraction:
         return getattr(self.__ctx, item)
 
     @property
-    def reply_embed(self):
-        return ReplyEmbedGetter(self, self.bot.embed)
+    def respond_embed(self):
+        return RespondEmbedGetter(self, self.bot.embed)
 
     async def i18n(self, text: str, /, *, use_guild: bool = False) -> str:
         return await self.bot.i18n(self, text, use_guild=use_guild)

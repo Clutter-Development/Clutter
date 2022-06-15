@@ -1,18 +1,19 @@
 import io
 
-import discord
+from discord import File
+from discord.utils import MISSING
 
 __all__ = ("TextFile",)
 
 
-class TextFile(discord.File):
+class TextFile(File):
     def __init__(
         self,
         text: str,
         /,
         filename: str | None = None,
         *,
-        spoiler: bool = discord.utils.MISSING,
+        spoiler: bool = MISSING,
         description: str | None = None,
         encoding: str = "utf-8",
     ):

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
     import discord
     from core.bot import Clutter
+
     from ..utils import embed
 
     class ReplyEmbedCoroutine(Protocol):

@@ -3,8 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 
 import discord
-from .interaction import ClutterInteraction
 from discord import app_commands as app
+
+from .interaction import ClutterInteraction
 
 if TYPE_CHECKING:
     from .bot import ClutterBot
@@ -31,15 +32,14 @@ class ClutterCommandTree(app.CommandTree):
         super().add_command(command, **kwargs)
 
     async def call(self, ctx: discord.Interaction, /) -> None:
-        await super().call(ClutterInteractionContext(ctx))  # type: ignore
+        # Basically a 'custom' interaction class.
+        await super().call(ClutterInteraction(ctx))  # type: ignore
 
     def check(self, func: CheckType) -> CheckType:
         self.checks.append(func)
         return func
 
-    async def interaction_check(
-        self, ctx: ClutterInteraction, /
-    ) -> bool:
+    async def interaction_check(self, ctx: ClutterInteraction, /) -> bool:
         for check in self.checks:
             try:
                 if not await check(ctx):
