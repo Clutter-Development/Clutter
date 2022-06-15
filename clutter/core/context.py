@@ -7,10 +7,10 @@ from discord.ext.commands import Context
 if TYPE_CHECKING:
     from datetime import datetime
 
-    from .bot import ClutterBot
     from discord import Message
 
     from ..utils.embed import EmbedCreator
+    from .bot import ClutterBot
 
     class ReplyEmbedCoroutine(Protocol):
         async def __call__(
