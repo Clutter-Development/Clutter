@@ -48,7 +48,7 @@ class ClutterBot(commands.AutoShardedBot):
             database="clutter",
             max_items=5000
         )
-        self.i18n = i18n.DiscordI18N(
+        self.i18n = i18n.I18N(
             str(ROOT_DIR / "i18n"),
             db=self.db,
             fallback_language=self.default_language

@@ -1,11 +1,11 @@
-__all__ = ("DiscordI18NError", "UnknownTranslationCode", "NoFallback")
+__all__ = ("I18NError", "UnknownTranslationCode", "NoFallback")
 
 
-class DiscordI18NError(Exception):
+class I18NError(Exception):
     """The base exception class for this library."""
 
 
-class UnknownTranslationCode(DiscordI18NError):
+class UnknownTranslationCode(I18NError):
     """Raised when a translation string doesn't exist."""
 
     def __init__(self, code: str, /) -> None:
@@ -15,7 +15,7 @@ class UnknownTranslationCode(DiscordI18NError):
         return f"Unknown translation code: {self.code}"
 
 
-class NoFallback(DiscordI18NError):
+class NoFallback(I18NError):
     """Raised when the fallback language isn't in the provided languages."""
 
     def __init__(

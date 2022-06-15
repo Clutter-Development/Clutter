@@ -14,31 +14,28 @@ from .misc import find_in_nested_dict
 if TYPE_CHECKING:
     from mongo_manager import CachedMongoManager, MongoManager
 
-__all__ = ("DiscordI18N",)
+__all__ = ("I18N",)
 
 
-class DiscordI18N:
+class I18N:
     def __init__(
         self,
         language_file_directory: str,
         /,
         *,
-        db: MongoManager | CachedMongoManager,
+        db: CachedMongoManager,
         fallback_language: str,
-        invalid_code: str | None = None,
     ) -> None:
-        """Initialize the DiscordI18N class.
+        """Initialize the I18N class.
 
         Args:
             language_file_directory (str): The directory that has all the translations. The file names must be the language the file houses.
             db (MongoManager): The database to use. The languages of the users should be "users.{id}.language" and the language of the guilds should be "guild.{id}.language".
             fallback_language (str): The fallback language to use if the translation string doesn't exist in the user/guilds language.
-            invalid_code (str, optional): The string to return instead of raising UnknownTranslationCode. If not given the exception will be raised. It can also have a {} in it that will get replaced with the code. Defaults to None.
         """
         self._db = db
         self._languages = {}
         self._fallback_language = fallback_language
-        self._invalid_code = invalid_code
 
         files = os.listdir(language_file_directory)
 
@@ -106,10 +103,10 @@ class DiscordI18N:
                 code,
             ),
         )
-        if not translated and self._invalid_code is None:
+        if not translated:
             raise UnknownTranslationCode(code)
 
-        return translated or self._invalid_code.format(code)  # type: ignore
+        return translated
 
     async def __call__(
         self,
