@@ -66,6 +66,7 @@ class ClutterBot(AutoShardedBot):
         )
         mapping = CooldownMapping.from_cooldown(10, 12, BucketType.user)
         self.spam_control.get_bucket = mapping.get_bucket
+        # noinspection PyProtectedMember
         self.spam_control.cooldown = mapping._cooldown
 
         self.embed = EmbedCreator(config["STYLE"])
@@ -143,6 +144,7 @@ class ClutterBot(AutoShardedBot):
 
     # Custom context.
 
+    # noinspection PyMethodOverriding
     async def get_context(self, message: Message, /) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
 

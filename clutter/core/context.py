@@ -7,7 +7,7 @@ from discord.ext.commands import Context
 if TYPE_CHECKING:
     from datetime import datetime
 
-    from core.bot import Clutter
+    from .bot import ClutterBot
     from discord import Message
 
     from ..utils.embed import EmbedCreator
@@ -52,7 +52,7 @@ class ReplyEmbedGetter:
 
 
 class ClutterContext(Context):
-    bot: Clutter
+    bot: ClutterBot
 
     @property
     def reply_embed(self) -> ReplyEmbedGetter:

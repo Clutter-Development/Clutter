@@ -1,5 +1,6 @@
 from typing import Any
 
+# noinspection PyPackageRequirements
 from lru import LRU
 
 from .manager import MongoManager

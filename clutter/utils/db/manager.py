@@ -8,6 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from .misc import create_nested_dict, find_in_nested_dict, maybe_int
 
 if TYPE_CHECKING:
+    # noinspection PyProtectedMember
     from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
 
 __all__ = ("MongoManager",)

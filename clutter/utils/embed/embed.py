@@ -5,6 +5,7 @@ from discord import Color, Embed
 if TYPE_CHECKING:
     from datetime import datetime
 
+    # noinspection PyUnresolvedReferences
     from typing_extensions import Self
 
 __all__ = ("Embed",)

@@ -57,6 +57,7 @@ class EmbedCreator:
         description: str | None = None,
         **kwargs,
     ) -> Embed | PartialEmbed:
+        # noinspection PyShadowingNames
         def inner(
             title: str | None = title,
             description: str | None = description,
