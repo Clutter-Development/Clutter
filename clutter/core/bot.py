@@ -1,12 +1,11 @@
-import asyncio
-import itertools
-import os
-import pathlib
-import time
-import traceback
+from asyncio import gather
+from itertools import chain
+from os import getcwd
+from pathlib import Path
+from time import time
+from traceback import format_exc
 
-import aiohttp
-from discord.utils import oauth_url
+from aiohttp import ClientSession
 from discord import (
     AllowedMentions,
     Guild,
@@ -17,8 +16,8 @@ from discord import (
     Object,
     Permissions,
     Webhook,
-    __version__ as dpy_version
 )
+from discord import __version__ as dpy_version
 from discord.ext.commands import (
     AutoShardedBot,
     BucketType,
@@ -28,12 +27,16 @@ from discord.ext.commands import (
     ExtensionNotFound,
     NoEntryPointError,
 )
+from discord.utils import oauth_url
 
-from ..utils import color, db, embed, format_as_list, i18n
+from ..utils import color, format_as_list
+from ..utils.db import CachedMongoManager
+from ..utils.embed import EmbedCreator
+from ..utils.i18n import I18N
 from .command_tree import ClutterCommandTree
 from .context import ClutterContext
 
-ROOT_DIR = pathlib.Path(__file__).resolve().parent.parent
+ROOT_DIR = Path(__file__).resolve().parent.parent
 
 
 class ClutterBot(AutoShardedBot):
@@ -41,7 +44,7 @@ class ClutterBot(AutoShardedBot):
     start_log: str
     start_time: float
 
-    def __init__(self, config: dict, session: aiohttp.ClientSession, /) -> None:
+    def __init__(self, config: dict, session: ClientSession, /) -> None:
         self.config = config
         self.session = session
 
@@ -65,12 +68,12 @@ class ClutterBot(AutoShardedBot):
         self.spam_control.get_bucket = mapping.get_bucket
         self.spam_control.cooldown = mapping._cooldown
 
-        self.embed = embed.EmbedCreator(config["STYLE"])
+        self.embed = EmbedCreator(config["STYLE"])
 
-        self.db = db.CachedMongoManager(
+        self.db = CachedMongoManager(
             config["MONGO_URI"], database="clutter", max_items=5000
         )
-        self.i18n = i18n.I18N(
+        self.i18n = I18N(
             str(ROOT_DIR / "i18n"),
             db=self.db,
             fallback_language=self.default_language,
@@ -102,7 +105,7 @@ class ClutterBot(AutoShardedBot):
     # Sets the attributes that either need a user instance or needs to be set when the bot starts.
 
     async def setup_hook(self) -> None:
-        self.start_time = time.time()
+        self.start_time = time()
 
         self.invite_url = oauth_url(
             self.user.id, permissions=Permissions(administrator=True)
@@ -114,7 +117,7 @@ class ClutterBot(AutoShardedBot):
 
     @property
     def uptime(self) -> float:
-        return time.time() - self.start_time
+        return time() - self.start_time
 
     # Adds global attributes to commands.
 
@@ -147,13 +150,13 @@ class ClutterBot(AutoShardedBot):
 
     async def guild_check(self, guild: Guild, /) -> bool:
         if await self.db.get(f"guilds.{guild.id}.blacklisted"):
-            await asyncio.gather(
+            await gather(
                 guild.leave(),
                 self.db.set(f"users.{guild.owner_id}.blacklisted", True),
             )
             return False
         elif await self.db.get(f"users.{guild.owner_id}.blacklisted"):
-            await asyncio.gather(
+            await gather(
                 guild.leave(),
                 self.db.set(f"guilds.{guild.id}.blacklisted", True),
             )
@@ -161,9 +164,7 @@ class ClutterBot(AutoShardedBot):
         return True  # True means the guild is safe.
 
     async def check_all_guilds(self) -> None:
-        await asyncio.gather(
-            *(self.guild_check(guild) for guild in self.guilds)
-        )
+        await gather(*(self.guild_check(guild) for guild in self.guilds))
 
     async def on_guild_join(self, guild: Guild) -> None:
         await self.guild_check(guild)
@@ -210,10 +211,10 @@ class ClutterBot(AutoShardedBot):
     async def load_extensions(self) -> None:
         loaded = []
         failed = {}
-        for fn in itertools.chain(
+        for fn in chain(
             map(
                 lambda fp: ".".join(fp.parts)[:-3],
-                (ROOT_DIR / "cogs").relative_to(os.getcwd()).rglob("*.py"),
+                (ROOT_DIR / "cogs").relative_to(getcwd()).rglob("*.py"),
             ),
             ["jishaku"],
         ):
@@ -225,7 +226,7 @@ class ClutterBot(AutoShardedBot):
                 NoEntryPointError,
                 ExtensionNotFound,
             ):
-                failed[fn.rsplit(".", 1)[-1]] = traceback.format_exc()
+                failed[fn.rsplit(".", 1)[-1]] = format_exc()
 
         log = []
         if loaded:

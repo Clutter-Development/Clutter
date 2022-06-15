@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
-    import datetime
+    from datetime import datetime
 
-    import discord
+    from discord import Interaction
 
-    from ..utils import embed
+    from ..utils.embed import EmbedCreator
     from .bot import ClutterBot
 
     class RespondEmbedCoroutine(Protocol):
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
             description: str | None = None,
             *,
             url: str | None = None,
-            timestamp: datetime.datetime | None = None,
+            timestamp: datetime | None = None,
             **kwargs: Any,
         ) -> None:
             ...
@@ -27,7 +27,7 @@ class RespondEmbedGetter:
     def __init__(
         self,
         ctx: ClutterInteraction,
-        embed_creator: embed.EmbedCreator,
+        embed_creator: EmbedCreator,
         /,
     ) -> None:
         self.__ctx = ctx
@@ -39,7 +39,7 @@ class RespondEmbedGetter:
             description: str | None = None,
             *,
             url: str | None = None,
-            timestamp: datetime.datetime | None = None,
+            timestamp: datetime | None = None,
             **kwargs: Any,
         ) -> None:
             await self.__ctx.respond(
@@ -55,7 +55,7 @@ class RespondEmbedGetter:
 class ClutterInteraction:
     bot: ClutterBot
 
-    def __init__(self, ctx: discord.Interaction, /) -> None:
+    def __init__(self, ctx: Interaction, /) -> None:
         self.__ctx = ctx
         self.bot = self.client
         self.author = self.user

@@ -2,19 +2,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar
 
-import discord
-from discord import app_commands as app
+from discord.app_commands import AppCommandError, CommandTree
 
 from .interaction import ClutterInteraction
 
 if TYPE_CHECKING:
+    from discord import Interaction
+    from discord.app_commands import Command, ContextMenu, Group
+
     from .bot import ClutterBot
 
 T = TypeVar("T")
 CheckType = Callable[[ClutterInteraction], Awaitable[bool]]
 
 
-class ClutterCommandTree(app.CommandTree):
+class ClutterCommandTree(CommandTree):
     bot: ClutterBot
 
     def __init__(self, bot: ClutterBot, /) -> None:
@@ -23,15 +25,15 @@ class ClutterCommandTree(app.CommandTree):
         self.checks: list[CheckType] = []
 
     def add_command(
-        self, command: app.Command | app.Group | app.ContextMenu, /, **kwargs
+        self, command: Command | Group | ContextMenu, /, **kwargs
     ) -> None:
         # command.name = self.bot.i18n.collect_translations(command.description)
-        # if not isinstance(command, app.ContextMenu):
+        # if not isinstance(command, ContextMenu):
         #     command.description = self.bot.i18n.collect_translations(command.description)
         # TODO: For when app command locales get implemented to discord.py.
         super().add_command(command, **kwargs)
 
-    async def call(self, ctx: discord.Interaction, /) -> None:
+    async def call(self, ctx: Interaction, /) -> None:
         # Basically a 'custom' interaction class.
         await super().call(ClutterInteraction(ctx))  # type: ignore
 
@@ -44,14 +46,14 @@ class ClutterCommandTree(app.CommandTree):
             try:
                 if not await check(ctx):
                     return False
-            except app.AppCommandError as e:
+            except AppCommandError as e:
                 await self.on_error(ctx, e)
                 return False
 
         return True
 
     async def on_error(
-        self, ctx: ClutterInteraction, error: app.AppCommandError, /
+        self, ctx: ClutterInteraction, error: AppCommandError, /
     ) -> None:
         self.bot.dispatch(
             "app_command_error", ctx, error

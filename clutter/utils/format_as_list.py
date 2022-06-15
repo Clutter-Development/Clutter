@@ -1,4 +1,4 @@
-import re
+from re import sub
 
 __all__ = ("format_as_list",)
 
@@ -28,7 +28,7 @@ def format_as_list(title: str, description: str, /, *, indent: int = 4) -> str:
         return corners[0] + length * "─" + corners[1]
 
     title_len = len(
-        re.sub(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", "", title)
+        sub(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", "", title)
     ) + int(bool(indent))
     lines = [f"{title}:"]
 

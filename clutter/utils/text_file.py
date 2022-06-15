@@ -1,4 +1,4 @@
-import io
+from io import BytesIO
 
 from discord import File
 from discord.utils import MISSING
@@ -18,7 +18,7 @@ class TextFile(File):
         encoding: str = "utf-8",
     ):
         super().__init__(
-            io.BytesIO(bytes(text, encoding)),
+            BytesIO(bytes(text, encoding)),
             filename,
             spoiler=spoiler,
             description=description,

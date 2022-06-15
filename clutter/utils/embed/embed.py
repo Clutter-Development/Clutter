@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any
 from discord import Color, Embed
 
 if TYPE_CHECKING:
-    import datetime
+    from datetime import datetime
 
     from typing_extensions import Self
 
@@ -17,7 +17,7 @@ class Embed(Embed):
         description: str | None = None,
         *,
         url: str | None = None,
-        timestamp: datetime.datetime | None = None,
+        timestamp: datetime | None = None,
         color: int | Color | None = None,
     ):
         super().__init__(

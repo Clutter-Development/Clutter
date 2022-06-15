@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Protocol
 
-from discord.ext import commands
+from discord.ext.commands import Context
 
 if TYPE_CHECKING:
-    import datetime
+    from datetime import datetime
 
-    import discord
     from core.bot import Clutter
+    from discord import Message
 
-    from ..utils import embed
+    from ..utils.embed import EmbedCreator
 
     class ReplyEmbedCoroutine(Protocol):
         async def __call__(
@@ -19,15 +19,15 @@ if TYPE_CHECKING:
             description: str | None = None,
             *,
             url: str | None = None,
-            timestamp: datetime.datetime | None = None,
+            timestamp: datetime | None = None,
             **kwargs: Any,
-        ) -> discord.Message:
+        ) -> Message:
             ...
 
 
 class ReplyEmbedGetter:
     def __init__(
-        self, ctx: ClutterContext, embed_creator: embed.EmbedCreator, /
+        self, ctx: ClutterContext, embed_creator: EmbedCreator, /
     ) -> None:
         self.__ctx = ctx
         self.__embed_creator = embed_creator
@@ -38,9 +38,9 @@ class ReplyEmbedGetter:
             description: str | None = None,
             *,
             url: str | None = None,
-            timestamp: datetime.datetime | None = None,
+            timestamp: datetime | None = None,
             **kwargs: Any,
-        ) -> discord.Message:
+        ) -> Message:
             return await self.__ctx.reply(
                 embed=self.__embed_creator.__call__(
                     item, title, description, url=url, timestamp=timestamp
@@ -51,7 +51,7 @@ class ReplyEmbedGetter:
         return runner
 
 
-class ClutterContext(commands.Context):
+class ClutterContext(Context):
     bot: Clutter
 
     @property

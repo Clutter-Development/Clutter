@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, Literal
 
-import json5
+from json5 import load
 
 from .errors import NoFallback, UnknownTranslationCode
 from .misc import find_in_nested_dict
@@ -45,7 +45,7 @@ class I18N:
                 continue
 
             with open(os.path.join(language_file_directory, fn)) as f:
-                self._languages[fn.rsplit(".", 1)[0]] = json5.load(f)
+                self._languages[fn.rsplit(".", 1)[0]] = load(f)
 
         if fallback_language not in self._languages:
             raise NoFallback(fallback_language, language_file_directory)
