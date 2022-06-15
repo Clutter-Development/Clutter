@@ -8,6 +8,7 @@ import json5
 from discord.ext import commands
 
 from .errors import NoFallback, UnknownTranslationCode
+from ...core.interaction import ClutterInteraction
 from .misc import find_in_nested_dict
 
 if TYPE_CHECKING:
@@ -112,7 +113,7 @@ class DiscordI18N:
 
     async def __call__(
         self,
-        ctx: discord.Message | discord.Interaction | commands.Context,
+        ctx: discord.Message | discord.Interaction | commands.Context | ClutterInteraction,
         code: str,
         /,
         *,
@@ -131,7 +132,7 @@ class DiscordI18N:
         Returns:
             str: The translation corresponding to the translation code.
         """
-        is_interaction = isinstance(ctx, discord.Interaction)
+        is_interaction = isinstance(ctx, (ClutterInteraction, discord.Interaction))
         translated = await self.translate_with_id(
             (ctx.guild_id if is_interaction else ctx.guild.id)  # type: ignore
             if prefer_guild
