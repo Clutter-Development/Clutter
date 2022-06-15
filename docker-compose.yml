@@ -1,7 +1,7 @@
 services:
   bot:
     build:
-      context: ./bot
+      context: ./clutter
       dockerfile: .
     restart: unless-stopped
     image: clutter-bot-image
