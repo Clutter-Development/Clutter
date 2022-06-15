@@ -1,0 +1,28 @@
+{
+  BOT_ADMIN_IDS: [
+    000000000000000000,
+    000000000000000000,
+    000000000000000000
+  ],
+  BOT_DEFAULT_LANGUAGE: "en-US",
+  BOT_DEFAULT_PREFIX: ">",
+  BOT_TOKEN: "",
+  ERROR_WEBHOOK_URL: "",
+  LOG_WEBHOOK_URL: "",
+  MONGO_URI: "mongodb+srv://<------------------------->.mongodb.net/Clutter?retryWrites=true&w=majority",
+  SENTRY_URL: "https://<--------------------------------------->.ingest.sentry.io/<----->",
+  STYLE: {
+    COLORS: {
+      SUCCESS: 0x00FF00,
+      ERROR: 0xFF0000,
+      WARNING: 0xFFA500,
+      INFO: 0x0000FF
+    },
+    EMOJIS: {
+      SUCCESS: '<:success:000000000000000000>',
+      ERROR: '<:error:000000000000000000>',
+      WARNING: '️<:warning:000000000000000000>',
+      INFO: '<:info:000000000000000000>'
+    },
+  }
+}
