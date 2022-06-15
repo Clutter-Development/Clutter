@@ -86,6 +86,8 @@ class ClutterBot(commands.AutoShardedBot):
             self.user.id, permissions=discord.Permissions(administrator=True)
         )
 
+        await self.load_extensions()
+
     # Gets the bot's uptime in seconds.
 
     @property
@@ -249,13 +251,3 @@ class ClutterBot(commands.AutoShardedBot):
                 ]
             )
         )
-
-    # Starts the bot.
-
-    async def start(self) -> None:
-        async with self:
-            await self.load_extensions()
-            await self.start(self.token)
-
-
-
