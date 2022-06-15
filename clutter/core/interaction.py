@@ -22,6 +22,8 @@ if TYPE_CHECKING:
         ) -> None:
             ...
 
+__all__ = ("ClutterInteraction",)
+
 
 class RespondEmbedGetter:
     def __init__(

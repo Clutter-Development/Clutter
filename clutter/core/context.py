@@ -24,6 +24,8 @@ if TYPE_CHECKING:
         ) -> Message:
             ...
 
+__all__ = ("ClutterContext",)
+
 
 class ReplyEmbedGetter:
     def __init__(

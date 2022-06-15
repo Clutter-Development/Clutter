@@ -1,4 +1,4 @@
-from asyncio import gather
+from asyncio import gather, run
 from itertools import chain
 from os import getcwd
 from pathlib import Path
@@ -28,6 +28,7 @@ from discord.ext.commands import (
     NoEntryPointError,
 )
 from discord.utils import oauth_url
+from json5 import loads
 
 from ..utils import color, format_as_list
 from ..utils.db import CachedMongoManager
@@ -35,6 +36,8 @@ from ..utils.embed import EmbedCreator
 from ..utils.i18n import I18N
 from .command_tree import ClutterCommandTree
 from .context import ClutterContext
+
+__all__ = ("ClutterBot",)
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
@@ -278,3 +281,17 @@ class ClutterBot(AutoShardedBot):
                 ]
             )
         )
+
+    # noinspection PyMethodOverriding
+    @classmethod
+    def run(cls) -> None:
+        async def runner() -> None:
+            async with ClientSession() as session, cls(
+                    loads((ROOT_DIR / "config.json5").read_text()), session
+            ) as bot:
+                await bot.start(bot.token)
+
+        try:
+            run(runner())
+        except KeyboardInterrupt:
+            pass

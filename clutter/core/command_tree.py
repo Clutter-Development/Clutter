@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 CheckType = Callable[[ClutterInteraction], Awaitable[bool]]
 
+__all__ = ("ClutterCommandTree",)
+
 
 class ClutterCommandTree(CommandTree):
     bot: ClutterBot
