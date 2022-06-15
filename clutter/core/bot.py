@@ -4,6 +4,7 @@ from os import getcwd
 from pathlib import Path
 from time import time
 from traceback import format_exc
+from sentry_sdk import init
 
 from aiohttp import ClientSession
 from discord import (
@@ -89,6 +90,8 @@ class ClutterBot(AutoShardedBot):
         self.log_webhook = Webhook.from_url(
             config["LOG_WEBHOOK_URL"], session=session
         )
+
+        init(config["SENTRY_URL"], traces_sample_rate=1.0)
 
         super().__init__(
             allowed_mentions=AllowedMentions.none(),
