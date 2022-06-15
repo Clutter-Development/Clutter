@@ -4,7 +4,6 @@ from os import getcwd
 from pathlib import Path
 from time import time
 from traceback import format_exc
-from sentry_sdk import init
 
 from aiohttp import ClientSession
 from discord import (
@@ -30,6 +29,7 @@ from discord.ext.commands import (
 )
 from discord.utils import oauth_url
 from json5 import loads
+from sentry_sdk import init
 
 from ..utils import color, format_as_list
 from ..utils.db import CachedMongoManager
@@ -290,7 +290,7 @@ class ClutterBot(AutoShardedBot):
     def run(cls) -> None:
         async def runner() -> None:
             async with ClientSession() as session, cls(
-                    loads((ROOT_DIR / "config.json5").read_text()), session
+                loads((ROOT_DIR / "config.json5").read_text()), session
             ) as bot:
                 await bot.start(bot.token)
 

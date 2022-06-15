@@ -22,6 +22,7 @@ if TYPE_CHECKING:
         ) -> None:
             ...
 
+
 __all__ = ("ClutterInteraction",)
 
 
