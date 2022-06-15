@@ -189,7 +189,7 @@ class ClutterBot(commands.AutoShardedBot):
         for fn in itertools.chain(
             map(
                 lambda fp: ".".join(fp.parts)[:-3],
-                (ROOT_DIR / "modules").relative_to(os.getcwd()).rglob("*.py"),
+                (ROOT_DIR / "cogs").relative_to(os.getcwd()).rglob("*.py"),
             ),
             ["jishaku"],
         ):
