@@ -9,7 +9,7 @@
   BOT_TOKEN: "",
   ERROR_WEBHOOK_URL: "",
   LOG_WEBHOOK_URL: "",
-  MONGO_URI: "mongodb+srv://<------------------------->.mongodb.net/Clutter?retryWrites=true&w=majority",
+  MONGO_URI: "mongodb+srv://<------------------------->.mongodb.net/<----->?retryWrites=true&w=majority",
   SENTRY_URL: "https://<--------------------------------------->.ingest.sentry.io/<----->",
   STYLE: {
     COLORS: {
