@@ -47,10 +47,10 @@ from . import (
 )
 
 if TYPE_CHECKING:
-    from . import ClutterInteraction
-
     # noinspection PyUnresolvedReferences
     from typing_extensions import Self
+
+    from . import ClutterInteraction
 
 
 __all__ = ("ClutterBot",)
