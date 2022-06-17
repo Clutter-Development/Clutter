@@ -19,7 +19,9 @@ jobs:
         continue-on-error: true
         run: unimport ./ --ignore-init --gitignore -r
       - name: Run Isort
-        run: isort ./
+        run: |
+          isort ./
+          python ./.github/workflows/isort_fix.py
       - name: Run Black
         run: black ./
       - name: Run Flynt
