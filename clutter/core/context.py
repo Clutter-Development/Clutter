@@ -64,9 +64,9 @@ class ClutterContext(Context):
     async def i18n(
         self, text: str, /, *, prefer_guild: bool = False, **kwargs: Any
     ) -> str:
-        return (await self.bot.i18n(self, text, prefer_guild=prefer_guild)).format(
-            **kwargs
-        )
+        return (
+            await self.bot.i18n(self, text, prefer_guild=prefer_guild)
+        ).format(**kwargs)
 
     async def ok(self, value: bool, /) -> None:
         emojis = self.bot.config["STYLE"]["EMOJIS"]

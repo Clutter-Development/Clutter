@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Awaitable, Callable, TypeVar, Any
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, TypeVar
 
 from discord.app_commands import AppCommandError, CommandTree
 
@@ -37,7 +37,7 @@ class ClutterCommandTree(CommandTree):
 
     async def call(self, ctx: Interaction, /) -> None:
         # Basically a 'custom' interaction class.
-        await super().call(ClutterInteraction(ctx))  # type: ignore  
+        await super().call(ClutterInteraction(ctx))  # type: ignore
 
     def check(self, func: CheckType) -> CheckType:
         self.checks.append(func)

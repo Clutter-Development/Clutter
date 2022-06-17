@@ -31,7 +31,7 @@ class MongoManager:
         self._client = AsyncIOMotorClient(connect_url, port)
         self._db: AsyncIOMotorDatabase = self._client[database]
 
-    def _parse_path(self, path: str, /) -> tuple[AsyncIOMotorCollection, str | int, str]:  # type: ignore  
+    def _parse_path(self, path: str, /) -> tuple[AsyncIOMotorCollection, str | int, str]:  # type: ignore
         """Parses a path string and returns a mongo collection, a str or int and the excess.
 
         Args:
@@ -199,7 +199,7 @@ class MongoManager:
 
         return False
 
-    async def rem(self, path: str, /) -> None:  # type: ignore  
+    async def rem(self, path: str, /) -> None:  # type: ignore
         """Removes the col/doc/var from the database.
 
         Args:

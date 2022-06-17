@@ -111,7 +111,7 @@ class ClutterBot(AutoShardedBot):
 
         super().__init__(
             allowed_mentions=AllowedMentions.none(),
-            command_prefix=self.get_prefix,  # type: ignore  
+            command_prefix=self.get_prefix,  # type: ignore
             case_insensitive=True,
             intents=Intents(
                 guilds=True,
@@ -129,7 +129,7 @@ class ClutterBot(AutoShardedBot):
         self.start_time = time()
 
         self.invite_url = oauth_url(
-            self.user.id, permissions=Permissions(administrator=True)  # type: ignore  
+            self.user.id, permissions=Permissions(administrator=True)  # type: ignore
         )
 
         await self.load_extensions()
@@ -205,7 +205,7 @@ class ClutterBot(AutoShardedBot):
         if (member := guild.get_member(user_id)) is not None:
             return member
 
-        if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore    
+        if self.get_shard(guild.shard_id).is_ws_ratelimited():  # type: ignore
             try:
                 return await guild.fetch_member(user_id)
             except HTTPException:
@@ -272,7 +272,7 @@ class ClutterBot(AutoShardedBot):
                             "\n".join(
                                 [
                                     f"{color.bold('User:')} {self.user}",
-                                    f"{color.bold('ID:')} {self.user.id}",  # type: ignore  
+                                    f"{color.bold('ID:')} {self.user.id}",  # type: ignore
                                     f"{color.bold('Total Guilds:')} {len(self.guilds)}",
                                     f"{color.bold('Total Users:')} {len(self.users)}",
                                     f"{color.bold('Total Shards:')} {self.shard_count}",
@@ -336,7 +336,9 @@ class ClutterBot(AutoShardedBot):
             if not (
                 retry_after := bot.spam_control.get_bucket(
                     ctx.message
-                ).update_rate_limit(ctx.message.created_at.timestamp())  # type: ignore  
+                ).update_rate_limit(
+                    ctx.message.created_at.timestamp()
+                )  # type: ignore
             ):
                 return True
 
@@ -344,7 +346,7 @@ class ClutterBot(AutoShardedBot):
 
             if counter[author_id] < 3:
                 raise CommandOnCooldown(
-                    bot.spam_control.cooldown, retry_after, BucketType.user  # type: ignore    
+                    bot.spam_control.cooldown, retry_after, BucketType.user  # type: ignore
                 )
 
             await bot.blacklist_user(author_id)
@@ -364,7 +366,7 @@ class ClutterBot(AutoShardedBot):
                     description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
                 ).add_field(
                     title="Channel Info",
-                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore  
+                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore
                 )
 
             create_task(bot.log_webhook.send(embed=embed))

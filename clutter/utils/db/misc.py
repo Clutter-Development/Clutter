@@ -59,7 +59,7 @@ def find_in_nested_dict(
 
     for key in path:
         try:
-            find_in = find_in[key]  # type: ignore  
+            find_in = find_in[key]  # type: ignore
         except (KeyError, TypeError):
             return default
 
@@ -86,6 +86,6 @@ def maybe_int(value: SupportsInt | T, /) -> int | T:
         int | T: The converted value. returns the original value if it couldn't be converter to an integer.
     """
     try:
-        value = int(value)  # type: ignore  
+        value = int(value)  # type: ignore
     finally:
         return value
