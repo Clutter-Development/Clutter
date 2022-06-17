@@ -3,8 +3,9 @@ from os import environ
 
 from sentry_sdk import init
 from uvloop import install
+from contextlib import suppress
 
-from .core import init_bot
+from .core import ClutterBot
 
 install()
 
@@ -13,12 +14,9 @@ for key in ["HIDE", "NO_UNDERSCORE"]:
 
 
 async def runner() -> None:
-    async with await init_bot() as bot:
+    async with await ClutterBot.init() as bot:
         init(bot.config["SENTRY_URL"], traces_sample_rate=1.0)
         await bot.start(bot.token)
 
-
-try:
+with suppress(KeyboardInterrupt):
     run(runner())
-except KeyboardInterrupt:
-    pass
