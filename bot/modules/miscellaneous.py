@@ -1,4 +1,4 @@
-from __future__ import annotations
+"""from __future__ import annotations
 
 import time
 from typing import TYPE_CHECKING
@@ -46,7 +46,7 @@ class Miscellaneous(
             )
         )
 
-    @app.command(name="ping", description="COMMANDS.PING.BRIEF")  # type: ignore
+    @app.command(name="ping", description="COMMANDS.PING.BRIEF")  
     async def app_ping(self, ctx: ClutterInteractionContext, /) -> None:
         ping = time.time()
 
@@ -67,3 +67,4 @@ class Miscellaneous(
 
 async def setup(bot: Clutter, /) -> None:
     await bot.add_cog(Miscellaneous(bot))
+"""

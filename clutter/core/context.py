@@ -62,9 +62,9 @@ class ClutterContext(Context):
         return ReplyEmbedGetter(self, self.bot.embed)
 
     async def i18n(
-        self, text: str, /, *, use_guild: bool = False, **kwargs: Any
+        self, text: str, /, *, prefer_guild: bool = False, **kwargs: Any
     ) -> str:
-        return (await self.bot.i18n(self, text, use_guild=use_guild)).format(
+        return (await self.bot.i18n(self, text, prefer_guild=prefer_guild)).format(
             **kwargs
         )
 

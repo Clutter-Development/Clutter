@@ -1,7 +1,7 @@
 # TODO: docs.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, TypedDict, overload
+from typing import TYPE_CHECKING, Protocol, TypedDict, overload, Any
 
 from .embed import Embed
 
@@ -45,7 +45,7 @@ class EmbedCreator:
         /,
         title: str | None = None,
         description: str | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> Embed:
         ...
 
@@ -55,13 +55,13 @@ class EmbedCreator:
         /,
         title: str | None = None,
         description: str | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> Embed | PartialEmbed:
         # noinspection PyShadowingNames
         def inner(
             title: str | None = title,
             description: str | None = description,
-            **kwargs_,
+            **kwargs_: Any,
         ) -> Embed:
             nonlocal asset_type
             asset_type = asset_type.upper()

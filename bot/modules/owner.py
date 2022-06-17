@@ -1,4 +1,4 @@
-from __future__ import annotations
+"""from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, Optional
 
@@ -73,3 +73,4 @@ class Owner(
 
 async def setup(bot: Clutter, /) -> None:
     await bot.add_cog(Owner(bot))
+"""

@@ -21,7 +21,7 @@ class NoFallback(I18NError):
     """Raised when the fallback language isn't in the provided languages."""
 
     def __init__(
-        self, fallback_language: str, language_file_directory, /
+        self, fallback_language: str, language_file_directory: str, /
     ) -> None:
         self.fallback_language = fallback_language
         self.language_file_directory = language_file_directory

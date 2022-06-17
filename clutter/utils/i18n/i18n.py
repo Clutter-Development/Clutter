@@ -132,7 +132,7 @@ class I18N:
         """
         return (
             await self.translate_with_id(
-                ctx.guild.id,
+                ctx.guild.id,  # type: ignore    
                 code,
                 object_type="guild",
             )

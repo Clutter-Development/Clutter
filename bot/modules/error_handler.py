@@ -1,4 +1,4 @@
-from __future__ import annotations
+"""from __future__ import annotations
 
 import asyncio
 import traceback
@@ -33,7 +33,7 @@ class ErrorHandler(commands.Cog):
         print(
             color.red(
                 format_as_list(
-                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",  # type: ignore
+                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",  
                     "\n".join(trace),
                 )
             )
@@ -50,7 +50,7 @@ class ErrorHandler(commands.Cog):
             self.capture_exception(error),
             self.bot.log_webhook.send(
                 file=TextFile(
-                    f"{head}\nCommand: {ctx.command.qualified_name}\nTraceback:\n{trace}"  # type: ignore
+                    f"{head}\nCommand: {ctx.command.qualified_name}\nTraceback:\n{trace}"  
                 )
             ),
             ctx.reply_embed.error(
@@ -84,4 +84,4 @@ class ErrorHandler(commands.Cog):
 
 
 async def setup(bot: Clutter, /) -> None:
-    await bot.add_cog(ErrorHandler(bot))
+    await bot.add_cog(ErrorHandler(bot))"""

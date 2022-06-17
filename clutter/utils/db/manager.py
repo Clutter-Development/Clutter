@@ -31,7 +31,7 @@ class MongoManager:
         self._client = AsyncIOMotorClient(connect_url, port)
         self._db: AsyncIOMotorDatabase = self._client[database]
 
-    def _parse_path(self, path: str, /) -> tuple[AsyncIOMotorCollection, str | int, str]:  # type: ignore
+    def _parse_path(self, path: str, /) -> tuple[AsyncIOMotorCollection, str | int, str]:  # type: ignore  
         """Parses a path string and returns a mongo collection, a str or int and the excess.
 
         Args:
@@ -157,7 +157,7 @@ class MongoManager:
 
         if not (doc := await collection.find_one({"_id": _id}, {"_id": 1})):
             await collection.insert_one(
-                {"_id": _id, **create_nested_dict(path, [value])}
+                {"_id": _id, **create_nested_dict(path, [value])}  # type: ignore
             )
             return True
 
@@ -199,7 +199,7 @@ class MongoManager:
 
         return False
 
-    async def rem(self, path: str, /) -> None:  # type: ignore
+    async def rem(self, path: str, /) -> None:  # type: ignore  
         """Removes the col/doc/var from the database.
 
         Args:
