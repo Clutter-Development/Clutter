@@ -67,11 +67,15 @@ class ClutterInteraction:
         return getattr(self.__ctx, item)
 
     @property
-    def respond_embed(self):
+    def reply_embed(self) -> RespondEmbedGetter:
         return RespondEmbedGetter(self, self.bot.embed)
 
-    async def i18n(self, text: str, /, *, use_guild: bool = False, **kwargs: str) -> str:
-        return (await self.bot.i18n(self, text, use_guild=use_guild)).format(**kwargs)
+    async def i18n(
+        self, text: str, /, *, use_guild: bool = False, **kwargs: str
+    ) -> str:
+        return (await self.bot.i18n(self, text, use_guild=use_guild)).format(
+            **kwargs
+        )
 
-    async def respond(self, *args, **kwargs) -> None:
+    async def reply(self, *args, **kwargs) -> None:
         await self.response.send_message(*args, **kwargs)
