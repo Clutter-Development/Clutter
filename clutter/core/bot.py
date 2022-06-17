@@ -198,8 +198,7 @@ class ClutterBot(AutoShardedBot):
     # Gets a member object.
 
     async def getch_member(
-        self, guild: Guild, user_id: int, /
-    ) -> Member | None:
+        self, guild: Guild, user_id: int, /) -> Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
 

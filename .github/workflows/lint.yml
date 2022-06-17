@@ -13,8 +13,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install Isort, Black, and Flynt
-        run: pip install -U pip isort black flynt
+      - name: Install Unimport, Isort, Black, and Flynt
+        run: pip install -U pip unimport isort black flynt
+      - name: Run Unimport
+        run: unimport ./ --ignore-init --gitignore -r
       - name: Run Isort
         run: isort ./ --profile black
       - name: Run Black
