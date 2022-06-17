@@ -70,4 +70,6 @@ class ClutterContext(Context):
 
     async def ok(self, value: bool, /) -> None:
         emojis = self.bot.config["STYLE"]["EMOJIS"]
-        await self.message.add_reaction(emojis["SUCCESS" if value else "ERROR"])
+        await self.message.add_reaction(
+            emojis["SUCCESS" if value else "ERROR"]
+        )

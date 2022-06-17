@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, SupportsInt, TypeVar, overload
 
 __all__ = (

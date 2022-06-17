@@ -20,8 +20,8 @@ from discord import (
     Object,
     Permissions,
     Webhook,
+    __version__ as dpy_version,
 )
-from discord import __version__ as dpy_version
 from discord.ext.commands import (
     AutoShardedBot,
     BucketType,
@@ -301,7 +301,11 @@ class ClutterBot(AutoShardedBot):
             ctx: ClutterContext | ClutterInteraction, /
         ) -> bool:
             return (
-                (await bot.is_owner(owner) if (owner := guild.owner) else False)
+                (
+                    await bot.is_owner(owner)
+                    if (owner := guild.owner)
+                    else False
+                )
                 or await bot.guild_check(guild)
                 if (guild := ctx.guild)
                 else True

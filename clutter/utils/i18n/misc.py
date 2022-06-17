@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, TypeVar
 
 __all__ = ("find_in_nested_dict", "NestedDict")

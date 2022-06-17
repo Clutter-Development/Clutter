@@ -25,7 +25,9 @@ class Miscellaneous(
         brief="COMMANDS.PING.BRIEF",
         help="COMMANDS.PING.HELP",
     )
-    @commands.bot_has_permissions(send_messages=True, read_message_history=True)
+    @commands.bot_has_permissions(
+        send_messages=True, read_message_history=True
+    )
     async def ping(self, ctx: ClutterContext, /) -> None:
         ping = time.time()
 

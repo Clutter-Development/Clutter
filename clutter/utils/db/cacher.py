@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 # noinspection PyPackageRequirements
@@ -65,7 +67,9 @@ class CachedMongoManager(MongoManager):
     async def push(
         self, path: str, value: Any, /, *, allow_duplicates: bool = True
     ) -> bool:
-        res = await super().push(path, value, allow_duplicates=allow_duplicates)
+        res = await super().push(
+            path, value, allow_duplicates=allow_duplicates
+        )
         self.uncache(path)
         return res
 

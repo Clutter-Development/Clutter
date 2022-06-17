@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from re import sub
 
 __all__ = ("format_as_list",)

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Callable
 
 __all__ = ("esc", "make_color")

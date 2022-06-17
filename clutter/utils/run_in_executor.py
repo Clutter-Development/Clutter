@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from asyncio import to_thread
 from typing import Awaitable, Callable, ParamSpec, TypeVar
 

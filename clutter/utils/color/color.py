@@ -1,5 +1,6 @@
-from .misc import esc as e
-from .misc import make_color as m
+from __future__ import annotations
+
+from .misc import esc as e, make_color as m
 
 __all__ = (
     "black",

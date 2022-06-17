@@ -9,7 +9,10 @@ from .misc import create_nested_dict, find_in_nested_dict, maybe_int
 
 if TYPE_CHECKING:
     # noinspection PyProtectedMember
-    from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
+    from motor.motor_asyncio import (
+        AsyncIOMotorCollection,
+        AsyncIOMotorDatabase,
+    )
 
 __all__ = ("MongoManager",)
 
@@ -187,7 +190,9 @@ class MongoManager:
             )
 
         if value in find_in_nested_dict(
-            await collection.find_one({"_id": _id}, {path: 1}), path, default=[]
+            await collection.find_one({"_id": _id}, {path: 1}),
+            path,
+            default=[],
         ):
             await collection.update_one({"_id": _id}, {"$pull": {path: value}})
             return True
@@ -219,4 +224,6 @@ class MongoManager:
         if not path:
             await collection.delete_one({"_id": _id})
         else:
-            await collection.update_one({"_id": _id}, {"$unset": {path[0]: ""}})
+            await collection.update_one(
+                {"_id": _id}, {"$unset": {path[0]: ""}}
+            )
