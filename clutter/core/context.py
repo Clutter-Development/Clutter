@@ -61,8 +61,12 @@ class ClutterContext(Context):
     def reply_embed(self) -> ReplyEmbedGetter:
         return ReplyEmbedGetter(self, self.bot.embed)
 
-    async def i18n(self, text: str, /, *, use_guild: bool = False, **kwargs: Any) -> str:
-        return (await self.bot.i18n(self, text, use_guild=use_guild)).format(**kwargs)
+    async def i18n(
+        self, text: str, /, *, use_guild: bool = False, **kwargs: Any
+    ) -> str:
+        return (await self.bot.i18n(self, text, use_guild=use_guild)).format(
+            **kwargs
+        )
 
     async def ok(self, value: bool, /) -> None:
         emojis = self.bot.config["STYLE"]["EMOJIS"]
