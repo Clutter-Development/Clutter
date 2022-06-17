@@ -342,15 +342,14 @@ async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
     if await bot.is_owner(ctx.author):
         return True
 
-    message = ctx.message
     author_id = ctx.author.id
 
     spam = bot.spam_control
     counter = spam.counter
 
     if not (
-        retry_after := spam.mapping.get_bucket(message).update_rate_limit(  # type: ignore
-            message.created_at.timestamp()
+        retry_after := spam.mapping.get_bucket(ctx.message).update_rate_limit(  # type: ignore
+            ctx.message.created_at.timestamp()
         )
     ):
         return True
