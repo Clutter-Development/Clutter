@@ -16,6 +16,7 @@ jobs:
       - name: Install Unimport, Isort, Black, and Flynt
         run: pip install -U pip unimport isort black flynt
       - name: Run Unimport
+        continue-on-error: true
         run: unimport ./ --ignore-init --gitignore -r
       - name: Run Isort
         run: isort ./ --profile black
