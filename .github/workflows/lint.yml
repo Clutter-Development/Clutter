@@ -19,9 +19,9 @@ jobs:
         continue-on-error: true
         run: unimport ./ --ignore-init --gitignore -r
       - name: Run Isort
-        run: isort ./ --profile black
+        run: isort ./
       - name: Run Black
-        run: black ./ --line-length=80
+        run: black ./
       - name: Run Flynt
         run: flynt ./ -tc
       - name: Setup Git
