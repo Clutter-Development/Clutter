@@ -1,1 +1,9 @@
-(lambda Path: map(lambda fp: fp.write_text(new) if fp.parts[-1] == "__init__.py" and (content := fp.read_text()) != (new := content.removeprefix("from __future__ import annotations")) else None, (Path(__file__).resolve().parent.parent.parent / "clutter").rglob("*.py")))(__import__("pathlib").Path)  # fmt: off
+rom pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent / "clutter"
+
+for fp in ROOT_DIR.rglob("*.py"):
+    if fp.parts[-1] == "__init__.py" and (content := fp.read_text()) != (
+        new := content.removeprefix("from __future__ import annotations")
+    ):
+        fp.write_text(new)
