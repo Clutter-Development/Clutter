@@ -335,9 +335,9 @@ class ClutterBot(AutoShardedBot):
             if not (
                 retry_after := bot.spam_control.get_bucket(
                     ctx.message
-                ).update_rate_limit(
+                ).update_rate_limit(  # type: ignore
                     ctx.message.created_at.timestamp()
-                )  # type: ignore
+                )
             ):
                 return True
 
@@ -365,8 +365,7 @@ class ClutterBot(AutoShardedBot):
                     description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
                 ).add_field(
                     title="Channel Info",
-                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",
-                    # type: ignore
+                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore
                 )
 
             create_task(bot.log_webhook.send(embed=embed))
