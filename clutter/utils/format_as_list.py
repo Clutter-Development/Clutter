@@ -6,24 +6,6 @@ __all__ = ("format_as_list",)
 
 
 def format_as_list(title: str, description: str, /, *, indent: int = 4) -> str:
-    """Makes a fancy list(ish) thing out of a title and description. You can call this black magic fuckery.
-
-    Args:
-        title (str): The title of the list.
-        description (str): The description of the list.
-        indent (int): The indent size.
-
-    Returns:
-        str: The listified string.
-
-    Example:
-        Title Here:
-           ╭──────╯
-           │Description
-           │Stuff
-           │Etc
-    """
-
     def create_line(length: int, inverted: bool, /):
         length -= 2
         corners = ("╭", "╯") if inverted else ("╰", "╮")

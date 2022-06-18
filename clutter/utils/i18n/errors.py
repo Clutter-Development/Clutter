@@ -4,12 +4,10 @@ __all__ = ("I18NError", "UnknownTranslationCode", "NoFallback")
 
 
 class I18NError(Exception):
-    """The base exception class for this library."""
+    pass
 
 
 class UnknownTranslationCode(I18NError):
-    """Raised when a translation string doesn't exist."""
-
     def __init__(self, code: str, /) -> None:
         self.code = code
 
@@ -18,8 +16,6 @@ class UnknownTranslationCode(I18NError):
 
 
 class NoFallback(I18NError):
-    """Raised when the fallback language isn't in the provided languages."""
-
     def __init__(
         self, fallback_language: str, language_file_directory: str, /
     ) -> None:

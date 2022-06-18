@@ -20,24 +20,10 @@ class CachedMongoManager(MongoManager):
         database: str,
         max_items: int,
     ) -> None:
-        """Initialize the CachedMongoManager class.
-
-        Args:
-            connect_url (str): The MongoDB URI to use to connect to the database.
-            port (int | None, optional): The port of the MongoDB instance, used when the db is hosted locally. Defaults to None.
-            database (str): The database to use.
-            max_items (int): The max items the cache can hold.
-        """
         self._cache = LRU(max_items)
         super().__init__(connect_url, port, database=database)
 
     def uncache(self, key: str | list[str], /, *, match: bool = True) -> None:
-        """Uncaches the key value pair with the given path. If match is False, it will uncache all key value pairs that start with the path.
-
-        Args:
-            key (str | list[str]): The key(s) to uncache.
-            match (bool, optional): If not to delete all keys starting with the path.
-        """
         if isinstance(key, list):
             for single_key in key:
                 self.uncache(single_key, match=match)
