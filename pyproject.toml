@@ -14,7 +14,7 @@ combine_star = true
 pythonVersion = "3.10"
 typeCheckingMode = "basic"
 strictListInference = true
-strictDictionaryInference= true
+strictDictionaryInference = true
 strictSetInference = true
 
 

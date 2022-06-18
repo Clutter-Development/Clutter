@@ -43,6 +43,7 @@ An example for the bot configuration can be found in the `config.example.json5` 
 
 Don't forget to rename `config.example.json5` to `config.json5`.
 
-# License           
+# License
 
-All code in this repository is licensed with the GNU General Public License v3, excluding the `clutter/utils` directory which is licensed with the MIT license.
+All code in this repository is licensed with the GNU General Public License v3, excluding the `clutter/utils` directory
+which is licensed with the MIT license.

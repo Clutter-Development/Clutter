@@ -52,7 +52,6 @@ if TYPE_CHECKING:
 
     from . import ClutterInteraction
 
-
 __all__ = ("ClutterBot",)
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -366,7 +365,8 @@ class ClutterBot(AutoShardedBot):
                     description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
                 ).add_field(
                     title="Channel Info",
-                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore
+                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",
+                    # type: ignore
                 )
 
             create_task(bot.log_webhook.send(embed=embed))

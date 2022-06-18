@@ -34,7 +34,6 @@ __all__ = (
     "blink",
 )
 
-
 FG_END = e(39)
 
 black = m(e(30), FG_END)
