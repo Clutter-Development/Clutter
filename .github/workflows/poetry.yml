@@ -15,11 +15,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Poetry
         run: pip install -U pip poetry
-      - name: Install Dependencies & Build Lock File
+      - name: Remove Lock File
         continue-on-error: true
-        run: |
-          rm poetry.lock
-          poetry install
+        run: rm poetry.lock
+      - name: Install Dependencies & Build Lock File
+        run: poetry install
       - name: Setup Git
         run: git config user.name "Automated Linter"
       - name: Push To GitHub
