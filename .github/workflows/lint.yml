@@ -21,7 +21,7 @@ jobs:
       - name: Run Isort
         run: |
           isort ./
-          python ./.github/workflows/isort_fix.py
+          python ./.github/workflows/lint.py
       - name: Run Black
         run: black ./
       - name: Run Flynt
