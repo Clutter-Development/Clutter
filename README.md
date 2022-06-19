@@ -16,12 +16,14 @@
 
 The preffered method for running this bot is Docker. <!-- currently broken -->
 
-Before running, don't forget to modify the `config.example.json5` file in the `clutter`
+Before running these commands, don't forget to modify the `config.example.json5` file in the `clutter`
 directory [(see below)](#configuration).
 
 ## Installation Commands
 
 ### Docker Installation
+
+> This installation requires [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) to be installed on your machine.
 
 ```bash
 git clone https://github.com/Clutter-Development/Clutter  # Clone the repository.
@@ -34,6 +36,7 @@ cd Clutter  # Go to the Clutter directory.
 ```bash
 git clone https://github.com/Clutter-Development/Clutter  # Clone the repository.
 cd Clutter  # Go to the Clutter directory.
+pip install poetry && poetry install --no-dev  # Install dependencies.
 python clutter  # Run the bot.
 ```
 
