@@ -16,7 +16,9 @@ jobs:
       - name: Install Poetry
         run: pip install -U pip poetry
       - name: Install Dependencies & Build Lock File
-        run: poetry install
+        run: |
+          rm pyproject.toml
+          poetry install
       - name: Push To GitHub
         continue-on-error: true
         run: |
