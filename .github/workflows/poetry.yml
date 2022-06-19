@@ -16,9 +16,12 @@ jobs:
       - name: Install Poetry
         run: pip install -U pip poetry
       - name: Install Dependencies & Build Lock File
+        continue-on-error: true
         run: |
-          rm poetry.lock || exit 0
+          rm poetry.lock
           poetry install
+      - name: Setup Git
+        run: git config user.name "Automated Linter"
       - name: Push To GitHub
         continue-on-error: true
         run: |
