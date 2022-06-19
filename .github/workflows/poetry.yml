@@ -17,7 +17,7 @@ jobs:
         run: pip install -U pip poetry
       - name: Install Dependencies & Build Lock File
         run: |
-          rm poetry.lock
+          rm poetry.lock || exit 0
           poetry install
       - name: Push To GitHub
         continue-on-error: true
