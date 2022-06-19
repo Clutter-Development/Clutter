@@ -5,8 +5,8 @@ from collections import Counter
 from itertools import chain
 from os import getcwd
 from pathlib import Path
+from re import MULTILINE, search
 from time import time
-from re import search, MULTILINE
 from traceback import format_exc
 from typing import TYPE_CHECKING, Any
 
@@ -68,7 +68,11 @@ class ClutterBot(AutoShardedBot):
         self.config = config
         self.session = session
 
-        self.version = search(r'^version\s*=\s*["]([^"]*)["]', (ROOT_DIR.parent / "pyproject.toml").read_text(), MULTILINE)[1]
+        self.version = search(
+            r'^version\s*=\s*["]([^"]*)["]',
+            (ROOT_DIR.parent / "pyproject.toml").read_text(),
+            MULTILINE,
+        )[1]
 
         self.support_invite = "https://com/invite/mVKkMZRPQE"
         self.documentation_url = "https://clutter-development.github.io/"
