@@ -4,8 +4,8 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent / "clutter"
 
-for fp in ROOT_DIR.rglob("*.py"):
-    if fp.parts[-1] != "__init__.py" or not (content := fp.read_text()):
+for fp in ROOT_DIR.rglob("__init__.py"):
+    if not (content := fp.read_text()):
         continue
 
     old_c = content[:]
