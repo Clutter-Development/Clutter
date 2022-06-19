@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent / "clutter"
 
 for fp in ROOT_DIR.rglob("__init__.py"):
     if not (content := fp.read_text()):
