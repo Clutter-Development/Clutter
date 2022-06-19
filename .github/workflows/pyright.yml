@@ -15,7 +15,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install PyRight & Dependencies
         run: |
-          pip install -U pip pyright
-          pip install -Ur requirements.txt
+          pip install -U pip pyright poetry
+          poetry install --no-dev
       - name: Run PyRight
         run: pyright ./
