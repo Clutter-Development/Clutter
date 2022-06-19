@@ -16,8 +16,6 @@ typeCheckingMode = "basic"
 strictListInference = true
 strictDictionaryInference = true
 strictSetInference = true
-
-
 reportMissingModuleSource = "error"
 reportAssertAlwaysTrue = "error"
 reportInvalidStringEscapeSequence = "error"
