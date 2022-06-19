@@ -1,3 +1,26 @@
+[tool.poetry]
+name = "clutter-bot"
+version = "0.2.0"
+description = "Clutter is a multipurpose, compact and easy to use Discord bot."
+authors = [ "Clutter Development" ]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+"discord.py" = { git = "https://github.com/Rapptz/discord.py.git", branch = "master", extras = [ "speed" ] }
+jishaku = "*"
+json5 = "*"
+lru-dict = "*"
+motor = "*"
+sentry-sdk = "*"
+typing-extensions = "*"
+uvloop = "*"
+
+[tool.poetry.dev-dependencies]
+black = "*"
+flynt = "*"
+isort = "*"
+unimport = "*"
+
 [tool.black]
 line-length = 79
 

@@ -67,7 +67,9 @@ class ClutterBot(AutoShardedBot):
         self.config = config
         self.session = session
 
-        self.version = "0.0.2"
+        pyproject = (ROOT_DIR.parent / "pyproject.toml").read_text()
+        for line in pyproject.splitlines()
+        self.version =
 
         self.support_invite = "https://com/invite/mVKkMZRPQE"
         self.documentation_url = "https://clutter-development.github.io/"
