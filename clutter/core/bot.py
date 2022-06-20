@@ -39,12 +39,11 @@ from ..utils import color, format_as_list
 from ..utils.db import CachedMongoManager
 from ..utils.embed import EmbedCreator
 from ..utils.i18n import I18N
-from . import (
-    ClutterCommandTree,
-    ClutterContext,
-    UserHasBeenBlacklisted,
-    UserIsBlacklisted,
-)
+from .command_tree import ClutterCommandTree
+from .errors import UserIsBlacklisted, UserHasBeenBlacklisted
+from .interaction import ClutterInteraction
+from .context import ClutterContext
+
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
@@ -67,13 +66,11 @@ class ClutterBot(AutoShardedBot):
         self.config = config
         self.session = session
 
-        self.version = search(
+        self.version = search(  # type: ignore
             r'^version\s*=\s*["]([^"]*)["]',
             (ROOT_DIR.parent / "pyproject.toml").read_text(),
             MULTILINE,
-        )[
-            1  # type: ignore
-        ]
+        )[1]
 
         self.support_invite = "https://com/invite/mVKkMZRPQE"
         self.documentation_url = "https://clutter-development.github.io/"
@@ -204,9 +201,7 @@ class ClutterBot(AutoShardedBot):
         await self.db.set(f"users.{user_id}.blacklisted", False)
         return True
 
-    async def getch_member(
-        self, guild: Guild, user_id: int
-    ) -> Member | None:
+    async def getch_member(self, guild: Guild, user_id: int) -> Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
 
@@ -303,7 +298,7 @@ class ClutterBot(AutoShardedBot):
         @bot.check
         @bot.tree.check
         async def guild_blacklist_check(
-            ctx: ClutterContext | ClutterInteraction
+            ctx: ClutterContext | ClutterInteraction,
         ) -> bool:
             # noinspection PyTypeChecker
             return (
@@ -320,7 +315,7 @@ class ClutterBot(AutoShardedBot):
         @bot.check
         @bot.tree.check
         async def user_blacklist_check(
-            ctx: ClutterContext | ClutterInteraction
+            ctx: ClutterContext | ClutterInteraction,
         ) -> bool:
             if not await bot.is_owner(ctx.author) and await bot.db.get(
                 f"users.{ctx.author.id}.blacklisted"

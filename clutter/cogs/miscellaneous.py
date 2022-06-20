@@ -3,11 +3,13 @@ from __future__ import annotations
 from time import monotonic
 from typing import TYPE_CHECKING
 
+from discord import Member, User
 from discord.app_commands import command as slash_command
 from discord.ext.commands import Cog, bot_has_permissions, command
 
 if TYPE_CHECKING:
     from ..core import ClutterBot, ClutterContext, ClutterInteraction
+    from ..utils.embed import Embed
 
 
 class Miscellaneous(
@@ -45,7 +47,7 @@ class Miscellaneous(
             )
         )
 
-    @slash_command(name="ping", description="COMMANDS.PING.BRIEF")
+    @slash_command(name="ping", description="COMMANDS.PING.BRIEF")  # type: ignore
     async def slash_ping(self, ctx: ClutterInteraction) -> None:
         ping = monotonic()
 
@@ -63,6 +65,54 @@ class Miscellaneous(
                 ),
             )
         )
+
+    async def create_info_embed(
+        self, ctx: ClutterContext | ClutterInteraction, user: User | Member
+    ) -> Embed:
+        embed = self.bot.embed.info(
+            await ctx.i18n("COMMANDS.INFO.TITLE", user=user),
+            await ctx.i18n(
+                "COMMANDS.INFO.BODY",
+                id=user.id,
+                created_at=f"<t:{user.created_at.timestamp()}:F>",
+            )
+            + (
+                "\n"
+                + await ctx.i18n(
+                    "COMMANDS.INFO.JOINED_AT",
+                    joined_at=f"<t:{user.joined_at.timestamp()}:F>",
+                )
+                if ctx.guild
+                else ""
+            ),
+        ).set_thumbnail(url=user.display_avatar.url)
+
+        if ctx.guild and (roles := user.roles):
+            embed.add_field(
+                await ctx.i18n("COMMANDS.INFO.FIELDS.ROLES"),
+                ", ".join(role.mention for role in roles),
+            )
+
+        return embed
+
+    @command(
+        aliases=("userinfo", "user-info", "user_info"),
+        brief="COMMANDS.INFO.BRIEF",
+        help="COMMANDS.INFO.HELP",
+    )
+    async def info(
+        self, ctx: ClutterContext, user: User | Member | None = None
+    ) -> None:
+        await ctx.reply(embed=self.create_info_embed(ctx, user))
+
+    @slash_command(
+        name="info",
+        description="COMMANDS.INFO.BRIEF",
+    )
+    async def slash_info(
+        self, ctx: ClutterInteraction, user: User | Member | None = None
+    ) -> None:
+        await ctx.reply(embed=self.create_info_embed(ctx, user))
 
 
 async def setup(bot: ClutterBot) -> None:
