@@ -1,44 +1,43 @@
-"""from __future__ import annotations
+from __future__ import annotations
 
-import time
+from time import monotonic
 from typing import TYPE_CHECKING
 
-from discord import app_commands as app
-from discord.ext import commands
+from discord.app_commands import command as slash_command
+from discord.ext.commands import Cog, bot_has_permissions, command
 
 if TYPE_CHECKING:
-    from core.bot import Clutter
-    from core.context import ClutterContext
-    from core.interaction import ClutterInteractionContext
+    from ..core import ClutterBot, ClutterContext, ClutterInteraction
 
 
 class Miscellaneous(
-    commands.Cog,
+    Cog,
     name="MODULES.MISCELLANEOUS.NAME",
     description="MODULES.MISCELLANEOUS.DESCRIPTION",
 ):
-    def __init__(self, bot: Clutter, /) -> None:
+    def __init__(self, bot: ClutterBot, /) -> None:
         self.bot = bot
 
-    @commands.command(
-        aliases=["latency", "pong"],
+    @command(
+        aliases=("latency",),
         brief="COMMANDS.PING.BRIEF",
         help="COMMANDS.PING.HELP",
     )
-    @commands.bot_has_permissions(
-        send_messages=True, read_message_history=True
+    @bot_has_permissions(
+        send_messages=True, read_message_history=True, use_external_emojis=True
     )
     async def ping(self, ctx: ClutterContext, /) -> None:
-        ping = time.time()
+        ping = monotonic()
 
         message = await ctx.reply("** **")
 
-        ping = time.time() - ping
+        ping = monotonic() - ping
 
         await message.edit(
             embed=self.bot.embed.info(
                 await ctx.i18n("COMMANDS.PING.RESPONSE.TITLE"),
-                (await ctx.i18n("COMMANDS.PING.RESPONSE.BODY")).format(
+                await ctx.i18n(
+                    "COMMANDS.PING.RESPONSE.BODY",
                     ws=int(self.bot.latency * 1000),
                     msg=int(ping * 1000),
                     db=int(await self.bot.db.ping() * 1000),
@@ -46,17 +45,18 @@ class Miscellaneous(
             )
         )
 
-    @app.command(name="ping", description="COMMANDS.PING.BRIEF")  
-    async def app_ping(self, ctx: ClutterInteractionContext, /) -> None:
-        ping = time.time()
+    @slash_command(name="ping", description="COMMANDS.PING.BRIEF")
+    async def slash_ping(self, ctx: ClutterInteraction, /) -> None:
+        ping = monotonic()
 
         await ctx.response.send_message("** **")
 
-        ping = time.time() - ping
+        ping = monotonic() - ping
         await ctx.edit_original_message(
             embed=self.bot.embed.info(
                 await ctx.i18n("COMMANDS.PING.RESPONSE.TITLE"),
-                (await ctx.i18n("COMMANDS.PING.RESPONSE.BODY")).format(
+                await ctx.i18n(
+                    "COMMANDS.PING.RESPONSE.BODY",
                     ws=int(self.bot.latency * 1000),
                     msg=int(ping * 1000),
                     db=int(await self.bot.db.ping() * 1000),
@@ -65,6 +65,5 @@ class Miscellaneous(
         )
 
 
-async def setup(bot: Clutter, /) -> None:
+async def setup(bot: ClutterBot, /) -> None:
     await bot.add_cog(Miscellaneous(bot))
-"""

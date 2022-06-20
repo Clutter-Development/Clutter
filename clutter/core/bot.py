@@ -3,7 +3,6 @@ from __future__ import annotations
 from asyncio import create_task, gather
 from collections import Counter
 from itertools import chain
-from os import getcwd
 from pathlib import Path
 from re import MULTILINE, search
 from time import time
@@ -227,8 +226,8 @@ class ClutterBot(AutoShardedBot):
         failed = {}
         for fn in chain(
             map(
-                lambda fp: ".".join(fp.parts)[:-3],
-                (ROOT_DIR / "cogs").relative_to(getcwd()).rglob("*.py"),
+                lambda fp: f"..cogs.{'.'.join(fp.parts)[:-3]}",
+                (ROOT_DIR / "cogs").relative_to(ROOT_DIR).rglob("*.py"),
             ),
             ["jishaku"],
         ):

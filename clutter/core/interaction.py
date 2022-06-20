@@ -71,7 +71,7 @@ class ClutterInteraction:
         return RespondEmbedGetter(self, self.bot.embed)
 
     async def i18n(
-        self, text: str, /, *, prefer_guild: bool = False, **kwargs: str
+        self, text: str, /, *, prefer_guild: bool = False, **kwargs: Any
     ) -> str:
         return (
             await self.bot.i18n(self, text, prefer_guild=prefer_guild)
