@@ -9,17 +9,15 @@ from uvloop import install
 
 from .core import ClutterBot
 
-install()
-
-for key in ["HIDE", "NO_UNDERSCORE"]:
-    environ[f"JISHAKU_{key}"] = "True"
-
-
-async def runner() -> None:
-    async with await ClutterBot.init() as bot:
-        init(bot.config["SENTRY_URL"], traces_sample_rate=1.0)
-        await bot.start(bot.token)
-
-
 with suppress(KeyboardInterrupt):
-    run(runner())
+    @lambda _: run(_)
+    async def main() -> None:
+        async with await ClutterBot.init() as bot:
+            init(bot.config["SENTRY_URL"], traces_sample_rate=1.0)
+
+            install()
+
+            for key in ["HIDE", "NO_UNDERSCORE"]:
+                environ[f"JISHAKU_{key}"] = "True"
+
+            await bot.start(bot.token)
