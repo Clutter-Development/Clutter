@@ -70,7 +70,8 @@ class EmbedCreator:
 
             return Embed(
                 title=(
-                    f"{self._style.get('EMOJIS', {}).get(asset_type, '')} {title}".strip()
+                    f"{self._style.get('EMOJIS', {}).get(asset_type, '')} {title}"
+                    .strip()
                     if title
                     else None
                 ),

@@ -77,7 +77,8 @@ class MongoManager:
 
         if not path and not isinstance(value, dict):
             raise ValueError(
-                "The value must be a dictionary if whole document is wanted to be updated."
+                "The value must be a dictionary if whole document is wanted to"
+                " be updated."
             )
 
         if await collection.find_one({"_id": _id}, {"_id": 1}):
@@ -97,7 +98,8 @@ class MongoManager:
 
         if not path:
             raise ValueError(
-                "Path must be at least 3 elements long: Collection, _id and key for the push operation."
+                "Path must be at least 3 elements long: Collection, _id and"
+                " key for the push operation."
             )
 
         if not (doc := await collection.find_one({"_id": _id}, {"_id": 1})):
@@ -119,7 +121,8 @@ class MongoManager:
 
         if not path:
             raise ValueError(
-                "Path must be at least 3 elements long: Collection, _id and key for the pull operation."
+                "Path must be at least 3 elements long: Collection, _id and"
+                " key for the pull operation."
             )
 
         if value in find_in_nested_dict(

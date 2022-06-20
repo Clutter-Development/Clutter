@@ -23,4 +23,7 @@ class NoFallback(I18NError):
         self.language_file_directory = language_file_directory
 
     def __str__(self) -> str:
-        return f"The fallback language ({self.fallback_language}) does not exist in the languages directory ({self.language_file_directory})."
+        return (
+            f"The fallback language ({self.fallback_language}) does not exist"
+            f" in the languages directory ({self.language_file_directory})."
+        )

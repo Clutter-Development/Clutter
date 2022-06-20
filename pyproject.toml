@@ -23,6 +23,7 @@ unimport = "*"
 
 [tool.black]
 line-length = 79
+preview = true
 
 [tool.isort]
 py_version = 310

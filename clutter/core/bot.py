@@ -73,8 +73,8 @@ class ClutterBot(AutoShardedBot):
             (ROOT_DIR.parent / "pyproject.toml").read_text(),
             MULTILINE,
         )[
-            1
-        ]  # type: ignore
+            1  # type: ignore
+        ]
 
         self.support_invite = "https://com/invite/mVKkMZRPQE"
         self.documentation_url = "https://clutter-development.github.io/"
@@ -364,13 +364,19 @@ class ClutterBot(AutoShardedBot):
                 f"Incident time: <t:{int(time())}:F>",
             ).add_field(
                 title="User Info",
-                description=f"**Mention:** {author.mention}\n**Tag:** {author}\n**ID:** {author.id}",
+                description=(
+                    f"**Mention:** {author.mention}\n**Tag:**"
+                    f" {author}\n**ID:** {author.id}"
+                ),
             )
             if guild := ctx.guild:
                 channel = ctx.channel
                 embed.add_field(
                     title="Guild Info",
-                    description=f"**Name:** {guild.name}\n**ID:** {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})",
+                    description=(
+                        f"**Name:** {guild.name}\n**ID:**"
+                        f" {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})"
+                    ),
                 ).add_field(
                     title="Channel Info",
                     description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore
