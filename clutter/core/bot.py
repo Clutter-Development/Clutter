@@ -41,7 +41,6 @@ from ..utils.embed import EmbedCreator
 from ..utils.i18n import I18N
 from .command_tree import ClutterCommandTree
 from .errors import UserIsBlacklisted, UserHasBeenBlacklisted
-from .interaction import ClutterInteraction
 from .context import ClutterContext
 
 
@@ -49,7 +48,7 @@ if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
     from typing_extensions import Self
 
-    from . import ClutterInteraction
+    from .interaction import ClutterInteraction
 
 __all__ = ("ClutterBot",)
 
@@ -113,7 +112,7 @@ class ClutterBot(AutoShardedBot):
 
         super().__init__(
             allowed_mentions=AllowedMentions.none(),
-            command_prefix=self.get_prefix,  # type: ignore
+            command_prefix=self.get_prefix,
             case_insensitive=True,
             intents=Intents(
                 guilds=True,
@@ -140,7 +139,7 @@ class ClutterBot(AutoShardedBot):
     def uptime(self) -> float:
         return time() - self.start_time
 
-    async def add_command(self, command: Command) -> None:
+    def add_command(self, command: Command) -> None:
         command.cooldown_after_parsing = True
         super().add_command(command)
 
@@ -157,6 +156,14 @@ class ClutterBot(AutoShardedBot):
             await ctx.typing()
 
         await self.invoke(ctx)
+
+    async def get_prefix(self, message: Message) -> list[str]:
+        if guild := message.guild:
+            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
+        else:
+            prefix = self.default_prefix
+
+        return [prefix, f"<@{self.user.id}>", f"<@!{self.user.id}>"]
 
     # noinspection PyMethodOverriding
     async def get_context(self, message: Message) -> ClutterContext:
