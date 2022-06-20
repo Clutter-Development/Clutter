@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import os
+from os import listdir, path
 from typing import TYPE_CHECKING, Literal
 
 from json5 import load
@@ -21,7 +21,7 @@ __all__ = ("I18N",)
 class I18N:
     def __init__(
         self,
-        language_file_directory: str,
+        lang_file_dir: str,
         *,
         db: CachedMongoManager,
         fallback_language: str,
@@ -31,17 +31,17 @@ class I18N:
         self._languages = {}
         self._fallback_language = fallback_language
 
-        files = os.listdir(language_file_directory)
+        files = listdir(lang_file_dir)
 
         for fn in files:
             if not fn.endswith(("json", "json5")):
                 continue
 
-            with open(os.path.join(language_file_directory, fn)) as f:
+            with open(path.join(lang_file_dir, fn)) as f:
                 self._languages[fn.rsplit(".", 1)[0]] = load(f)
 
         if fallback_language not in self._languages:
-            raise NoFallback(fallback_language, language_file_directory)
+            raise NoFallback(fallback_language, lang_file_dir)
 
     def collect_translations(self, code: str) -> dict[str, str]:
 

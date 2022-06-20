@@ -7,9 +7,8 @@ __all__ = ("format_as_list",)
 
 def format_as_list(title: str, description: str, *, indent: int = 4) -> str:
     def create_line(length: int, inverted: bool):
-        length -= 2
         corners = ("╭", "╯") if inverted else ("╰", "╮")
-        return corners[0] + length * "─" + corners[1]
+        return corners[0] + min(length - 2, 0) * "─" + corners[1]
 
     title_len = len(
         sub(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", "", title)

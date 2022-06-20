@@ -96,11 +96,7 @@ class ClutterBot(AutoShardedBot):
         self.db = CachedMongoManager(
             config["MONGO_URI"], database="clutter", max_items=5000
         )
-        self.i18n = I18N(
-            str(ROOT_DIR / "i18n"),
-            db=self.db,
-            fallback_language=self.default_language,
-        )
+        self.i18n = I18N(str(ROOT_DIR / "i18n"), db=self.db, fallback_language=self.default_language)
 
         self.error_webhook = Webhook.from_url(
             config["ERROR_WEBHOOK_URL"], session=session
