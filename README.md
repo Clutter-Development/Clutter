@@ -37,7 +37,7 @@ cd Clutter  # Go to the Clutter directory.
 git clone https://github.com/Clutter-Development/Clutter  # Clone the repository.
 cd Clutter  # Go to the Clutter directory.
 pip install poetry && poetry install --no-dev  # Install dependencies.
-python clutter  # Run the bot.
+python -m clutter  # Run the bot.
 ```
 
 # Configuration

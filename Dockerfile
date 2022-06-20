@@ -8,4 +8,4 @@ RUN apk add --no-cache git && pip install --no-cache-dir poetry && poetry instal
 
 COPY ./clutter ./clutter
 
-CMD [ "python3.10", "clutter" ]
+CMD [ "python3.10", "-m", "clutter" ]
