@@ -71,16 +71,16 @@ class Miscellaneous(
     ) -> Embed:
         is_member = isinstance(user, Member)
         embed = self.bot.embed.info(
-            await ctx.i18n("COMMANDS.INFO.TITLE", user=user),
+            await ctx.i18n("COMMANDS.INFO.RESPONSE.TITLE", user=user),
             await ctx.i18n(
-                "COMMANDS.INFO.BODY",
+                "COMMANDS.INFO.RESPONSE.BODY",
                 id=user.id,
                 created_at=f"<t:{user.created_at.timestamp()}:F>",
             )
             + (
                 "\n"
                 + await ctx.i18n(
-                    "COMMANDS.INFO.JOINED_AT",
+                    "COMMANDS.INFO.RESPONSE.JOINED_AT",
                     joined_at=f"<t:{user.joined_at.timestamp()}:F>",
                 )
                 if is_member

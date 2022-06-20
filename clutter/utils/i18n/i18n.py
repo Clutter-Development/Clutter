@@ -76,6 +76,7 @@ class I18N:
                 code,
             ),
         )
+        print(code, translated)
         if not translated:
             raise UnknownTranslationCode(code)
 

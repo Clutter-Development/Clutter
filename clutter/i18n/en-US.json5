@@ -1,1 +1,30 @@
-{}
+{
+  MODULES: {
+    MISCELLANEOUS: {
+      NAME: "Miscellaneous",
+      DESCRIPTION: "Various utilities."
+    }
+  },
+  COMMANDS: {
+    PING: {
+      BRIEF: "Sends latency information.",
+      HELP: "Sends the bots websocket, message and database latency.",
+      RESPONSE: {
+        TITLE: "Latency Info",
+        BODY: "Websocket ping: `{ws}ms`\nMessage ping: `{msg}ms`\nDatabase ping: `{db}ms`"
+      }
+    },
+    INFO: {
+      BRIEF: "Sends information about the user.",
+      HELP: "Sends information about the specified user. If the user is not specified, the called is used.",
+      RESPONSE: {
+        TITLE: "Showing info for {user}",
+        BODY: "ID: `{id}`\nCreated at: {created_at}",
+        JOINED_AT: "Joined at: {joined_at}",
+      },
+      FIELDS: {
+        ROLES: "Roles"
+      }
+    }
+  }
+}
