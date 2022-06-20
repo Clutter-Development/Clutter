@@ -306,6 +306,7 @@ class ClutterBot(AutoShardedBot):
         async def guild_blacklist_check(
             ctx: ClutterContext | ClutterInteraction, /
         ) -> bool:
+            # noinspection PyTypeChecker
             return (
                 (
                     await bot.is_owner(owner)
