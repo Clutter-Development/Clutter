@@ -21,5 +21,6 @@ async def main() -> None:
 
         await bot.start(bot.token)
 
+
 with suppress(KeyboardInterrupt):
     run(main())

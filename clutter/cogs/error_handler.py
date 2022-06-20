@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging as log
 from asyncio import gather
 from traceback import format_exception
 from typing import TYPE_CHECKING
@@ -24,13 +25,14 @@ class ErrorHandler(Cog):
         ctx: ClutterContext | ClutterInteraction,
         error: Exception,
     ) -> None:
-        trace = format_exception(type(error), error, error.__traceback__)
-        print(
+        traceback = format_exception(type(error), error, error.__traceback__)
+
+        log.error(
             color.red(
                 format_as_list(
                     "An unhandled exception has occured in the command"
                     f" '{ctx.command.qualified_name}'",
-                    "\n".join(trace),
+                    "\n".join(traceback),
                 )
             )
         )
@@ -50,7 +52,7 @@ class ErrorHandler(Cog):
             self.bot.error_webhook.send(
                 file=TextFile(
                     f"{head}\nCommand:"
-                    f" {ctx.command.qualified_name}\nTraceback:\n{trace}",
+                    f" {ctx.command.qualified_name}\nTraceback:\n{traceback}",
                     "error.txt",
                 )
             ),

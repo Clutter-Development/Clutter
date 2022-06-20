@@ -25,9 +25,6 @@ class Miscellaneous(
         brief="COMMANDS.PING.BRIEF",
         help="COMMANDS.PING.HELP",
     )
-    @bot_has_permissions(
-        send_messages=True, read_message_history=True, use_external_emojis=True
-    )
     async def ping(self, ctx: ClutterContext) -> None:
         ping = monotonic()
 

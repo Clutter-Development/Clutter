@@ -1,39 +1,35 @@
-"""from __future__ import annotations
+from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, Optional
 
 import discord
-from discord.ext import commands
+from discord.ext.commands import command, Cog, is_owner, Greedy, NoPrivateMessage
 
 if TYPE_CHECKING:
-    from core.bot import Clutter
-    from core.context import ClutterContext
+    from ..core import ClutterBot, ClutterContext
 
 
 class Owner(
-    commands.Cog,
+    Cog,
     name="COGS.OWNER.NAME",
     description="COGS.OWNER.DESCRIPTION",
 ):
-    def __init__(self, bot: Clutter) -> None:
+    def __init__(self, bot: ClutterBot) -> None:
         self.bot = bot
 
-    @commands.command(
+    @command(
         brief="COMMANDS.SYNC.BRIEF", help="COMMANDS.SYNC.HELP", hidden=True
     )
-    @commands.is_owner()
-    @commands.bot_has_permissions(
-        send_messages=True, read_message_history=True
-    )
+    @is_owner()
     async def sync(
         self,
         ctx: ClutterContext,
-        guilds: commands.Greedy[discord.Object],
+        guilds: Greedy[discord.Object],
         spec: Optional[Literal[".", "*"]] = None,
     ) -> None:
         if not guilds:
-            if not (guild := ctx.guild):
-                raise commands.NoPrivateMessage()
+            if not (guild := ctx.guild) and not spec:
+                raise NoPrivateMessage()
 
             if spec == ".":
                 cmds = await ctx.bot.tree.sync(guild=guild)
@@ -71,6 +67,5 @@ class Owner(
             )
 
 
-async def setup(bot: Clutter) -> None:
+async def setup(bot: ClutterBot) -> None:
     await bot.add_cog(Owner(bot))
-"""
