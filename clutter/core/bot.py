@@ -43,7 +43,6 @@ from .command_tree import ClutterCommandTree
 from .errors import UserIsBlacklisted, UserHasBeenBlacklisted
 from .context import ClutterContext
 
-
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
     from typing_extensions import Self
@@ -226,10 +225,11 @@ class ClutterBot(AutoShardedBot):
     async def load_extensions(self) -> None:
         loaded = []
         failed = {}
+        cog_dir = ROOT_DIR / "cogs"
         for fn in chain(
             map(
-                lambda fp: f"..cogs.{'.'.join(fp.parts)[:-3]}",
-                map(lambda p: p.relative_to(ROOT_DIR / "cogs"), (ROOT_DIR / "cogs").rglob("*.py")),
+                lambda fp: f"clutter.cogs.{'.'.join(fp.relative_to(cog_dir).parts)[:-3]}",
+                cog_dir.rglob("*.py"),
             ),
             ["jishaku"],
         ):

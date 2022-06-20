@@ -104,7 +104,7 @@ class Miscellaneous(
     async def info(
         self, ctx: ClutterContext, user: User | Member | None = None
     ) -> None:
-        await ctx.reply(embed=self.create_info_embed(ctx, user))
+        await ctx.reply(embed=await self.create_info_embed(ctx, user))
 
     @slash_command(
         name="info",
@@ -113,7 +113,7 @@ class Miscellaneous(
     async def slash_info(
         self, ctx: ClutterInteraction, user: Member | None = None
     ) -> None:
-        await ctx.reply(embed=self.create_info_embed(ctx, user))
+        await ctx.reply(embed=await self.create_info_embed(ctx, user))
 
 
 async def setup(bot: ClutterBot) -> None:
