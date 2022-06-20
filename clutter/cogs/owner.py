@@ -34,14 +34,14 @@ class Owner(
         spec: Optional[Literal[".", "*"]] = None,
     ) -> None:
         if not guilds:
-            if not (guild := ctx.guild) and not spec:
+            if not ctx.guild and not spec:
                 raise NoPrivateMessage()
 
             if spec == ".":
-                commands = await self.bot.tree.sync(guild=guild)
+                commands = await self.bot.tree.sync(guild=ctx.guild)
             elif spec == "*":
-                self.bot.tree.copy_global_to(guild=guild)
-                commands = await self.bot.tree.sync(guild=guild)
+                self.bot.tree.copy_global_to(guild=ctx.guild)  # type: ignore
+                commands = await self.bot.tree.sync(guild=ctx.guild)
             else:
                 commands = await self.bot.tree.sync()
 

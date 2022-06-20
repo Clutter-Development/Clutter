@@ -111,7 +111,7 @@ class ClutterBot(AutoShardedBot):
 
         super().__init__(
             allowed_mentions=AllowedMentions.none(),
-            command_prefix=self.get_prefix,
+            command_prefix=self.get_prefix,  # type: ignore
             case_insensitive=True,
             intents=Intents(
                 guilds=True,
@@ -151,20 +151,20 @@ class ClutterBot(AutoShardedBot):
         if not ctx.valid:
             return
 
-        if (cog := ctx.cog) and cog.qualified_name != "Jishaku":
+        if ctx.cog and ctx.cog.qualified_name != "Jishaku":
             await ctx.typing()
 
         await self.invoke(ctx)
 
     async def get_prefix(self, message: Message) -> list[str]:
-        if guild := message.guild:
+        if message.guild:
             prefix = await self.db.get(
-                f"guilds.{guild.id}.prefix", default=self.default_prefix
+                f"guilds.{message.guild.id}.prefix", default=self.default_prefix
             )
         else:
             prefix = self.default_prefix
 
-        return [prefix, f"<@{self.user.id}>", f"<@!{self.user.id}>"]
+        return [prefix, f"<@{self.user.id}>", f"<@!{self.user.id}>"]  # type: ignore
 
     # noinspection PyMethodOverriding
     async def get_context(self, message: Message) -> ClutterContext:
@@ -312,12 +312,12 @@ class ClutterBot(AutoShardedBot):
             # noinspection PyTypeChecker
             return (
                 (
-                    await bot.is_owner(owner)
-                    if (owner := guild.owner)
+                    await bot.is_owner(ctx.guild.owner)
+                    if ctx.guild.owner
                     else False
                 )
-                or await bot.guild_check(guild)
-                if (guild := ctx.guild)
+                or await bot.guild_check(ctx.guild)
+                if ctx.guild
                 else True
             )
 
@@ -372,13 +372,13 @@ class ClutterBot(AutoShardedBot):
                     f" {author}\n**ID:** {author.id}"
                 ),
             )
-            if guild := ctx.guild:
+            if ctx.guild:
                 channel = ctx.channel
                 embed.add_field(
                     title="Guild Info",
                     description=(
-                        f"**Name:** {guild.name}\n**ID:**"
-                        f" {guild.id}\n[Jump!](https://discord.com/channels/{guild.id})"
+                        f"**Name:** {ctx.guild.name}\n**ID:**"
+                        f" {ctx.guild.id}\n[Jump!](https://discord.com/channels/{ctx.guild.id})"
                     ),
                 ).add_field(
                     title="Channel Info",

@@ -31,15 +31,15 @@ class ErrorHandler(Cog):
             color.red(
                 format_as_list(
                     "An unhandled exception has occured in the command"
-                    f" '{ctx.command.qualified_name}'",
+                    f" '{ctx.command.qualified_name}'",  # type: ignore
                     "\n".join(traceback),
                 )
             )
         )
 
-        if guild := ctx.guild:
+        if ctx.guild:
             head = (
-                f"Error from the server {guild.name} with the ID {guild.id}."
+                f"Error from the server {ctx.guild.name} with the ID {ctx.guild.id}."
             )
         else:
             head = (
@@ -52,7 +52,7 @@ class ErrorHandler(Cog):
             self.bot.error_webhook.send(
                 file=TextFile(
                     f"{head}\nCommand:"
-                    f" {ctx.command.qualified_name}\nTraceback:\n{traceback}",
+                    f" {ctx.command.qualified_name}\nTraceback:\n{traceback}",  # type: ignore
                     "error.txt",
                 )
             ),

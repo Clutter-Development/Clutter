@@ -66,11 +66,13 @@ class Miscellaneous(
     async def create_info_embed(
         self,
         ctx: ClutterContext | ClutterInteraction,
-        user: User | Member | None,
+        user: User | Member | None,  # type: ignore
     ) -> Embed:
         if not user:
             user = ctx.author
-        is_member = isinstance(user, Member)
+
+        user: User | Member
+
         embed = self.bot.embed.info(
             await ctx.i18n("COMMANDS.INFO.RESPONSE.TITLE", user=user),
             await ctx.i18n(
@@ -82,19 +84,19 @@ class Miscellaneous(
                 "\n"
                 + await ctx.i18n(
                     "COMMANDS.INFO.RESPONSE.JOINED_AT",
-                    joined_at=f"<t:{int(user.joined_at.timestamp())}:F>",
+                    joined_at=f"<t:{int(user.joined_at.timestamp())}:F>",  # type: ignore
                 )
-                if is_member
+                if isinstance(user, Member)
                 else ""
             ),
         ).set_thumbnail(url=user.display_avatar.url)
 
-        if is_member and (roles := user.roles):
+        if ctx.guild and user.roles:  # type: ignore
             embed.add_field(
                 await ctx.i18n("COMMANDS.INFO.FIELDS.ROLES"),
                 ", ".join(
                     role.mention
-                    for role in roles
+                    for role in user.roles  # type: ignore
                     if not role == ctx.guild.default_role
                 ),
             )
@@ -111,7 +113,7 @@ class Miscellaneous(
     ) -> None:
         await ctx.reply(embed=await self.create_info_embed(ctx, user))
 
-    @slash_command(
+    @slash_command(  # type: ignore
         name="info",
         description="COMMANDS.INFO.BRIEF",
     )
