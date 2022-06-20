@@ -11,9 +11,9 @@ from .misc import find_in_nested_dict
 if TYPE_CHECKING:
     from discord import Message
     from discord.ext.commands import Context
-    from ..db import CachedMongoManager
 
     from ...core.interaction import ClutterInteraction
+    from ..db import CachedMongoManager
 
 __all__ = ("I18N",)
 
