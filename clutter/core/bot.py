@@ -229,7 +229,7 @@ class ClutterBot(AutoShardedBot):
         for fn in chain(
             map(
                 lambda fp: f"..cogs.{'.'.join(fp.parts)[:-3]}",
-                (ROOT_DIR / "cogs").relative_to(ROOT_DIR).rglob("*.py"),
+                map(lambda p: p.relative_to(ROOT_DIR / "cogs"), (ROOT_DIR / "cogs").rglob("*.py")),
             ),
             ["jishaku"],
         ):
