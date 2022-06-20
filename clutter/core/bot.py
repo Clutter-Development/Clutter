@@ -72,7 +72,7 @@ class ClutterBot(AutoShardedBot):
             r'^version\s*=\s*["]([^"]*)["]',
             (ROOT_DIR.parent / "pyproject.toml").read_text(),
             MULTILINE,
-        )[1]
+        )[1]  # type: ignore
 
         self.support_invite = "https://com/invite/mVKkMZRPQE"
         self.documentation_url = "https://clutter-development.github.io/"
