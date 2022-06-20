@@ -10,6 +10,7 @@ from uvloop import install
 from .core import ClutterBot
 
 with suppress(KeyboardInterrupt):
+
     @lambda _: run(_)
     async def main() -> None:
         async with await ClutterBot.init() as bot:
