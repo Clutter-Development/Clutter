@@ -5,7 +5,7 @@
     <h1 style="font-size: 3em">Clutter</h1>
 
 [![CodeFactor](https://www.codefactor.io/repository/github/clutter-development/clutter/badge)](https://www.codefactor.io/repository/github/clutter-development/clutter)
-[![Total Lines](https://img.shields.io/tokei/lines/github/Clutter-Development/Clutter)](./)
+[![Total Lines](https://img.shields.io/tokei/lines/github/Clutter-Development/Clutter)](https://github.com/Clutter-Development/Clutter)
 [![License](https://img.shields.io/badge/license-GPL_3.0-success)](./clutter/LICENSE)
 [![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
 </div>
