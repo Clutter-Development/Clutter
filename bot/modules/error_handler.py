@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class ErrorHandler(commands.Cog):
-    def __init__(self, bot: Clutter, /) -> None:
+    def __init__(self, bot: Clutter) -> None:
         self.bot = bot
         self.capture_exception = run_in_executor(sentry_sdk.capture_exception)
 
@@ -25,7 +25,6 @@ class ErrorHandler(commands.Cog):
         self,
         ctx: ClutterContext | ClutterInteractionContext,
         error: Exception,
-        /,
     ) -> None:
         trace = traceback.format_exception(
             type(error), error, error.__traceback__
@@ -61,7 +60,7 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(
-        self, ctx: ClutterContext, error: commands.CommandError, /
+        self, ctx: ClutterContext, error: commands.CommandError
     ) -> None:
         error = getattr(error, "original", error)
 
@@ -74,7 +73,7 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_error(
-        self, ctx: ClutterInteractionContext, error: app.AppCommandError, /
+        self, ctx: ClutterInteractionContext, error: app.AppCommandError
     ) -> None:
         error = getattr(error, "original", error)
 
@@ -83,5 +82,5 @@ class ErrorHandler(commands.Cog):
                 await self.handle_error(ctx, error)
 
 
-async def setup(bot: Clutter, /) -> None:
+async def setup(bot: Clutter) -> None:
     await bot.add_cog(ErrorHandler(bot))"""

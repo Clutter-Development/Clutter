@@ -19,12 +19,12 @@ __all__ = ("MongoManager",)
 
 class MongoManager:
     def __init__(
-        self, connect_url: str, port: int | None = None, /, *, database: str
+        self, connect_url: str, port: int | None = None, *, database: str
     ) -> None:
         self._client = AsyncIOMotorClient(connect_url, port)
         self._db: AsyncIOMotorDatabase = self._client[database]
 
-    def _parse_path(self, path: str, /) -> tuple[AsyncIOMotorCollection, str | int, str]:  # type: ignore
+    def _parse_path(self, path: str) -> tuple[AsyncIOMotorCollection, str | int, str]:  # type: ignore
 
         path: list[str] = path.split(".", 2)
 
@@ -60,7 +60,7 @@ class MongoManager:
 
         return ts
 
-    async def get(self, path: str, /, *, default: Any = None) -> Any:
+    async def get(self, path: str, *, default: Any = None) -> Any:
         collection, _id, path = self._parse_path(path)
 
         return find_in_nested_dict(
@@ -71,7 +71,7 @@ class MongoManager:
             default=default,
         )
 
-    async def set(self, path: str, value: Any, /) -> None:
+    async def set(self, path: str, value: Any) -> None:
 
         collection, _id, path = self._parse_path(path)
 
@@ -92,7 +92,7 @@ class MongoManager:
             )
 
     async def push(
-        self, path: str, value: Any, /, *, allow_duplicates: bool = True
+        self, path: str, value: Any, *, allow_duplicates: bool = True
     ) -> bool:
         collection, _id, path = self._parse_path(path)
 
@@ -116,7 +116,7 @@ class MongoManager:
 
         return False
 
-    async def pull(self, path: str, value: Any, /) -> bool:
+    async def pull(self, path: str, value: Any) -> bool:
         collection, _id, path = self._parse_path(path)
 
         if not path:
@@ -135,7 +135,7 @@ class MongoManager:
 
         return False
 
-    async def rem(self, path: str, /) -> None:  # type: ignore
+    async def rem(self, path: str) -> None:  # type: ignore
 
         path: list[str] = path.split(".", 2)
 

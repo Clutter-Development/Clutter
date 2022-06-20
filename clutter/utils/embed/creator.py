@@ -34,14 +34,13 @@ class EmbedCreator:
         return self.__call__(item)
 
     @overload
-    def __call__(self, asset_type: str, /) -> PartialEmbed:
+    def __call__(self, asset_type: str) -> PartialEmbed:
         ...
 
     @overload
     def __call__(
         self,
         asset_type: str,
-        /,
         title: str | None = None,
         description: str | None = None,
         **kwargs: Any,
@@ -51,7 +50,6 @@ class EmbedCreator:
     def __call__(
         self,
         asset_type: str,
-        /,
         title: str | None = None,
         description: str | None = None,
         **kwargs: Any,

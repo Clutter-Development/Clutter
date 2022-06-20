@@ -12,7 +12,6 @@ class TextFile(File):
     def __init__(
         self,
         text: str,
-        /,
         filename: str | None = None,
         *,
         spoiler: bool = MISSING,

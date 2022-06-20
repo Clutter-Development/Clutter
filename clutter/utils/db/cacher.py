@@ -15,7 +15,6 @@ class CachedMongoManager(MongoManager):
         self,
         connect_url: str,
         port: int | None = None,
-        /,
         *,
         database: str,
         max_items: int,
@@ -23,7 +22,7 @@ class CachedMongoManager(MongoManager):
         self._cache = LRU(max_items)
         super().__init__(connect_url, port, database=database)
 
-    def uncache(self, key: str | list[str], /, *, match: bool = True) -> None:
+    def uncache(self, key: str | list[str], *, match: bool = True) -> None:
         if isinstance(key, list):
             for single_key in key:
                 self.uncache(single_key, match=match)
@@ -36,7 +35,7 @@ class CachedMongoManager(MongoManager):
                 if ikey.startswith(key):
                     del self._cache[ikey]
 
-    async def get(self, path: str, /, *, default: Any = None) -> Any:
+    async def get(self, path: str, *, default: Any = None) -> Any:
         if path in self._cache:
             return self._cache[path]
 
@@ -46,12 +45,12 @@ class CachedMongoManager(MongoManager):
 
         return value
 
-    async def set(self, path: str, value: Any, /) -> None:
+    async def set(self, path: str, value: Any) -> None:
         await super().set(path, value)
         self.uncache(path)
 
     async def push(
-        self, path: str, value: Any, /, *, allow_duplicates: bool = True
+        self, path: str, value: Any, *, allow_duplicates: bool = True
     ) -> bool:
         res = await super().push(
             path, value, allow_duplicates=allow_duplicates
@@ -59,11 +58,11 @@ class CachedMongoManager(MongoManager):
         self.uncache(path)
         return res
 
-    async def pull(self, path: str, value: Any, /) -> bool:
+    async def pull(self, path: str, value: Any) -> bool:
         res = await super().pull(path, value)
         self.uncache(path)
         return res
 
-    async def rem(self, path: str, /) -> None:
+    async def rem(self, path: str) -> None:
         await super().rem(path)
         self.uncache(path)

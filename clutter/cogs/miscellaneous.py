@@ -15,7 +15,7 @@ class Miscellaneous(
     name="MODULES.MISCELLANEOUS.NAME",
     description="MODULES.MISCELLANEOUS.DESCRIPTION",
 ):
-    def __init__(self, bot: ClutterBot, /) -> None:
+    def __init__(self, bot: ClutterBot) -> None:
         self.bot = bot
 
     @command(
@@ -26,7 +26,7 @@ class Miscellaneous(
     @bot_has_permissions(
         send_messages=True, read_message_history=True, use_external_emojis=True
     )
-    async def ping(self, ctx: ClutterContext, /) -> None:
+    async def ping(self, ctx: ClutterContext) -> None:
         ping = monotonic()
 
         message = await ctx.reply("** **")
@@ -46,7 +46,7 @@ class Miscellaneous(
         )
 
     @slash_command(name="ping", description="COMMANDS.PING.BRIEF")
-    async def slash_ping(self, ctx: ClutterInteraction, /) -> None:
+    async def slash_ping(self, ctx: ClutterInteraction) -> None:
         ping = monotonic()
 
         await ctx.response.send_message("** **")
@@ -65,5 +65,5 @@ class Miscellaneous(
         )
 
 
-async def setup(bot: ClutterBot, /) -> None:
+async def setup(bot: ClutterBot) -> None:
     await bot.add_cog(Miscellaneous(bot))

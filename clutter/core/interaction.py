@@ -31,7 +31,6 @@ class RespondEmbedGetter:
         self,
         ctx: ClutterInteraction,
         embed_creator: EmbedCreator,
-        /,
     ) -> None:
         self.__ctx = ctx
         self.__embed_creator = embed_creator
@@ -58,12 +57,12 @@ class RespondEmbedGetter:
 class ClutterInteraction:
     bot: ClutterBot
 
-    def __init__(self, ctx: Interaction, /) -> None:
+    def __init__(self, ctx: Interaction) -> None:
         self.__ctx = ctx
         self.bot = self.client
         self.author = self.user
 
-    def __getattr__(self, item: str, /) -> Any:
+    def __getattr__(self, item: str) -> Any:
         return getattr(self.__ctx, item)
 
     @property
@@ -71,7 +70,7 @@ class ClutterInteraction:
         return RespondEmbedGetter(self, self.bot.embed)
 
     async def i18n(
-        self, text: str, /, *, prefer_guild: bool = False, **kwargs: Any
+        self, text: str, *, prefer_guild: bool = False, **kwargs: Any
     ) -> str:
         return (
             await self.bot.i18n(self, text, prefer_guild=prefer_guild)

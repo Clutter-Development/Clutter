@@ -22,7 +22,6 @@ class I18N:
     def __init__(
         self,
         language_file_directory: str,
-        /,
         *,
         db: CachedMongoManager,
         fallback_language: str,
@@ -44,7 +43,7 @@ class I18N:
         if fallback_language not in self._languages:
             raise NoFallback(fallback_language, language_file_directory)
 
-    def collect_translations(self, code: str, /) -> dict[str, str]:
+    def collect_translations(self, code: str) -> dict[str, str]:
 
         return {
             language: translation
@@ -59,7 +58,6 @@ class I18N:
         self,
         object_id: int,
         code: str,
-        /,
         *,
         object_type: Literal["guild", "user"] = "user",
     ) -> str:
@@ -87,7 +85,6 @@ class I18N:
         self,
         ctx: Message | Context | ClutterInteraction,
         code: str,
-        /,
         *,
         prefer_guild: bool = False,
     ) -> str:

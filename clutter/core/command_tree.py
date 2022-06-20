@@ -21,13 +21,13 @@ __all__ = ("ClutterCommandTree",)
 class ClutterCommandTree(CommandTree):
     bot: ClutterBot
 
-    def __init__(self, bot: ClutterBot, /) -> None:
+    def __init__(self, bot: ClutterBot) -> None:
         super().__init__(bot)
         self.bot = self.client
         self.checks: list[CheckType] = []
 
     def add_command(
-        self, command: Command | Group | ContextMenu, /, **kwargs: Any
+        self, command: Command | Group | ContextMenu, **kwargs: Any
     ) -> None:
         # command.name = self.bot.i18n.collect_translations(command.description)
         # if not isinstance(command, ContextMenu):
@@ -35,7 +35,7 @@ class ClutterCommandTree(CommandTree):
         # TODO: For when app command locales get implemented to discord.py.
         super().add_command(command, **kwargs)
 
-    async def call(self, ctx: Interaction, /) -> None:
+    async def call(self, ctx: Interaction) -> None:
         # Basically a 'custom' interaction class.
         await super().call(ClutterInteraction(ctx))  # type: ignore
 
@@ -43,7 +43,7 @@ class ClutterCommandTree(CommandTree):
         self.checks.append(func)
         return func
 
-    async def interaction_check(self, ctx: ClutterInteraction, /) -> bool:
+    async def interaction_check(self, ctx: ClutterInteraction) -> bool:
         for check in self.checks:
             try:
                 if not await check(ctx):
@@ -55,7 +55,7 @@ class ClutterCommandTree(CommandTree):
         return True
 
     async def on_error(
-        self, ctx: ClutterInteraction, error: AppCommandError, /
+        self, ctx: ClutterInteraction, error: AppCommandError
     ) -> None:
         self.bot.dispatch(
             "app_command_error", ctx, error

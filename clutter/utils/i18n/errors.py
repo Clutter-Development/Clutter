@@ -8,7 +8,7 @@ class I18NError(Exception):
 
 
 class UnknownTranslationCode(I18NError):
-    def __init__(self, code: str, /) -> None:
+    def __init__(self, code: str) -> None:
         self.code = code
 
     def __str__(self) -> str:
@@ -17,7 +17,7 @@ class UnknownTranslationCode(I18NError):
 
 class NoFallback(I18NError):
     def __init__(
-        self, fallback_language: str, language_file_directory: str, /
+        self, fallback_language: str, language_file_directory: str
     ) -> None:
         self.fallback_language = fallback_language
         self.language_file_directory = language_file_directory

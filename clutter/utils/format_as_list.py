@@ -5,8 +5,8 @@ from re import sub
 __all__ = ("format_as_list",)
 
 
-def format_as_list(title: str, description: str, /, *, indent: int = 4) -> str:
-    def create_line(length: int, inverted: bool, /):
+def format_as_list(title: str, description: str, *, indent: int = 4) -> str:
+    def create_line(length: int, inverted: bool):
         length -= 2
         corners = ("╭", "╯") if inverted else ("╰", "╮")
         return corners[0] + length * "─" + corners[1]

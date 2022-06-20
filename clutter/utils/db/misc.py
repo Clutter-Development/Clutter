@@ -13,7 +13,7 @@ T = TypeVar("T")
 NestedDict = dict[str, Any | "NestedDict"]
 
 
-def create_nested_dict(path: str | list[str], value: T, /) -> NestedDict | T:
+def create_nested_dict(path: str | list[str], value: T) -> NestedDict | T:
     if not path:
         return value
 
@@ -33,7 +33,7 @@ def create_nested_dict(path: str | list[str], value: T, /) -> NestedDict | T:
 
 
 def find_in_nested_dict(
-    find_in: NestedDict | None, path: str | list[str], /, *, default: T = None
+    find_in: NestedDict | None, path: str | list[str], *, default: T = None
 ) -> Any | T:
     if isinstance(path, str):
         return find_in_nested_dict(find_in, path.split("."), default=default)
@@ -48,16 +48,16 @@ def find_in_nested_dict(
 
 
 @overload
-def maybe_int(value: SupportsInt, /) -> int:
+def maybe_int(value: SupportsInt) -> int:
     ...
 
 
 @overload
-def maybe_int(value: T, /) -> T:
+def maybe_int(value: T) -> T:
     ...
 
 
-def maybe_int(value: SupportsInt | T, /) -> int | T:
+def maybe_int(value: SupportsInt | T) -> int | T:
     try:
         value = int(value)  # type: ignore
     finally:

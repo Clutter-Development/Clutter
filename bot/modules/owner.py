@@ -15,7 +15,7 @@ class Owner(
     name="MODULES.OWNER.NAME",
     description="MODULES.OWNER.DESCRIPTION",
 ):
-    def __init__(self, bot: Clutter, /) -> None:
+    def __init__(self, bot: Clutter) -> None:
         self.bot = bot
 
     @commands.command(
@@ -71,6 +71,6 @@ class Owner(
             )
 
 
-async def setup(bot: Clutter, /) -> None:
+async def setup(bot: Clutter) -> None:
     await bot.add_cog(Owner(bot))
 """

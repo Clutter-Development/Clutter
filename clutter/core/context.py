@@ -30,7 +30,7 @@ __all__ = ("ClutterContext",)
 
 class ReplyEmbedGetter:
     def __init__(
-        self, ctx: ClutterContext, embed_creator: EmbedCreator, /
+        self, ctx: ClutterContext, embed_creator: EmbedCreator
     ) -> None:
         self.__ctx = ctx
         self.__embed_creator = embed_creator
@@ -62,13 +62,13 @@ class ClutterContext(Context):
         return ReplyEmbedGetter(self, self.bot.embed)
 
     async def i18n(
-        self, text: str, /, *, prefer_guild: bool = False, **kwargs: Any
+        self, text: str, *, prefer_guild: bool = False, **kwargs: Any
     ) -> str:
         return (
             await self.bot.i18n(self, text, prefer_guild=prefer_guild)
         ).format(**kwargs)
 
-    async def ok(self, value: bool, /) -> None:
+    async def ok(self, value: bool) -> None:
         emojis = self.bot.config["STYLE"]["EMOJIS"]
         await self.message.add_reaction(
             emojis["SUCCESS" if value else "ERROR"]

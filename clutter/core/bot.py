@@ -63,7 +63,7 @@ class ClutterBot(AutoShardedBot):
     start_time: float
     tree: ClutterCommandTree
 
-    def __init__(self, config: dict, session: ClientSession, /) -> None:
+    def __init__(self, config: dict, session: ClientSession) -> None:
         self.config = config
         self.session = session
 
@@ -143,11 +143,11 @@ class ClutterBot(AutoShardedBot):
     def uptime(self) -> float:
         return time() - self.start_time
 
-    async def add_command(self, command: Command, /) -> None:
+    async def add_command(self, command: Command) -> None:
         command.cooldown_after_parsing = True
         super().add_command(command)
 
-    async def process_commands(self, message: Message, /) -> None:
+    async def process_commands(self, message: Message) -> None:
         if message.author.bot:
             return
 
@@ -162,10 +162,10 @@ class ClutterBot(AutoShardedBot):
         await self.invoke(ctx)
 
     # noinspection PyMethodOverriding
-    async def get_context(self, message: Message, /) -> ClutterContext:
+    async def get_context(self, message: Message) -> ClutterContext:
         return await super().get_context(message, cls=ClutterContext)
 
-    async def guild_check(self, guild: Guild, /) -> bool:
+    async def guild_check(self, guild: Guild) -> bool:
         if await self.db.get(f"guilds.{guild.id}.blacklisted"):
             await gather(
                 guild.leave(),
@@ -186,7 +186,7 @@ class ClutterBot(AutoShardedBot):
     async def on_guild_join(self, guild: Guild) -> None:
         await self.guild_check(guild)
 
-    async def blacklist_user(self, user: int | Object, /) -> bool:
+    async def blacklist_user(self, user: int | Object) -> bool:
         user_id = user if isinstance(user, int) else user.id
 
         if await self.db.get(f"users.{user_id}.blacklisted"):
@@ -195,7 +195,7 @@ class ClutterBot(AutoShardedBot):
         await self.db.set(f"users.{user_id}.blacklisted", True)
         return True
 
-    async def unblacklist_user(self, user: int | Object, /) -> bool:
+    async def unblacklist_user(self, user: int | Object) -> bool:
         user_id = user if isinstance(user, int) else user.id
 
         if not await self.db.get(f"users.{user_id}.blacklisted"):
@@ -205,7 +205,7 @@ class ClutterBot(AutoShardedBot):
         return True
 
     async def getch_member(
-        self, guild: Guild, user_id: int, /
+        self, guild: Guild, user_id: int
     ) -> Member | None:
         if (member := guild.get_member(user_id)) is not None:
             return member
@@ -303,7 +303,7 @@ class ClutterBot(AutoShardedBot):
         @bot.check
         @bot.tree.check
         async def guild_blacklist_check(
-            ctx: ClutterContext | ClutterInteraction, /
+            ctx: ClutterContext | ClutterInteraction
         ) -> bool:
             # noinspection PyTypeChecker
             return (
@@ -320,7 +320,7 @@ class ClutterBot(AutoShardedBot):
         @bot.check
         @bot.tree.check
         async def user_blacklist_check(
-            ctx: ClutterContext | ClutterInteraction, /
+            ctx: ClutterContext | ClutterInteraction
         ) -> bool:
             if not await bot.is_owner(ctx.author) and await bot.db.get(
                 f"users.{ctx.author.id}.blacklisted"
@@ -330,7 +330,7 @@ class ClutterBot(AutoShardedBot):
 
         @bot.check
         # TODO: @bot.tree.check
-        async def global_cooldown_check(ctx: ClutterContext, /) -> bool:
+        async def global_cooldown_check(ctx: ClutterContext) -> bool:
             author = ctx.author
 
             if await bot.is_owner(author):

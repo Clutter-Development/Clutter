@@ -9,7 +9,7 @@ NestedDict = dict[str, Any | "NestedDict"]
 
 
 def find_in_nested_dict(
-    find_in: NestedDict, path: str | list[str], /, *, default: T = None
+    find_in: NestedDict, path: str | list[str], *, default: T = None
 ) -> Any | T:
     if isinstance(path, str):
         return find_in_nested_dict(find_in, path.split("."), default=default)
