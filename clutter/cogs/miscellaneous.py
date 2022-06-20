@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from discord import Member, User
 from discord.app_commands import command as slash_command
-from discord.ext.commands import Cog, bot_has_permissions, command
+from discord.ext.commands import Cog, command
 
 if TYPE_CHECKING:
     from ..core import ClutterBot, ClutterContext, ClutterInteraction

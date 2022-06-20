@@ -7,8 +7,12 @@
   },
   COGS: {
     MISCELLANEOUS: {
-      NAME: "Miscellaneous",
+      NAME: "\uD83D\uDD27 Miscellaneous",
       DESCRIPTION: "Various utilities."
+    },
+    OWNER: {
+      NAME: "\uD83D\uDEE0 Owner",
+      DESCRIPTION: "Owner only."
     }
   },
   COMMANDS: {
@@ -30,6 +34,16 @@
       },
       FIELDS: {
         ROLES: "Roles"
+      }
+    },
+    SYNC: {
+      BRIEF: "Syncs app commands.",
+      HELP: "Syncs app commands to the specified guild IDs. If no guild IDs are given, the app commands are synced globally.",
+      RESPONSE: {
+        TITLE: "Successfully synced app commands",
+        BODY_1: "Synced {count} commands to the current guild.",
+        BODY_2: "Synced {count} commands globally.",
+        BODY_3: "Synced app commands to {success} out of {total} guilds."
       }
     }
   }
