@@ -30,8 +30,7 @@ class ErrorHandler(Cog):
         log.error(
             color.red(
                 format_as_list(
-                    "An unhandled exception has occured in the command"
-                    f" '{ctx.command.qualified_name}'",  # type: ignore
+                    f"An unhandled exception has occured in the command '{ctx.command.qualified_name}'",  # type: ignore
                     "\n".join(traceback),
                 )
             )
@@ -39,7 +38,8 @@ class ErrorHandler(Cog):
 
         if ctx.guild:
             head = (
-                f"Error from the server {ctx.guild.name} with the ID {ctx.guild.id}."
+                f"Error from the server {ctx.guild.name} with the ID"
+                f" {ctx.guild.id}."
             )
         else:
             head = (
@@ -51,8 +51,7 @@ class ErrorHandler(Cog):
             self.capture_exception(error),
             self.bot.error_webhook.send(
                 file=TextFile(
-                    f"{head}\nCommand:"
-                    f" {ctx.command.qualified_name}\nTraceback:\n{traceback}",  # type: ignore
+                    f"{head}\nCommand: {ctx.command.qualified_name}\nTraceback:\n{traceback}",  # type: ignore
                     "error.txt",
                 )
             ),
