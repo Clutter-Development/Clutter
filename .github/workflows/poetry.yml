@@ -1,7 +1,9 @@
 name: Poetry
+
 on:
   schedule:
     - cron: "0 0 * * *"
+
 jobs:
   build:
     if: github.event.pull_request.user.type != 'Bot'
@@ -9,21 +11,29 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.10' ]
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Install Poetry
         run: pip install -U pip poetry
+
       - name: Remove Lock File
         continue-on-error: true
         run: rm poetry.lock
+
       - name: Install Dependencies & Build Lock File
         run: poetry install
+
       - name: Setup Git
         run: git config user.name "Automated poetry.lock Updater"
+
       - name: Push To GitHub
         continue-on-error: true
         run: |
