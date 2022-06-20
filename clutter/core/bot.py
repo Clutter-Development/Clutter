@@ -40,8 +40,8 @@ from ..utils.db import CachedMongoManager
 from ..utils.embed import EmbedCreator
 from ..utils.i18n import I18N
 from .command_tree import ClutterCommandTree
-from .errors import UserIsBlacklisted, UserHasBeenBlacklisted
 from .context import ClutterContext
+from .errors import UserHasBeenBlacklisted, UserIsBlacklisted
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
@@ -158,7 +158,9 @@ class ClutterBot(AutoShardedBot):
 
     async def get_prefix(self, message: Message) -> list[str]:
         if guild := message.guild:
-            prefix = await self.db.get(f"guilds.{guild.id}.prefix", default=self.default_prefix)
+            prefix = await self.db.get(
+                f"guilds.{guild.id}.prefix", default=self.default_prefix
+            )
         else:
             prefix = self.default_prefix
 

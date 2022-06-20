@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 
 class Owner(
     commands.Cog,
-    name="MODULES.OWNER.NAME",
-    description="MODULES.OWNER.DESCRIPTION",
+    name="COGS.OWNER.NAME",
+    description="COGS.OWNER.DESCRIPTION",
 ):
     def __init__(self, bot: Clutter) -> None:
         self.bot = bot

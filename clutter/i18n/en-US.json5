@@ -1,5 +1,11 @@
 {
-  MODULES: {
+  ERROR: {
+    RESPONSE: {
+      TITLE: "An error has occured",
+      BODY: "The developers have been notified. The bug will be fixed soon."
+    }
+  },
+  COGS: {
     MISCELLANEOUS: {
       NAME: "Miscellaneous",
       DESCRIPTION: "Various utilities."

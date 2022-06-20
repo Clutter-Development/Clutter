@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 class Miscellaneous(
     Cog,
-    name="MODULES.MISCELLANEOUS.NAME",
-    description="MODULES.MISCELLANEOUS.DESCRIPTION",
+    name="COGS.MISCELLANEOUS.NAME",
+    description="COGS.MISCELLANEOUS.DESCRIPTION",
 ):
     def __init__(self, bot: ClutterBot) -> None:
         self.bot = bot
@@ -67,21 +67,25 @@ class Miscellaneous(
         )
 
     async def create_info_embed(
-        self, ctx: ClutterContext | ClutterInteraction, user: User | Member
+        self,
+        ctx: ClutterContext | ClutterInteraction,
+        user: User | Member | None,
     ) -> Embed:
+        if not user:
+            user = ctx.author
         is_member = isinstance(user, Member)
         embed = self.bot.embed.info(
             await ctx.i18n("COMMANDS.INFO.RESPONSE.TITLE", user=user),
             await ctx.i18n(
                 "COMMANDS.INFO.RESPONSE.BODY",
                 id=user.id,
-                created_at=f"<t:{user.created_at.timestamp()}:F>",
+                created_at=f"<t:{int(user.created_at.timestamp())}:F>",
             )
             + (
                 "\n"
                 + await ctx.i18n(
                     "COMMANDS.INFO.RESPONSE.JOINED_AT",
-                    joined_at=f"<t:{user.joined_at.timestamp()}:F>",
+                    joined_at=f"<t:{int(user.joined_at.timestamp())}:F>",
                 )
                 if is_member
                 else ""
@@ -91,7 +95,11 @@ class Miscellaneous(
         if is_member and (roles := user.roles):
             embed.add_field(
                 await ctx.i18n("COMMANDS.INFO.FIELDS.ROLES"),
-                ", ".join(role.mention for role in roles),
+                ", ".join(
+                    role.mention
+                    for role in roles
+                    if not role == ctx.guild.default_role
+                ),
             )
 
         return embed
