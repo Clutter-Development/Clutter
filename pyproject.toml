@@ -11,6 +11,7 @@ jishaku = "*"
 json5 = "*"
 lru-dict = "*"
 motor = "*"
+pymongo = { version = "*", extras = [ "srv" ] }
 sentry-sdk = "*"
 typing-extensions = "*"
 uvloop = "*"
