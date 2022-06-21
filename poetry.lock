@@ -177,7 +177,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a4369+gb8ddb17b"
+version = "2.0.0a4370+g868476c9"
 description = "A Python wrapper for the Discord API"
 category = "main"
 optional = false
@@ -201,7 +201,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "https://github.com/Rapptz/discord.py.git"
 reference = "master"
-resolved_reference = "b8ddb17b141dfa337ea88b90d1e198c9c784fd41"
+resolved_reference = "868476c99963e72aa529ed6203f86ef529a2c1f1"
 
 [[package]]
 name = "dnspython"
