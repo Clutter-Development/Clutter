@@ -10,7 +10,7 @@
 [![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
 </div>
 
-#### Clutter is a multipurpose, compact and easy to use Discord bot. <!-- common sense is required btw -->
+### Clutter is a multipurpose, compact and easy to use Discord bot. <!-- common sense is required btw -->
 
 # Installation
 
