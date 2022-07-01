@@ -10,11 +10,11 @@
 [![Discord](https://img.shields.io/discord/944535258722861106?color=success&label=discord&logo=discord&logoColor=white)](https://discord.gg/mVKkMZRPQE)
 </div>
 
-### Clutter is a multipurpose, compact and easy to use Discord bot. <!-- common sense is required btw -->
+### Clutter is a multipurpose, compact and easy to use Discord bot.
 
 # Installation
 
-The preffered method for running this bot is Docker. <!-- currently broken -->
+The preffered method for running this bot is Docker.
 
 Before running these commands, don't forget to modify the `config.example.json5` file in the `clutter`
 directory [(see below)](#configuration).
