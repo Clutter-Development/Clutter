@@ -33,7 +33,6 @@ from discord.ext.commands import (
     NoEntryPointError,
 )
 from discord.utils import oauth_url
-from json5 import loads
 
 from ..utils import color, format_as_list
 from ..utils.db import CachedMongoManager
@@ -44,9 +43,6 @@ from .context import ClutterContext
 from .errors import UserHasBeenBlacklisted, UserIsBlacklisted
 
 if TYPE_CHECKING:
-    # noinspection PyUnresolvedReferences
-    from typing_extensions import Self
-
     from .interaction import ClutterInteraction
 
 __all__ = ("ClutterBot",)

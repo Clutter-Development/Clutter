@@ -26,7 +26,6 @@ class I18N:
         db: CachedMongoManager,
         fallback_language: str,
     ) -> None:
-
         self._db = db
         self._languages = {}
         self._fallback_language = fallback_language
@@ -44,7 +43,6 @@ class I18N:
             raise NoFallback(fallback_language, lang_file_dir)
 
     def collect_translations(self, code: str) -> dict[str, str]:
-
         return {
             language: translation
             for language, translation in map(
@@ -61,7 +59,6 @@ class I18N:
         *,
         object_type: Literal["guild", "user"] = "user",
     ) -> str:
-
         translated = find_in_nested_dict(
             self._languages.get(
                 await self._db.get(
@@ -88,7 +85,6 @@ class I18N:
         *,
         prefer_guild: bool = False,
     ) -> str:
-
         return (
             await self.translate_with_id(
                 ctx.guild.id,  # type: ignore

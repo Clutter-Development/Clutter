@@ -25,7 +25,6 @@ class MongoManager:
         self._db: AsyncIOMotorDatabase = self._client[database]
 
     def _parse_path(self, path: str) -> tuple[AsyncIOMotorCollection, str | int, str]:  # type: ignore
-
         path: list[str] = path.split(".", 2)
 
         if len(path) < 2:
@@ -72,7 +71,6 @@ class MongoManager:
         )
 
     async def set(self, path: str, value: Any) -> None:
-
         collection, _id, path = self._parse_path(path)
 
         if not path and not isinstance(value, dict):
@@ -136,7 +134,6 @@ class MongoManager:
         return False
 
     async def rem(self, path: str) -> None:  # type: ignore
-
         path: list[str] = path.split(".", 2)
 
         if not path:
