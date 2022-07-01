@@ -7,7 +7,7 @@ from pathlib import Path
 from re import MULTILINE, search
 from time import time
 from traceback import format_exc
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Awaitable
 
 from aiohttp import ClientSession
 from discord import (
@@ -60,9 +60,28 @@ class ClutterBot(AutoShardedBot):
     start_time: float
     tree: ClutterCommandTree
 
-    def __init__(self, config: dict, session: ClientSession) -> None:
+    @classmethod
+    async def __init(cls, config: dict) -> Awaitable[ClutterBot]:
+        self = super(cls, cls).__new__(cls)
+
+        self.__init__(
+            allowed_mentions=AllowedMentions.none(),
+            command_prefix=self.get_prefix,  # type: ignore
+            case_insensitive=True,
+            intents=Intents(
+                guilds=True,
+                members=True,
+                messages=True,
+                message_content=True,
+            ),
+            max_messages=1000,
+            owner_ids=set(config["BOT_ADMIN_IDS"]),
+            strip_after_prefix=True,
+            tree_cls=ClutterCommandTree,
+        )
+
         self.config = config
-        self.session = session
+        self.session = ClientSession()
 
         self.version = search(  # type: ignore
             r'^version\s*=\s*["]([^"]*)["]',
@@ -103,27 +122,99 @@ class ClutterBot(AutoShardedBot):
         )
 
         self.error_webhook = Webhook.from_url(
-            config["ERROR_WEBHOOK_URL"], session=session
+            config["ERROR_WEBHOOK_URL"], session=self.session
         )
         self.log_webhook = Webhook.from_url(
-            config["LOG_WEBHOOK_URL"], session=session
+            config["LOG_WEBHOOK_URL"], session=self.session
         )
 
-        super().__init__(
-            allowed_mentions=AllowedMentions.none(),
-            command_prefix=self.get_prefix,  # type: ignore
-            case_insensitive=True,
-            intents=Intents(
-                guilds=True,
-                members=True,
-                messages=True,
-                message_content=True,
-            ),
-            max_messages=1000,
-            owner_ids=set(config["BOT_ADMIN_IDS"]),
-            strip_after_prefix=True,
-            tree_cls=ClutterCommandTree,
-        )
+        @self.check
+        @self.tree.check
+        async def guild_blacklist_check(
+            ctx: ClutterContext | ClutterInteraction,
+        ) -> bool:
+            # noinspection PyTypeChecker
+            return (
+                (
+                    await self.is_owner(ctx.guild.owner)
+                    if ctx.guild.owner
+                    else False
+                )
+                or await self.guild_check(ctx.guild)
+                if ctx.guild
+                else True
+            )
+
+        @self.check
+        @self.tree.check
+        async def user_blacklist_check(
+            ctx: ClutterContext | ClutterInteraction,
+        ) -> bool:
+            if not await self.is_owner(ctx.author) and await self.db.get(
+                f"users.{ctx.author.id}.blacklisted"
+            ):
+                raise UserIsBlacklisted("You are banned from using this bot.")
+            return True
+
+        @self.check
+        # TODO: @bot.tree.check
+        async def global_cooldown_check(ctx: ClutterContext) -> bool:
+            author = ctx.author
+
+            if await self.is_owner(author):
+                return True
+
+            author_id = author.id
+            counter = self.spam_control.counter
+
+            if not (
+                retry_after := self.spam_control.get_bucket(
+                    ctx.message
+                ).update_rate_limit(  # type: ignore
+                    ctx.message.created_at.timestamp()
+                )
+            ):
+                return True
+
+            counter[author_id] += 1
+
+            if counter[author_id] < 3:
+                raise CommandOnCooldown(
+                    bot.spam_control.cooldown, retry_after, BucketType.user  # type: ignore
+                )
+
+            await self.blacklist_user(author_id)
+            del counter[author_id]
+
+            embed = self.embed.warning(
+                f"**{author}** has been blacklisted for spamming!",
+                f"Incident time: <t:{int(time())}:F>",
+            ).add_field(
+                title="User Info",
+                description=(
+                    f"**Mention:** {author.mention}\n**Tag:**"
+                    f" {author}\n**ID:** {author.id}"
+                ),
+            )
+            if ctx.guild:
+                channel = ctx.channel
+                embed.add_field(
+                    title="Guild Info",
+                    description=(
+                        f"**Name:** {ctx.guild.name}\n**ID:**"
+                        f" {ctx.guild.id}\n[Jump!](https://discord.com/channels/{ctx.guild.id})"
+                    ),
+                ).add_field(
+                    title="Channel Info",
+                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore
+                )
+
+            create_task(self.log_webhook.send(embed=embed))
+            raise UserHasBeenBlacklisted(
+                "You have been blacklisted for spamming commands."
+            )
+
+        return self
 
     async def setup_hook(self) -> None:
         self.start_time = time()
@@ -298,97 +389,3 @@ class ClutterBot(AutoShardedBot):
     async def __aexit__(self, *args: Any):
         await self.close()
         await self.session.close()
-
-    @classmethod
-    async def init(cls) -> Self:
-        bot = cls(
-            loads((ROOT_DIR / "config.json5").read_text()), ClientSession()
-        )
-
-        @bot.check
-        @bot.tree.check
-        async def guild_blacklist_check(
-            ctx: ClutterContext | ClutterInteraction,
-        ) -> bool:
-            # noinspection PyTypeChecker
-            return (
-                (
-                    await bot.is_owner(ctx.guild.owner)
-                    if ctx.guild.owner
-                    else False
-                )
-                or await bot.guild_check(ctx.guild)
-                if ctx.guild
-                else True
-            )
-
-        @bot.check
-        @bot.tree.check
-        async def user_blacklist_check(
-            ctx: ClutterContext | ClutterInteraction,
-        ) -> bool:
-            if not await bot.is_owner(ctx.author) and await bot.db.get(
-                f"users.{ctx.author.id}.blacklisted"
-            ):
-                raise UserIsBlacklisted("You are banned from using this bot.")
-            return True
-
-        @bot.check
-        # TODO: @bot.tree.check
-        async def global_cooldown_check(ctx: ClutterContext) -> bool:
-            author = ctx.author
-
-            if await bot.is_owner(author):
-                return True
-
-            author_id = author.id
-            counter = bot.spam_control.counter
-
-            if not (
-                retry_after := bot.spam_control.get_bucket(
-                    ctx.message
-                ).update_rate_limit(  # type: ignore
-                    ctx.message.created_at.timestamp()
-                )
-            ):
-                return True
-
-            counter[author_id] += 1
-
-            if counter[author_id] < 3:
-                raise CommandOnCooldown(
-                    bot.spam_control.cooldown, retry_after, BucketType.user  # type: ignore
-                )
-
-            await bot.blacklist_user(author_id)
-            del counter[author_id]
-
-            embed = bot.embed.warning(
-                f"**{author}** has been blacklisted for spamming!",
-                f"Incident time: <t:{int(time())}:F>",
-            ).add_field(
-                title="User Info",
-                description=(
-                    f"**Mention:** {author.mention}\n**Tag:**"
-                    f" {author}\n**ID:** {author.id}"
-                ),
-            )
-            if ctx.guild:
-                channel = ctx.channel
-                embed.add_field(
-                    title="Guild Info",
-                    description=(
-                        f"**Name:** {ctx.guild.name}\n**ID:**"
-                        f" {ctx.guild.id}\n[Jump!](https://discord.com/channels/{ctx.guild.id})"
-                    ),
-                ).add_field(
-                    title="Channel Info",
-                    description=f"**Mention:** {channel.mention}\n**Name:** {channel.name}\n**ID:** {channel.id}\n[Jump!]({channel.jump_url})",  # type: ignore
-                )
-
-            create_task(bot.log_webhook.send(embed=embed))
-            raise UserHasBeenBlacklisted(
-                "You have been blacklisted for spamming commands."
-            )
-
-        return bot
